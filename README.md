@@ -1,6 +1,6 @@
 # Hotel Project README
 
-Please read this thoroughly to understand how to get things started.  
+Please read this thoroughly to understand how to get things started. Doesn't matter what part of the project you are on, make sure to read all of it.
 If you have any questions, reach out to Mj.
 
 ## Getting Started with Yarn Package Management
