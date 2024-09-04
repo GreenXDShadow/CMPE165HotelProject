@@ -48,6 +48,7 @@ Frontend development is done using Next.js, which is built on React.js.
 Here is a breakdown of the directory structure to help you understand where everything goes:
 
 ### Directory Structure
+```
 hotel
 ├── .next               # Next.js build output (don't worry about this)
 ├── node_modules        # Installed npm packages (don't worry about this)
@@ -65,6 +66,7 @@ hotel
     ├── page.js            # Home page
     ├── main.css           # Home page styling
     └── globals.css        # Global styling (affects every page when included)
+```
 
 ### How to Get It Running
 
