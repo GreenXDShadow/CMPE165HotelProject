@@ -1,10 +1,13 @@
 from flask import Flask, request, jsonify  # Importing necessary modules
 from flask_cors import CORS  # Importing CORS module for cross-origin resource sharing
 from flask_sqlalchemy import SQLAlchemy  # Importing SQLAlchemy module for database operations
+from flask_bcrypt import Bcrypt  # Importing Bcrypt module for password hashing
 
 app = Flask(__name__)  # Creating a Flask application instance
 
 CORS(app, origins=['http://localhost:3000'])  # Allowing cross-origin requests from http://localhost:3000
+
+bcrypt = Bcrypt(app)  # Creating a Bcrypt instance
 
 @app.route('/login', methods=['GET', 'POST'])  # Defining a route for '/login' with GET and POST methods
 def login():
@@ -19,7 +22,13 @@ def login():
 def registration():
     if request.method == 'POST':  # Checking if the request method is POST
         data = request.json  # Extracting JSON data from the request
-        print(data)  # Printing the data to the console
+        
+        email = data.get('email')  # Extracting email from the data
+        password = data.get('password') # Extracting password from the data
+
+        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')  # Hashing the password
+
+        print(email + hashed_password)  # Printing the data to the console
         return 'Success'  # Returning 'Success' as a response
     else:
         return 'Failed'  # Returning 'Failed' as a response if the request method is not POST

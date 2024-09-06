@@ -1,8 +1,8 @@
+'use client'; // this is necessary in order to use useStates and other react hooks
+
 import './registration.css'; // Importing the CSS file for styling (./ means the file is in the same directory as this file)
 import React, { useState } from 'react'; // Importing React and useState hook from the 'react' package
 import axios from 'axios'; // Importing axios for making HTTP requests
-
-'use client'; // this is necessary in order to use useStates and other react hooks
 
 export default function registration(){ // Exporting a default function named 'registration'
     const [email, setEmail] = useState('') // Creating a state variable 'email' and a function 'setEmail' to update it

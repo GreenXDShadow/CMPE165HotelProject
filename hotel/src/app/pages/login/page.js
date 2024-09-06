@@ -1,9 +1,8 @@
+'use client'; // this is necessary in order to use useStates and other react hooks
+
 import './login.css' // Importing the CSS file for styling purposes (./ means the file is in the same directory as this file)
 import React, { useState } from 'react' // Importing React and useState hook from the 'react' package
 import axios from 'axios' // Importing axios library for making HTTP requests
-
-'use client'; // this is necessary in order to use useStates and other react hooks
-
 
 export default function Login(){ // Defining a functional component named Login
     const [email, setEmail] = useState('') // Creating a state variable 'email' and a function 'setEmail' to update it
