@@ -21,6 +21,11 @@ export default function Home() {
               Register
             </button>
           </a>
+          <a href="/pages/payment">
+            <button className="button">
+              Payment
+            </button>
+          </a>
         </div>
       </div>
     </RootLayout>
