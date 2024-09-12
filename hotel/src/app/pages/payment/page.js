@@ -56,7 +56,7 @@ export default function Payment(){
             
             <h2> You may also login to check out </h2>
             <a href="/pages/login">
-            <button className="button">
+            <button className="button" type="submit">
               Login
             </button>
           	</a>
