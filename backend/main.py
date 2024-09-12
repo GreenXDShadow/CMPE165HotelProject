@@ -32,6 +32,15 @@ def registration():
         return 'Success'  # Returning 'Success' as a response
     else:
         return 'Failed'  # Returning 'Failed' as a response if the request method is not POST
+    
+app.route('/payment', methods=['GET', 'POST'])  # Defining a route for '/payment' with GET and POST methods
+def payment():
+    if request.method == 'POST':  # Checking if the request method is POST
+        data = request.json  # Extracting JSON data from the request
+        print(data)  # Printing the data to the console
+        return 'Success'  # Returning True as a response
+    else:
+        return 'False'  # Returning False as a response if the request method is not POST
 
 if __name__ == '__main__':
     app.run(debug=True, port=4000)  # Running the Flask application in debug mode on port 4000
