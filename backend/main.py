@@ -33,7 +33,7 @@ def registration():
     else:
         return 'Failed'  # Returning 'Failed' as a response if the request method is not POST
     
-app.route('/payment', methods=['GET', 'POST'])  # Defining a route for '/payment' with GET and POST methods
+@app.route('/payment', methods=['GET', 'POST'])  # Defining a route for '/payment' with GET and POST methods
 def payment():
     if request.method == 'POST':  # Checking if the request method is POST
         data = request.json  # Extracting JSON data from the request

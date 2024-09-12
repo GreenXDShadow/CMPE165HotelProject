@@ -6,7 +6,6 @@ import './main.css';
 
 export default function Home() {
   return (
-    <RootLayout hideNavbar={true}>
       <div className="main">
         <h1>Hotel App</h1>
         <p>CS-149 Project</p>
@@ -28,6 +27,5 @@ export default function Home() {
           </a>
         </div>
       </div>
-    </RootLayout>
   );
 }
