@@ -4,16 +4,15 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  title: "Hotel App",
-  description: "CS-149 Project",
+  title: "LikeHome",
+  description: "Your next stay will feel LikeHome",
 };
 
-export default function RootLayout({ children, hideNavbar }) {
+export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={inter.className}>
         <header>
-          {!hideNavbar && (
             <nav className="nav-container">
               <ul>
                 <li>
@@ -25,9 +24,11 @@ export default function RootLayout({ children, hideNavbar }) {
                 <li>
                   <a className="nav-button" href="/pages/registration">Register</a>
                 </li>
+                <li>
+                  <a className="nav-button" href="/pages/payment">Payment</a>
+                </li>
               </ul>
             </nav>
-          )}
         </header>
         <main>{children}</main>
       </body>

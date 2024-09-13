@@ -7,6 +7,11 @@ import axios from 'axios'; // Importing axios for making HTTP requests
 export default function registration(){ // Exporting a default function named 'registration'
     const [email, setEmail] = useState('') // Creating a state variable 'email' and a function 'setEmail' to update it
     const [password, setPassword] = useState('') // Creating a state variable 'password' and a function 'setPassword' to update it
+    const [firstname, setFirstname] = useState('')
+    const [lastname, setLastname] = useState('')
+    const [cardnum, setCardnum] = useState('')
+    const [cvc, setCVC] = useState('')
+    const [expire, setExpire] = useState('')
     const [response, setResponse] = useState('') // Creating a state variable 'response' and a function 'setResponse' to update it
 
     const handleRegistration = async(e) => { // Defining an asynchronous function named 'handleRegistration' that takes an event object as a parameter
@@ -14,7 +19,12 @@ export default function registration(){ // Exporting a default function named 'r
 
         const data = { // Creating an object 'data' with 'email' and 'password' properties
             email: email,
-            password: password
+            password: password,
+            firstname: firstname,
+            lastname: lastname,
+            cardnum: cardnum,
+            cvc: cvc,
+            expire: expire
         }
 
         try{
@@ -33,6 +43,11 @@ export default function registration(){ // Exporting a default function named 'r
             <form onSubmit={handleRegistration}> {/* Rendering a form element with the 'handleRegistration' function as the submit event handler */}
                 <input type='email' placeholder='Email' value={email} onChange={(e) => setEmail(e.target.value)} /> {/* Rendering an input element for email with value and onChange event handler */}
                 <input type='password' placeholder='Password' value={password} onChange={(e) => setPassword(e.target.value)} /> {/* Rendering an input element for password with value and onChange event handler */}
+                <input type='firstname' placeholder='First Name' value={firstname} onChange={(e) => setFirstname(e.target.value)} /> {}
+                <input type='lastname' placeholder='Last Name' value={lastname} onChange={(e) => setLastname(e.target.value)} /> {}
+                <input type='cardnum' placeholder='Card Number' value={cardnum} onChange={(e) => setCardnum(e.target.value)} /> {}
+                <input type='cvc' placeholder='CVC' value={cvc} onChange={(e) => setCVC(e.target.value)} /> {}
+                <input type='expire' placeholder='Expiration' value={expire} onChange={(e) => setExpire(e.target.value)} /> {}
                 <button type='submit'>Register</button> {/* Rendering a button element with the text 'Register' */}
                 {response && <p className='response'>{response}</p>} {/* Rendering a paragraph element with the 'response' value if it exists */}
             </form>
