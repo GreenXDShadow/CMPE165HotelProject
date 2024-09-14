@@ -1,9 +1,70 @@
-import sqlite3
+import random
+import os
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
 
-data = sqlite3.connect('backend/database.db')
-dataCursor = data.cursor()
-dataCursor.execute('create table if not exists "Users" ("User ID" text primary key, "Email" text, "Password" text, "First Name" text, "Last Name" text, "Reward Points" integer)')
-dataCursor.execute('create table if not exists "Hotels" ("Hotel ID" text primary key, "Name" text, "Address" text, "Room Count" Integer, "Rating" real, "Check In Start" text, "Check In End" text, "Check Out Time" text)')
-dataCursor.execute('create table if not exists "Hotel Rooms" ("Hotel ID" text, "Floor" integer, "Room Number" integer, "Beds" integer, "Pricing" real)')
-dataCursor.execute('create table if not exists "Bookings" ("Booking ID" text primary key, "Hotel ID" text, "User ID" text, "Email" text, "First Name" text, "Last Name" text, "Start Date" text, "End Date" text, "Guest Count" integer, "Nights" integer, "Payment ID" text, "Cost" real, "Canceled" integer)')
-dataCursor.execute('create table if not exists "Payment Info" ("Payment ID" text primary key, "First Name" text, "Last Name" text, "CVC" integer, "Expiration Month" integer, "Expiration Year" integer, "User ID" text)')
+app = Flask(__name__)
+
+# Set up the SQLite URI (or any other database URI)
+db_path = os.path.abspath('backend/database.db')
+app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
+db = SQLAlchemy(app)
+
+
+# Users Table
+class User(db.Model):
+    __tablename__ = 'Users'
+    user_id = db.Column('User ID', db.Integer, primary_key=True, autoincrement=True)  # Autoincrement true by default as the primary key
+    email = db.Column('Email', db.String, unique=True, nullable=False)
+    password = db.Column('Password', db.String, nullable=False)
+    first_name = db.Column('First Name', db.String)
+    last_name = db.Column('Last Name', db.String)
+    reward_points = db.Column('Reward Points', db.Integer)
+
+
+# Bookings Table
+class Booking(db.Model):
+    __tablename__ = 'Bookings'
+    booking_id = db.Column('Booking ID', db.Integer, primary_key=True)
+    user_id = db.Column('User ID', db.Integer, db.ForeignKey('Users.User ID'), nullable=False)
+    hotel_id = db.Column('Hotel ID', db.Integer, nullable=False)
+    hotel_name = db.Column('Hotel Name', db.String, nullable=False)
+    address = db.Column('Address', db.String)
+    check_in_start = db.Column('Check In Start', db.String)  # No need for check-in ending time
+    check_out_time = db.Column('Check Out Time', db.String)
+    email = db.Column('Email', db.String, nullable=False)
+    first_name = db.Column('First Name', db.String, nullable=False)
+    last_name = db.Column('Last Name', db.String, nullable=False)
+    start_date = db.Column('Start Date', db.String, nullable=False)
+    end_date = db.Column('End Date', db.String, nullable=False)
+    bed_count = db.Column('Bed Count', db.String)  # Count is type String to include bed type, 1 King bed would be 1K, 2 Queens is 2Q
+    nights = db.Column('Nights', db.Integer)
+    pricing_per_night = db.Column('Pricing', db.Float)
+    cost = db.Column('Cost', db.Float)
+    payment_id = db.Column('Payment ID', db.String, db.ForeignKey('Payment Info.Payment ID'))
+    floor = db.Column('Floor', db.Integer, primary_key=True)
+    room_number = db.Column('Room Number', db.Integer, primary_key=True)
+    canceled = db.Column('Canceled', db.Integer)
+
+
+# Payment Info Table
+class PaymentInfo(db.Model):
+    __tablename__ = 'Payment Info'
+    payment_id = db.Column('Payment ID', db.Integer, primary_key=True)
+    first_name = db.Column('First Name', db.String, nullable=False)
+    last_name = db.Column('Last Name', db.String, nullable=False)
+    expiration_month = db.Column('Expiration Month', db.Integer)
+    expiration_year = db.Column('Expiration Year', db.Integer)
+    cvc = db.Column('CVC', db.Integer)
+    user_id = db.Column('User ID', db.String, db.ForeignKey('Users.User ID'), nullable=False)  # user_id for feature of saving payment methods
+
+
+# Initialize the database and create tables
+with app.app_context():
+    db.create_all()
+
+    newUser = User(email=f'name{random.randint(1, 1000)}@example.com', password='password', first_name='first', last_name='last',
+                   reward_points=1)  # id is autoincremented starting from 1
+
+    db.session.add(newUser)
+    db.session.commit()
