@@ -23,8 +23,8 @@ class User(db.Model):
 
 # Hotels Table
 class Hotel(db.Model):
-    tablename = 'Hotels'
-    hotelid = db.Column('Hotel ID', db.Integer, primarykey=True)
+    __tablename__ = 'Hotels'
+    hotel_id = db.Column('Hotel ID', db.Integer, primary_key=True)
     longitude = db.Column('Longitude', db.Float)  # can be used with latitude to decipher hotel's location 
     latitude = db.Column('Latitude', db.Float)
     name = db.Column('Name', db.String, nullable=False)
@@ -32,22 +32,23 @@ class Hotel(db.Model):
     room_count = db.Column('Room Count', db.Integer)
     rating = db.Column('Rating', db.Float)
     check_in_start = db.Column('Check In Start', db.String)
-    check_in_end = db.Column('Check In End', db.String)
+    check_in_end = db.Column('Check In End', db.String)  # check in end time added back just in case
     check_out_time = db.Column('Check Out Time', db.String)
+
 
 # Hotel Rooms Table
 class HotelRoom(db.Model):
-    __tablename = 'Hotel Rooms'
+    __tablename__ = 'Hotel Rooms'
     hotel_id = db.Column('Hotel ID', db.Integer, db.ForeignKey('Hotels.Hotel ID'), primary_key=True)
     floor = db.Column('Floor', db.Integer)
     room_number = db.Column('Room Number', db.Integer, primary_key=True)
-    beds = db.Column('Bed Count', db.String)  # Count is type String to include bed type, 1 King bed would be 1K, 2 Queens is 2Q
+    beds = db.Column('Beds', db.Integer)   # Count is type String to include bed type, 1 King bed would be 1K, 2 Queens is 2Q
 
 # Bookings Table
 class Booking(db.Model):
     __tablename__ = 'Bookings'
     booking_id = db.Column('Booking ID', db.Integer, primary_key=True)
-    room_number = db.Column('Room Number', db.Integer, primary_key=True)
+    room_number = db.Column('Room Number', db.Integer)
     user_id = db.Column('User ID', db.Integer, db.ForeignKey('Users.User ID'), nullable=False)
     hotel_id = db.Column('Hotel ID', db.Integer, nullable=False)
     check_in_start = db.Column('Check In Start', db.String)  # No need for check-in ending time
@@ -82,6 +83,7 @@ with app.app_context():
 
     newUser = User(email=f'name{random.randint(1, 1000)}@example.com', password='password', first_name='first', last_name='last',
                    reward_points=1)  # id is autoincremented starting from 1
+    print("Created user") 
 
-    db.session.add(newUser)
+    db.session.add(newUser)  # test code for adding user mechanism
     db.session.commit()
