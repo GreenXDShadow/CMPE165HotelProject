@@ -1,31 +1,35 @@
-import Image from "next/image";
-import styles from "./page.module.css";
-import axios from "axios";
-import RootLayout from "./layout";
-import './main.css';
+"use client"; 
+import './main.css'; 
+import Link from "next/link";
 
 export default function Home() {
+  const handleSearch = (event) => {
+    event.preventDefault();
+    const searchQuery = event.target.elements.search.value;
+    // Logic to redirect or fetch results for the search
+  };
+
   return (
+    <>
       <div className="main">
-        <h1>Hotel App</h1>
-        <p>CS-149 Project</p>
-        <div className="main-buttons">
-          <a href="/pages/login">
-            <button className="button">
-              Login
-            </button>
-          </a>
-          <a href="/pages/registration">
-            <button className="button">
-              Register
-            </button>
-          </a>
-          <a href="/pages/payment">
-            <button className="button">
-              Payment
-            </button>
-          </a>
+        <h1>Your Next Stay Will Feel</h1>
+        <img src="/likehome.png" alt="LikeHome Logo" className="logo" />
+      </div>
+
+      <div className="content-wrapper">
+        <div className="search-container">
+          <form onSubmit={handleSearch} className="searchBar">
+            <input
+              type="text"
+              name="search"
+              placeholder="Where do you wanna stay?"
+              className="searchInput"
+            />
+            <button type="submit" className="searchButton">Search</button>
+            <p className="infoText">Find your next getaway</p>
+          </form>
         </div>
       </div>
+    </>
   );
 }
