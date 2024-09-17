@@ -1,12 +1,15 @@
 "use client"; 
 import './main.css'; 
-import Link from "next/link";
 
 export default function Home() {
   const handleSearch = (event) => {
     event.preventDefault();
     const searchQuery = event.target.elements.search.value;
-    // Logic to redirect or fetch results for the search
+  };
+
+  const handleContactSubmit = (event) => {
+    event.preventDefault(); // Prevents form submission
+    // No functionality yet
   };
 
   return (
@@ -30,6 +33,28 @@ export default function Home() {
           </form>
         </div>
       </div>
+
+      <footer className="footer">
+        <div className="footer-content">
+          <div className="footer-left">
+            <a href="/">
+              <img src="/likehome.png" alt="LikeHome Logo" className="footer-logo" />
+            </a>
+            <p>We are dedicated to providing a catered hotel experience based on your needs.</p>
+            <p>Whatever stay you look for will feel <strong>LikeHome</strong>.</p>
+            <p>Book your next vacation with us!</p>
+          </div>
+          <div className="footer-right">
+            <p>Contact Us</p>
+            <form onSubmit={handleContactSubmit} className="contact-form">
+              <input type="text" name="name" placeholder="Name" className="contact-input" />
+              <input type="email" name="email" placeholder="Email" className="contact-input" />
+              <textarea name="message" placeholder="Message" className="contact-input"></textarea>
+              <button type="submit" className="contact-button">Book</button>
+            </form>
+          </div>
+        </div>
+      </footer>
     </>
   );
 }

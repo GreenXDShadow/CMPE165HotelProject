@@ -1,3 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Text:wght@400;700&display=swap');
+
+
 :root {
   --max-width: 1100px;
   --border-radius: 12px;
@@ -106,31 +109,3 @@ a {
   }
 }
 
-/* styles.css */
-.nav-container {
-  display: flex;
-  justify-content: center; /* Center the nav items horizontally */
-  background-color: #333; /* Optional: Add a background color */
-  padding: 10px; /* Optional: Add some padding */
-}
-
-.nav-container ul {
-  list-style-type: none; /* Remove default list styling */
-  display: flex; /* Display list items in a row */
-  margin: 0; /* Remove default margin */
-  padding: 0; /* Remove default padding */
-}
-
-.nav-container li {
-  margin: 0 15px; /* Add some space between the nav items */
-}
-
-.nav-button {
-  color: white; /* Optional: Change text color */
-  text-decoration: none; /* Remove underline from links */
-  padding: 10px 20px; /* Optional: Add some padding */
-}
-
-.nav-button:hover {
-  background-color: #575757; /* Optional: Add hover effect */
-}

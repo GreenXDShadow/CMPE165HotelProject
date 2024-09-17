@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Crimson+Text:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
 
 .main {
     position: relative;
@@ -37,7 +38,8 @@
     margin-right: 20px;
 }
 
-/* Navbar styling */
+/* -------------------- Navbar -------------------- */
+
 .nav-container {
     display: flex;
     justify-content: space-between;
@@ -50,39 +52,45 @@
     right: 0;
     z-index: 1000; 
     box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.5); 
-}
-
-.nav-container ul {
-    display: flex;
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-}
-
-.nav-container ul li {
-    margin-left: 20px;
-}
-
-.nav-button {
-    text-decoration: none;
-    color: white;
-    font-size: 24px;
+  }
+  
+  .nav-container ul {
+    list-style-type: none; /* Remove default list styling */
+    display: flex; /* Display list items in a row */
+    margin: 0; /* Remove default margin */
+    padding: 0; /* Remove default padding */
+  }
+  
+  .nav-container li {
+    margin: 0 15px; /* Add some space between the nav items */
+  }
+  
+  .nav-button {
+    color: white; /* Optional: Change text color */
+    text-decoration: none; /* Remove underline from links */
+    padding: 10px 20px; /* Optional: Add some padding */
     font-family: 'Crimson Text', serif; 
-}
-
-.nav-logo {
+    font-size: 24px;
+  }
+  
+  .nav-logo {
     display: block;
     width: 60px; 
     height: auto;
-    margin-left: 15px;
-}
+    margin-left: 30px;
+  }
+  
 
+/* -------------------------------------------------- */
+
+
+
+/* ----------------- Buttons/Search ----------------- */
 .main-buttons{
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-
     gap: 10px;
 }
 
@@ -122,7 +130,7 @@
     background-color: #F3F3F3;
     color: #AEAEAE;
     font-size: 16px;
-    box-shadow: 0px 20px 25px rgba(0, 0, 0, 0.3); /* Increased shadow size and blur */
+    box-shadow: 0px 20px 25px rgba(0, 0, 0, 0.3); 
     padding-left: 20px;
     margin-bottom: 40px; 
 }
@@ -141,7 +149,7 @@
     border-radius: 10px; 
     font-size: 18px;
     font-weight: bold;
-    box-shadow: 0px 20px 15px rgba(0, 0, 0, 0.3); /* Increased shadow size and blur */ 
+    box-shadow: 0px 20px 15px rgba(0, 0, 0, 0.3); 
     margin-bottom: 60px;
   }
   
@@ -159,3 +167,92 @@
     margin-top: 60px; 
     margin-bottom: 20px;
 }
+
+/* -------------------------------------------------- */
+
+/* -------------------- Footer --------------------------- */
+
+.footer {
+    background-color: #001C3F;
+    padding: 25px;
+    color: white;
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+    text-align: center; 
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 1400px; 
+    align-items: center;
+}
+
+.footer-left, .footer-right {
+    width: 50%; 
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+    text-align: center;  
+}
+
+.footer-logo {
+    width: 280px;
+    margin-bottom: 5px;
+}
+
+.footer-left p {
+    font-family: 'Crimson Text', serif;
+    font-size: 18px;
+    margin: 10px 0;
+}
+
+.footer-right p {
+    font-family: 'Inter', sans-serif;
+    font-size: 32px; 
+    font-weight: 400; 
+    margin-bottom: 20px;
+    color: white; 
+    text-align: center; 
+}
+
+.contact-form {
+    width: 60%;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center; 
+}
+
+.contact-input {
+    padding: 5px 10px;
+    font-family: 'Crimson Text', serif;
+    font-size: 16px;
+    border: none;
+    border-radius: 10px;
+    background-color: white;
+    color: #333;
+    width: 100%;
+}
+
+.contact-form textarea {
+    height: 80px; 
+}
+
+.contact-button {
+    padding: 10px 50px;
+    background-color: #CDC379;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-family: 'Crimson Text', serif;
+    font-size: 18px;
+    font-weight: bold;
+    box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.3);
+    transition: box-shadow 0.3s;
+}
+
+/* -------------------------------------------------- */
