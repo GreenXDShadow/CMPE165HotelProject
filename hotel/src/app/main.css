@@ -55,20 +55,20 @@
   }
   
   .nav-container ul {
-    list-style-type: none; /* Remove default list styling */
-    display: flex; /* Display list items in a row */
-    margin: 0; /* Remove default margin */
-    padding: 0; /* Remove default padding */
+    list-style-type: none; 
+    display: flex;
+    margin: 0; 
+    padding: 0; 
   }
   
   .nav-container li {
-    margin: 0 15px; /* Add some space between the nav items */
+    margin: 0 15px; 
   }
   
   .nav-button {
-    color: white; /* Optional: Change text color */
-    text-decoration: none; /* Remove underline from links */
-    padding: 10px 20px; /* Optional: Add some padding */
+    color: white; 
+    text-decoration: none; 
+    padding: 10px 20px;
     font-family: 'Crimson Text', serif; 
     font-size: 24px;
   }
