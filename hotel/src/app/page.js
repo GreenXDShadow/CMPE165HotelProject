@@ -1,10 +1,12 @@
 "use client"; 
 import './main.css'; 
+import HotelCard from './components/HotelCard';
 
 export default function Home() {
   const handleSearch = (event) => {
     event.preventDefault();
     const searchQuery = event.target.elements.search.value;
+    console.log("Searching for:", searchQuery);
   };
 
   const handleContactSubmit = (event) => {
@@ -32,6 +34,25 @@ export default function Home() {
             <p className="infoText">Find your next getaway</p>
           </form>
         </div>
+
+        {/* Hotel Cards */}
+        <div className="hotel-cards">
+          <HotelCard 
+            name="Holiday Inn" 
+            description="Clean rooms, amenities, reliable stay"
+            image="/holiday.png" 
+          />
+          <HotelCard 
+            name="Mariott" 
+            description="Pool, Views, best stay at a bargain"
+            image="/marriot.png" 
+          />
+          <HotelCard 
+            name="Motel 6" 
+            description="Reliable stay, affordable prices, easy to stay"
+            image="/motel.png" 
+          />
+        </div>
       </div>
 
       <footer className="footer">
@@ -50,7 +71,7 @@ export default function Home() {
               <input type="text" name="name" placeholder="Name" className="contact-input" />
               <input type="email" name="email" placeholder="Email" className="contact-input" />
               <textarea name="message" placeholder="Message" className="contact-input"></textarea>
-              <button type="submit" className="contact-button">Book</button>
+              <button type="submit" className="contact-button">Submit</button>
             </form>
           </div>
         </div>
