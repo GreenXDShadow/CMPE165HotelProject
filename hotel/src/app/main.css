@@ -1,23 +1,96 @@
-.main{
-    color: black;
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Text:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
 
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-
+.main {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     text-align: center;
-
-    background-color: white;
-
+    background-image: url('/landing.png');
+    background-size: cover;
+    background-position: center;
     height: 100vh;
+    color: white;
+    z-index: 1;
 }
 
+/* Dark overlay on the background image */
+.main::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5); 
+    z-index: -1; 
+}
+
+.content-wrapper {
+    background-color: white; 
+    padding: 20px;
+}
+
+.logo {
+    width: 500px; 
+    margin-right: 20px;
+}
+
+/* -------------------- Navbar -------------------- */
+
+.nav-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px;
+    background-color: rgba(0, 0, 0, 0.2); 
+    position: fixed; 
+    top: 0; 
+    left: 0;
+    right: 0;
+    z-index: 1000; 
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.5); 
+  }
+  
+  .nav-container ul {
+    list-style-type: none; 
+    display: flex;
+    margin: 0; 
+    padding: 0; 
+  }
+  
+  .nav-container li {
+    margin: 0 15px; 
+  }
+  
+  .nav-button {
+    color: white; 
+    text-decoration: none; 
+    padding: 10px 20px;
+    font-family: 'Crimson Text', serif; 
+    font-size: 24px;
+  }
+  
+  .nav-logo {
+    display: block;
+    width: 60px; 
+    height: auto;
+    margin-left: 30px;
+  }
+  
+
+/* -------------------------------------------------- */
+
+
+
+/* ----------------- Buttons/Search ----------------- */
 .main-buttons{
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-
     gap: 10px;
 }
 
@@ -39,3 +112,205 @@
 .button:hover{
     box-shadow: 0px 4px 3px 1px grey;
 }
+
+.searchBar {
+    display: flex;
+    flex-direction: column; 
+    align-items: center; 
+    margin-top: 40px;
+    width: 100%; 
+}
+  
+.searchInput {
+    padding: 15px;
+    width: 75%;
+    max-width: 900px; 
+    border: none;
+    border-radius: 15px;
+    background-color: #F3F3F3;
+    color: #AEAEAE;
+    font-size: 16px;
+    box-shadow: 0px 20px 25px rgba(0, 0, 0, 0.3); 
+    padding-left: 20px;
+    margin-bottom: 40px; 
+}
+
+  .searchInput::placeholder {
+    color: #AEAEAE; 
+  }
+  
+  .searchButton {
+    padding: 10px 50px;
+    margin-left: 20px; 
+    background-color: #CDC379; 
+    color: white; 
+    border: none;
+    cursor: pointer;
+    border-radius: 10px; 
+    font-size: 18px;
+    font-weight: bold;
+    box-shadow: 0px 20px 15px rgba(0, 0, 0, 0.3); 
+    margin-bottom: 60px;
+  }
+  
+  h1 {
+    font-family: 'Crimson Text', serif;
+    font-size: 60px; 
+    margin-bottom: 10px;
+    color: white;
+  }
+
+  .infoText {
+    font-family: 'Crimson Text', serif;
+    font-size: 60px; 
+    color: black; 
+    margin-top: 60px; 
+    margin-bottom: 100px;
+}
+
+/* -------------------------------------------------- */
+
+/* -------------------- Footer --------------------------- */
+
+.footer {
+    background-color: #001C3F;
+    padding: 25px;
+    color: white;
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+    text-align: center; 
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 1400px; 
+    align-items: center;
+}
+
+.footer-left, .footer-right {
+    width: 50%; 
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+    text-align: center;  
+}
+
+.footer-logo {
+    width: 280px;
+    margin-bottom: 5px;
+}
+
+.footer-left p {
+    font-family: 'Crimson Text', serif;
+    font-size: 18px;
+    margin: 10px 0;
+}
+
+.footer-right p {
+    font-family: 'Inter', sans-serif;
+    font-size: 32px; 
+    font-weight: 400; 
+    margin-bottom: 20px;
+    color: white; 
+    text-align: center; 
+}
+
+.contact-form {
+    width: 60%;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center; 
+}
+
+.contact-input {
+    padding: 5px 10px;
+    font-family: 'Crimson Text', serif;
+    font-size: 16px;
+    border: none;
+    border-radius: 10px;
+    background-color: white;
+    color: #333;
+    width: 100%;
+}
+
+.contact-form textarea {
+    height: 80px; 
+}
+
+.contact-button {
+    padding: 10px 50px;
+    background-color: #CDC379;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-family: 'Crimson Text', serif;
+    font-size: 18px;
+    font-weight: bold;
+    box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.3);
+    transition: box-shadow 0.3s;
+}
+
+/* -------------------- Hotel Card ------------------------------ */
+
+.hotel-card {
+    display: flex;
+    justify-content: center; 
+    margin-bottom: 140px;
+    padding: 20px;
+    gap: 20px; 
+  }
+  
+  .hotel-card-left {
+    display: flex;
+    align-items: center;
+    width: 35%; 
+  }
+  
+  .vertical-line {
+    width: 3px;
+    height: 210px;
+    background-color: black;
+    margin-right: 40px;
+    margin-top: 40px;
+  }
+  
+  .hotel-info {
+    flex: 1; 
+  }
+
+  .hotel-info h2 {
+    font-size: 48px;
+    font-family: 'Crimson Text', serif;
+    margin-bottom: 10px; 
+  }
+  
+  .hotel-info p {
+    margin-bottom: 18px; 
+    font-size: 20px;
+    font-family: 'Crimson Text', serif;
+  }
+  
+  .bookButton {
+    padding: 10px 50px;
+    margin-left: 20px; 
+    background-color: #CDC379; 
+    color: white; 
+    border: none;
+    cursor: pointer;
+    border-radius: 10px; 
+    font-size: 18px;
+    font-weight: bold;
+    box-shadow: 0px 20px 15px rgba(0, 0, 0, 0.3); 
+  }
+  
+  .hotel-card-right .hotel-image {
+    max-width: 500px;
+    height: 300;
+    border-radius: 5px;
+  }
+  
