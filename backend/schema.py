@@ -22,33 +22,24 @@ class User(db.Model):
     reward_points = db.Column('Reward Points', db.Integer)
 
 # Hotels Table
-class Hotel(db.Model):
+class Hotel(db.Model): # for caching hotel data
     __tablename__ = 'Hotels'
     hotel_id = db.Column('Hotel ID', db.Integer, primary_key=True)
     longitude = db.Column('Longitude', db.Float)  # can be used with latitude to decipher hotel's location 
     latitude = db.Column('Latitude', db.Float)
     name = db.Column('Name', db.String, nullable=False)
     address = db.Column('Address', db.String)
-    room_count = db.Column('Room Count', db.Integer)
+    city = db.Column('City', db.String)
+    region_id = db.Column('Region ID', db.Integer) # searching cities with API will return region ids
     rating = db.Column('Rating', db.Float)
     check_in_start = db.Column('Check In Start', db.String)
     check_in_end = db.Column('Check In End', db.String)  # check in end time added back just in case
     check_out_time = db.Column('Check Out Time', db.String)
 
-
-# Hotel Rooms Table
-class HotelRoom(db.Model):
-    __tablename__ = 'Hotel Rooms'
-    hotel_id = db.Column('Hotel ID', db.Integer, db.ForeignKey('Hotels.Hotel ID'), primary_key=True)
-    floor = db.Column('Floor', db.Integer)
-    room_number = db.Column('Room Number', db.Integer, primary_key=True)
-    beds = db.Column('Beds', db.Integer)   # Count is type String to include bed type, 1 King bed would be 1K, 2 Queens is 2Q
-
 # Bookings Table
 class Booking(db.Model):
     __tablename__ = 'Bookings'
     booking_id = db.Column('Booking ID', db.Integer, primary_key=True)
-    room_number = db.Column('Room Number', db.Integer)
     user_id = db.Column('User ID', db.Integer, db.ForeignKey('Users.User ID'), nullable=False)
     hotel_id = db.Column('Hotel ID', db.Integer, nullable=False)
     check_in_start = db.Column('Check In Start', db.String)  # No need for check-in ending time
@@ -58,6 +49,7 @@ class Booking(db.Model):
     last_name = db.Column('Last Name', db.String, nullable=False)
     start_date = db.Column('Start Date', db.String, nullable=False)
     end_date = db.Column('End Date', db.String, nullable=False)
+    beds = db.Column('Beds', db.Integer)   # Count is type String to include bed type, 1 King bed would be 1K, 2 Queens is 2Q
     nights = db.Column('Nights', db.Integer)
     pricing_per_night = db.Column('Pricing', db.Float)
     cost = db.Column('Cost', db.Float)
