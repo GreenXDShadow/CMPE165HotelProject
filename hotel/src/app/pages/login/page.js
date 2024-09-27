@@ -29,12 +29,16 @@ export default function Login(){ // Defining a functional component named Login
             {/* A div element with a class name 'login-page' */}
             <h1>Login</h1>
             {/* Heading element with the text 'Login' */}
-            <form onSubmit={handleLogin}>
+            <form onSubmit={handleLogin} className='form-container'>
+            	<img src="/likehome.png" alt="LikeHome Logo" className="logo" />
+            	<br></br>
                 {/* Form element with a submit event handler set to handleLogin function */}
-                <input type='email' placeholder='Email' value={email} onChange={(e) => setEmail(e.target.value)} />
+                <input type='email' placeholder='Email' value={email} onChange={(e) => setEmail(e.target.value)}/>
                 {/* Input element for email with value and onChange event handler */}
+                <br></br>
                 <input type='password' placeholder='Password' value={password} onChange={(e) => setPassword(e.target.value)} />
                 {/* Input element for password with value and onChange event handler */}
+                <br></br>
                 <button type='submit'>Login</button>
                 {/* Button element for submitting the form */}
             </form>

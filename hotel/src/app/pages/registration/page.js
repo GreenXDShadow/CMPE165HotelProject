@@ -40,14 +40,21 @@ export default function registration(){ // Exporting a default function named 'r
     return(
         <div className="registration-page"> {/* Rendering a div element with the class name 'registration-page' */}
             <h1>Registration</h1> {/* Rendering a heading element with the text 'Registration' */}
-            <form onSubmit={handleRegistration}> {/* Rendering a form element with the 'handleRegistration' function as the submit event handler */}
-                <input type='email' placeholder='Email' value={email} onChange={(e) => setEmail(e.target.value)} /> {/* Rendering an input element for email with value and onChange event handler */}
-                <input type='password' placeholder='Password' value={password} onChange={(e) => setPassword(e.target.value)} /> {/* Rendering an input element for password with value and onChange event handler */}
+            <form onSubmit={handleRegistration} className='form-container'> {/* Rendering a form element with the 'handleRegistration' function as the submit event handler */}
+                <img src="/likehome.png" alt="LikeHome Logo" className="logo" />
+                <br></br>
+                <input id='longtext' type='email' placeholder='Email' value={email} onChange={(e) => setEmail(e.target.value)} /> {/* Rendering an input element for email with value and onChange event handler */}
+                <br></br>
+                <input id='longtext' type='password' placeholder='Password' value={password} onChange={(e) => setPassword(e.target.value)} /> {/* Rendering an input element for password with value and onChange event handler */}
+                <br></br>
                 <input type='firstname' placeholder='First Name' value={firstname} onChange={(e) => setFirstname(e.target.value)} /> {}
                 <input type='lastname' placeholder='Last Name' value={lastname} onChange={(e) => setLastname(e.target.value)} /> {}
-                <input type='cardnum' placeholder='Card Number' value={cardnum} onChange={(e) => setCardnum(e.target.value)} /> {}
+                <br></br>
+                <input id='longtext' type='cardnum' placeholder='Card Number' value={cardnum} onChange={(e) => setCardnum(e.target.value)} /> {}
+                <br></br>
                 <input type='cvc' placeholder='CVC' value={cvc} onChange={(e) => setCVC(e.target.value)} /> {}
                 <input type='expire' placeholder='Expiration' value={expire} onChange={(e) => setExpire(e.target.value)} /> {}
+                <br></br>
                 <button type='submit'>Register</button> {/* Rendering a button element with the text 'Register' */}
                 {response && <p className='response'>{response}</p>} {/* Rendering a paragraph element with the 'response' value if it exists */}
             </form>
