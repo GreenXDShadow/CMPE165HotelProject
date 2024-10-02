@@ -27,7 +27,7 @@ export default function HotelInfo() {
                 <div className="info-container">
                     {/* Needs to eventualy be variable */}
                     <p className='title' style={{marginBottom: '0px', fontSize: '30px'}}>Hotel Name</p>
-                    <Image className='image' src="/holiday.png" alt="hotel image" width={1366} height={768} layout='responsive'/>
+                    <Image src="/holiday.png" alt="hotel image" width={1366} height={768} layout='responsive'/>
                     <p className='title'>Rating</p>
                     <p>★★★★★</p>
                     <p className='title'>Address</p>
@@ -50,10 +50,12 @@ export default function HotelInfo() {
                         objectFit='cover'
                     />
                 </div>
+                <div className="break"></div>
                 <div className="booking-container">
                     <button className='searchButton'>Book</button>
                 </div>
             </div>
+            
         </>
     )
 }
