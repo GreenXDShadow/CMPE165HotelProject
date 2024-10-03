@@ -2,12 +2,40 @@ from flask import Flask, request, jsonify  # Importing necessary modules
 from flask_cors import CORS  # Importing CORS module for cross-origin resource sharing
 from flask_sqlalchemy import SQLAlchemy  # Importing SQLAlchemy module for database operations
 from flask_bcrypt import Bcrypt  # Importing Bcrypt module for password hashing
+from dotenv import load_dotenv  # Importing load_dotenv module to load environment variables
+import os
+
+import http.client
+
+load_dotenv()
 
 app = Flask(__name__)  # Creating a Flask application instance
 
 CORS(app, origins=['http://localhost:3000'])  # Allowing cross-origin requests from http://localhost:3000
 
 bcrypt = Bcrypt(app)  # Creating a Bcrypt instance
+
+RAPIDAPI_URL = os.getenv('RAPIDAPI_URL')
+RAPIDAPI_KEY = os.getenv('RAPIDAPI_KEY')
+
+
+headers = {
+    'x-rapidapi-key': RAPIDAPI_KEY,
+    'x-rapidapi-host': RAPIDAPI_URL
+}
+
+# would likely have to convert text destinations to coordinates to get locations
+# for filters/sorts, can do it by availablitiy, reviews scores, etc.  
+@app.route('/hotels', methods=['GET', 'POST'])  # Defining a route for '/' with GET method
+def dash():
+    try:
+        conn = http.client.HTTPSConnection(RAPIDAPI_URL)
+        conn.request("GET", "/api/v1/hotels/searchHotelsByCoordinates?latitude=37.7749&longitude=-122.4194&radius=10&checkIn=2021-12-01&checkOut=2021-12-02&pageNumber=1&pageSize=25&adults1=1", headers=headers)
+        res = conn.getresponse()
+        data = res.read()
+        return jsonify({"data": data.decode("utf-8")})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/login', methods=['GET', 'POST'])  # Defining a route for '/login' with GET and POST methods
 def login():
@@ -28,20 +56,11 @@ def registration():
 
         hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')  # Hashing the password
 
-        print(email + hashed_password)  # Printing the data to the console
+        print(email + " " + hashed_password)  # Printing the data to the console
         return 'Success'  # Returning 'Success' as a response
     else:
         return 'Failed'  # Returning 'Failed' as a response if the request method is not POST
     
-@app.route('/payment', methods=['GET', 'POST'])  # Defining a route for '/payment' with GET and POST methods
-def payment():
-    if request.method == 'POST':  # Checking if the request method is POST
-        data = request.json  # Extracting JSON data from the request
-        print(data)  # Printing the data to the console
-        return 'Success'  # Returning True as a response
-    else:
-        return 'False'  # Returning False as a response if the request method is not POST
-
 @app.route('/payment', methods=['GET', 'POST'])  # Defining a route for '/payment' with GET and POST methods
 def payment():
     if request.method == 'POST':
