@@ -1,0 +1,137 @@
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Text:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+
+
+:root {
+    --gold: #cdc379;
+    --blue: #001C3F;
+    --input-text: #AEAEAE;
+    --input-box: #F3F3F3;
+}
+
+.hotel-page {
+    margin-top: 83px;
+}
+
+.nav-bar-filler {
+    background-color: var(--blue);
+    position: fixed;
+    top: 0;
+    z-index: 10;
+    width: 100%;
+    margin-top: 0px;
+    height: 83px;
+}
+
+.content-wrapper {
+    margin-top: 83px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.info-container {
+    flex: 0 0 33.33%;
+}
+
+.map-container {
+    flex: 0 0 66.67%;
+    max-width: 66.67%;
+    height: auto;
+    overflow: hidden;
+}
+
+.image {
+    max-width: 100%;
+    padding: 1rem;
+    height: auto;
+}
+
+.booking-container {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.button-container {
+    display: flex;
+    cursor: pointer;
+    border: none;
+    border-radius: 15px;
+    background-color: var(--input-box);
+    color: black;
+    max-width: 600px;
+    width: 60%;
+    height: 50px;
+    justify-content: center;
+    align-items: center;
+    font-family: "Crimson Text", serif;
+    font-size: large;
+    margin-bottom: 20px;
+    box-shadow: 0px 20px 25px rgba(0, 0, 0, 0.3);
+}
+
+.button-container input[type="radio"] {
+    display: none;
+}
+
+.button-container input[type="radio"]:checked
+{
+    background-color: blue;
+    color: black;
+}
+
+.calendar-container {
+    padding: 10px;
+    font-family: "Crimson Text", serif;
+}
+
+.break {
+    flex-basis: 100%;
+    height: 0;
+}
+
+.title {
+    font-weight: bold;
+    font-size: large;
+    margin-bottom: -15px;
+    font-family: 'Crimson Text', serif;
+}
+
+.confirmButton {
+    width: 150px;
+    height: 50px;
+    border: none;
+    border-radius: 15px;
+    background-color: var(--gold);
+    color: white;
+    font-size: large;
+    font-family: 'Crimson Text', serif;
+    box-shadow: 0px 20px 25px rgba(0, 0, 0, 0.3);
+}
+
+p {
+    font-family: 'Crimson Text', serif;
+}
+
+label {
+    font-family: 'Crimson Text', serif;
+    font-size: large;
+}
+
+@media (max-width: 768px) {
+    .content-wrapper {
+        align-items: center;
+        justify-items: center;
+    }
+
+    .info-container, .map-container {
+        flex: 0 0 100%;
+    }
+
+    .map-container {
+        max-width: 100%;
+    }
+}
