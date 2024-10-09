@@ -63,6 +63,10 @@ p {
 	font-size: 15px;
 }
 
+p, form {
+	display: inline-block;
+}
+
 .guest-input {
 	border-radius: 5px;
 	margin-top: 5px;
@@ -74,6 +78,7 @@ p {
 	color: #AEAEAE;
 	width: 25px;
 	box-shadow: 0px 10px 12px rgba(0, 0, 0, 0.3); 
+	display: inline;
 }
 
 /* -------------------- Calendar ------------------------------ */
@@ -83,7 +88,7 @@ p {
   /* unstylized */
 }
 
-.calendar-button {
+.calendar-input {
 	background-color: #F3F3F3;
 	margin-top: 20px;
 	width: 100px;
@@ -137,15 +142,16 @@ p {
 /* -------------------- Search Result ------------------------------ */
 
 .search-results {
-    display: flex;
+    display: inline-block;
     justify-content: center; 
+    align-items: center;
     margin-bottom: 140px;
     padding: 20px;
     gap: 20px; 
   }
   
   .search-results-left {
-    display: flex;
+    display: inline-block;
     align-items: center;
     width: 35%; 
   }
@@ -173,6 +179,7 @@ p {
     margin-bottom: 18px; 
     font-size: 20px;
     font-family: 'Crimson Text', serif;
+    display: block;
   }
 
  .bookButton {
@@ -192,6 +199,7 @@ p {
   	max-width: 500px;
     height: 300;
     border-radius: 5px;
+    display: inline-block;
   }
 
 

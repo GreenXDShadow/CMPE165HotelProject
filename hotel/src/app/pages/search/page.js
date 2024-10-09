@@ -4,9 +4,15 @@ import './search.css' // Importing the CSS file for styling purposes (./ means t
 import React, { useState } from 'react' // Importing React and useState hook from the 'react' package
 import axios from 'axios' // Importing axios library for making HTTP requests
 import SearchResult from '../../components/SearchResult';
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+
 
 export default function Login(){ // Defining a functional component named Login
     const [error, setError] = useState('') // Creating a state variable 'error' and a function 'setError' to update it
+	const [startDate, setStartDate] = useState(new Date()); //State variable for Check-in Date picker
+	const [endDate, setEndDate] = useState(new Date()); //State variable for Check-out Date picker
+	const todaysDate = new Date();
 
 	//unfinished handleSearch from main page
 	const handleSearch = (event) => {
@@ -28,8 +34,14 @@ export default function Login(){ // Defining a functional component named Login
         rating: 9,
         image:"/marriot.png"
     };
+    
+    const hotel3 = {name:"Motel6",
+        description:"Reliable stay, affordable prices, easy to stay",
+        rating: 7,
+        image:"/motel.png"
+    };
         
-  	const results = [hotel1, hotel2];
+  	const results = [hotel1, hotel2, hotel3];
 
 	// List Hotels
 	
@@ -59,7 +71,8 @@ export default function Login(){ // Defining a functional component named Login
             	/>
             	
             	<div className="calendar">
-            		<button className="calendar-button"> Dates </button>
+            		<DatePicker minDate={todaysDate} className="calendar-input" selected={startDate} onChange={(date) => setStartDate(date)} />
+            		<DatePicker minDate={startDate} className="calendar-input" selected={endDate} onChange={(date) => setEndDate(date)} />
             	</div>
             	
             	<div className="dropdown">
@@ -67,6 +80,7 @@ export default function Login(){ // Defining a functional component named Login
             	<div class="dropdown-content">
 					<p> Number of adults:</p>
 					<input type="number" name="adult-guests" placeholder="2" min="1" max="20" className="guest-input"/>
+					<br/>
 					<p> Number of children: </p>
 					<input type="number" name="child-guests" placeholder="0" min="0" max="20" className="guest-input"/>
             	</div>
