@@ -1,68 +1,98 @@
-'use client'; // this is necessary in order to use useStates and other react hooks
+'use client'; // use client-side hooks
 
-import './payment.css' // Importing the CSS file for styling purposes (./ means the file is in the same directory as this file)
-import React, { useState } from 'react' // Importing React and useState hook from the 'react' package
-import axios from 'axios' // Importing axios library for making HTTP requests
+import './payment.css';
+import React, { useState } from 'react';
 
-export default function Payment(){ 
-	// Payment form based on login form - no crucial changes made
-    const [cardnum, setCardnum] = useState('') 
-    const [cvc, setCVC] = useState('')
-    const [expire, setExpire] = useState('') 
-	const [error, setError] = useState('')
-	
-	// Current testID just for displaying information
-	const testID = 11235813;
-	
-	const handlePaymentInfo = async(e) => { 
-        e.preventDefault() 
+export default function Payment() {
+    const [cardnum, setCardnum] = useState('');
+    const [cvc, setCVC] = useState('');
+    const [expire, setExpire] = useState('');
+    const [error, setError] = useState('');
 
-        const data = { 
-            cardnum: cardnum,
-            cvc: cvc,
-            expire: expire
-        }
+    const testID = 11235813; // test ID for the booking
 
-        try{
-            const response = await axios.post('http://localhost:4000/payment', data)
-        } catch (e) {
-            console.log(e)
-        }
-    }
-	
+    const handlePaymentInfo = (e) => {
+        e.preventDefault();      
+    };
+
     return (
-        <div className='payment-page'>
-            
-            <h1>Payment</h1>
-            
-            <h2> Display booking Information: </h2>
-            <p> Current Booking ID: {testID}</p>
-            
-			<br></br>
-			
-            <h2> Payment Information </h2>
-            <form onSubmit={handlePaymentInfo}>
-                <input type='cardnum' placeholder='Card Number' value={cardnum} onChange={(e) => setCardnum(e.target.value)} />
-                {}
-                <input type='cvc' placeholder='CVC' value={cvc} onChange={(e) => setCVC(e.target.value)} />
-                {}
-                <input type='expire' placeholder='Expiration' value={expire} onChange={(e) => setExpire(e.target.value)} />
-                {}
-                <button type='submit'>Confirm</button>
-                {}
-            </form>
-            
-            <br></br>
-            
-            <h2> You may also login to check out </h2>
-            <a href="/pages/login">
-            <button className="button" type="submit">
-              Login
-            </button>
-          	</a>
-            
-            {error && <p className='error'>{error}</p>}
+        <div className="payment-page">
+            <div className="payment-container">
+                <h1 className="payment-title">Payment</h1>
 
+                <div className="columns-container">
+                    {/* Booking Information */}
+                    <div className="left-column">
+                        <div className="booking-info">
+                            <h2 className="section-title">Your Booking Information</h2>
+                            <p>Check-in date:</p>
+                            <p>Check-out date:</p>
+                            <p>Hotel:</p>
+                            <p>Guests:</p>
+                            <p>Room and floor:</p>
+                            <p>Price:</p>
+                            <p>Tax:</p>
+                            <p>Convenience Fee:</p>
+                            <p>Total:</p>
+                            <p className="booking-id">Booking ID: {testID}</p>
+                        </div>
+                    </div>
+
+                    {/* Payment Form and Login */}
+                    <div className="right-column">
+                        <div className="payment-form">
+                            <h2 className="section-title">Payment Information</h2>
+                            <form onSubmit={handlePaymentInfo}>
+                                <div className="form-group">
+                                    <input
+                                        type="text"
+                                        className="payment-input"
+                                        placeholder="Card Number"
+                                        value={cardnum}
+                                        onChange={(e) => setCardnum(e.target.value)}
+                                        required
+                                    />
+                                </div>
+
+                                <div className="form-group2">
+                                    <input
+                                        type="text"
+                                        className="payment-input2"
+                                        placeholder="CVC"
+                                        value={cvc}
+                                        onChange={(e) => setCVC(e.target.value)}
+                                        required
+                                    />
+
+                                    <input
+                                        type="text"
+                                        className="payment-input2"
+                                        placeholder="Expiration Date"
+                                        value={expire}
+                                        onChange={(e) => setExpire(e.target.value)}
+                                        required
+                                    />
+                                </div>
+
+
+                                <button type="submit" className="btn">
+                                    Confirm
+                                </button>
+                            </form>
+                        </div>
+
+                        <div className="login-section">
+                            <h2 className="section-title">You may also login to check out</h2>
+                            <a href="/pages/login">
+                                <button className="btn">Login</button>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Error */}
+                {error && <p className="error-message">{error}</p>}
+            </div>
         </div>
-    )
+    );
 }
