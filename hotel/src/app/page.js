@@ -3,6 +3,7 @@ import './main.css';
 import HotelCard from './components/HotelCard';
 
 export default function Home() {
+	
   const handleSearch = (event) => {
     event.preventDefault();
     const searchQuery = event.target.elements.search.value;
