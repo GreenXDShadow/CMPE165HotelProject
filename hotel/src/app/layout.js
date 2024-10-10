@@ -19,9 +19,9 @@ export default function RootLayout({ children }) {
             </a>
             <ul>
               <li><a className="nav-button" href="/">Home</a></li>
-              <li><a className="nav-button" href="/pages/login">Login</a></li>
-              <li><a className="nav-button" href="/pages/registration">Register</a></li>
-              <li><a className="nav-button" href="/pages/payment">Payment</a></li>
+              <li><a className="nav-button" href="/login">Login</a></li>
+              <li><a className="nav-button" href="/registration">Register</a></li>
+              <li><a className="nav-button" href="/payment">Payment</a></li>
             </ul>
           </nav>
         </header>
