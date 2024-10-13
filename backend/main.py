@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify  # Importing necessary modules
 from flask_cors import CORS  # Importing CORS module for cross-origin resource sharing
 from flask_sqlalchemy import SQLAlchemy  # Importing SQLAlchemy module for database operations
 from flask_bcrypt import Bcrypt  # Importing Bcrypt module for password hashing
+from hotelFetch import city_search, hotel_search, room_search
 
 app = Flask(__name__)  # Creating a Flask application instance
 
@@ -39,6 +40,17 @@ def payment():
         data = request.json  # Extracting JSON data from the request
         print(data)  # Printing the data to the console
         return 'Success'  # Returning True as a response
+    else:
+        return 'False'  # Returning False as a response if the request method is not POST
+
+@app.route('/search', methods=['GET', 'POST'])
+def search():
+    if request.method == 'POST':  # Checking if the request method is POST
+        data = request.json  # Extracting JSON data from the request
+        city_id = city_search(data.get('location')) # Get the and input into function for getting the id of the city searched
+        # hotel_list = hotel_search(city_id, data.get('arrival_date'), data.get('depart_date'), data.get('num_adults'), data.get('num_rooms'))
+        example = hotel_search(city_id, "2024-12-18", "2024-12-20", "2", "1") # use this example variable to run a default API call so that only input needed is the location, hotel_list will be used later on
+        return jsonify(example)  # Returning list of hotels
     else:
         return 'False'  # Returning False as a response if the request method is not POST
 
