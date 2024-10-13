@@ -6,19 +6,41 @@ import axios from 'axios' // Importing axios library for making HTTP requests
 import SearchResult from '../../components/SearchResult';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { render } from 'react-dom';
 
 
 export default function Login(){ // Defining a functional component named Login
     const [error, setError] = useState('') // Creating a state variable 'error' and a function 'setError' to update it
+	const [location, setLocation] = useState('') // State variable for the location of stay
 	const [startDate, setStartDate] = useState(new Date()); //State variable for Check-in Date picker
 	const [endDate, setEndDate] = useState(new Date()); //State variable for Check-out Date picker
+	const [numAdults, setNumAdults] = useState('');
+	const [numChildren, setNumChildren] = useState('');
+	const [numRooms, setNumRooms] = useState('');
+	const [hotelsList, setHotels] = useState([]);
 	const todaysDate = new Date();
 
 	//unfinished handleSearch from main page
-	const handleSearch = (event) => {
-    	event.preventDefault();
-    	const searchQuery = event.target.elements.search.value;
+	const handleSearch = async(e) => {
+    	e.preventDefault();
+    	const searchQuery = e.target.elements.search.value;
     	console.log("Searching for:", searchQuery);
+		
+		const data = { 
+			location: location,
+            arrival_date: startDate,
+			depart_date: endDate,
+			num_adults: numAdults,
+			num_children: numChildren,
+			num_rooms: numRooms
+        }
+
+		try{
+            const response = await axios.post('http://localhost:4000/search', data) // Making a POST request to 'http://localhost:4000/search' with the data object
+			setHotels(response.data)
+		} catch (e) {
+            console.log(e) // Logging any errors that occur during the request
+        }
   	};
   	
   	// Test Hotels
@@ -43,7 +65,7 @@ export default function Login(){ // Defining a functional component named Login
         
   	const results = [hotel1, hotel2, hotel3];
 
-	// List Hotels
+	// List Hotels (used by Ari for intial page design, but now use renderHotels instead to render API data)
 	
 	const listHotels = results.map((result, index) => (
     <div className="hotel-list">
@@ -52,6 +74,20 @@ export default function Login(){ // Defining a functional component named Login
         description={result.description}
         rating={result.rating}
         image={result.image}
+        />
+    </div>
+    ));
+
+	// API Hotels (renders upon receiving post request after the setHotels function is run to populate hotelsList with the API data)
+
+	const renderHotels = hotelsList.map((hotel, index) => (
+    <div className="hotel-list">
+        <SearchResult 
+		id = {hotel.hotel_id} // follow the key structure from h_details in the hotel_search() funtion from hotelFetch.py
+        name={hotel.name} 
+        description={hotel.rating}
+        rating={hotel.review_score}
+        image= "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/2c/8a/0a/a3/exterior.jpg?w=700&h=-1&s=1" // default image until we decide how to get unique high quality images for hotels
         />
     </div>
     ));
@@ -68,6 +104,7 @@ export default function Login(){ // Defining a functional component named Login
              	name="search"
            	   	placeholder="Where do you wanna stay?"
             	className="search-input"
+				value={location} onChange={(e) => setLocation(e.target.value)}
             	/>
             	
             	<div className="calendar">
@@ -77,20 +114,24 @@ export default function Login(){ // Defining a functional component named Login
             	
             	<div className="dropdown">
             	<button className="dropdown-button"> Guests </button>
-            	<div class="dropdown-content">
+            	<div className="dropdown-content">
 					<p> Number of adults:</p>
-					<input type="number" name="adult-guests" placeholder="2" min="1" max="20" className="guest-input"/>
+					<input type="number" name="adult-guests" placeholder="2" min="1" max="20" className="guest-input" value={numAdults} onChange={(e) => setNumAdults(e.target.value)}/>
 					<br/>
 					<p> Number of children: </p>
-					<input type="number" name="child-guests" placeholder="0" min="0" max="20" className="guest-input"/>
-            	</div>
+					<input type="number" name="child-guests" placeholder="0" min="0" max="20" className="guest-input" value={numChildren} onChange={(e) => setNumChildren(e.target.value)}/>
+					<br/>
+					<p> Number of rooms:</p>
+					<input type="number" name="room-qty" placeholder="1" min="1" max="4" className="guest-input" value={numRooms} onChange={(e) => setNumRooms(e.target.value)}/>
+				</div>
             	</div>
             
            	 <button type="submit" className="searchButton">Search</button>
           </form>
         </div>
+
         <div className='search-results'>
-        	{listHotels}
+        	{renderHotels}
         </div>
         
             {error && <p className='error'>{error}</p>}
