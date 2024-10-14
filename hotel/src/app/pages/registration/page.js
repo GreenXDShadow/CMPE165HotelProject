@@ -3,6 +3,8 @@
 import './registration.css'; // Importing the CSS file for styling (./ means the file is in the same directory as this file)
 import React, { useState } from 'react'; // Importing React and useState hook from the 'react' package
 import axios from 'axios'; // Importing axios for making HTTP requests
+import { NotificationContainer, NotificationManager } from 'react-notifications'; // Importing NotificationContainer and NotificationManager from 'react-notifications'
+import 'react-notifications/lib/notifications.css'
 
 export default function registration(){ // Exporting a default function named 'registration'
     const [email, setEmail] = useState('') // Creating a state variable 'email' and a function 'setEmail' to update it
@@ -12,7 +14,6 @@ export default function registration(){ // Exporting a default function named 'r
     const [cardnum, setCardnum] = useState('')
     const [cvc, setCVC] = useState('')
     const [expire, setExpire] = useState('')
-    const [response, setResponse] = useState('') // Creating a state variable 'response' and a function 'setResponse' to update it
 
     const handleRegistration = async(e) => { // Defining an asynchronous function named 'handleRegistration' that takes an event object as a parameter
         e.preventDefault() // Preventing the default form submission behavior
@@ -27,10 +28,15 @@ export default function registration(){ // Exporting a default function named 'r
             expire: expire
         }
 
+        console.log(data)
+
         try{
-            const response = await axios.post('http://localhost:4000/registration', data) // Making a POST request to 'http://localhost:4000/registration' with the 'data' object
-            if(response.data === 'Success'){ // Checking if the response data is equal to 'Success'
-                setResponse('Registered successfully') // Updating the 'response' state variable with the success message
+            const response = await axios.post('http://localhost:4000/registration', data, { withCredentials: true }) // Making a POST request to 'http://localhost:4000/registration' with the 'data' object
+            if(response.status === 200){ // Checking if the response data is equal to 'Success'
+                NotificationManager.success('Registered successfully') // Updating the 'response' state variable with the success message
+                setTimeout(() => {
+                    window.location.href = '/pages/login' // Redirecting to the login page after a delay
+                }, 1500)
             }
         }catch (e){
             console.log(e) // Logging any errors that occur during the request
@@ -56,8 +62,8 @@ export default function registration(){ // Exporting a default function named 'r
                 <input type='expire' placeholder='Expiration' value={expire} onChange={(e) => setExpire(e.target.value)} /> {}
                 <br></br>
                 <button type='submit'>Register</button> {/* Rendering a button element with the text 'Register' */}
-                {response && <p className='response'>{response}</p>} {/* Rendering a paragraph element with the 'response' value if it exists */}
             </form>
+            <NotificationContainer />
         </div>
     )
 }

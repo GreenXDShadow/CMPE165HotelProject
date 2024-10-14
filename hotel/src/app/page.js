@@ -1,8 +1,12 @@
 "use client"; 
 import './main.css'; 
 import HotelCard from './components/HotelCard';
+import React, { useState, useEffect } from 'react'
+import axios from 'axios'
 
 export default function Home() {
+  const [hotels, setHotels] = useState([])
+
   const handleSearch = (event) => {
     event.preventDefault();
     const searchQuery = event.target.elements.search.value;
@@ -13,6 +17,18 @@ export default function Home() {
     event.preventDefault(); // Prevents form submission
     // No functionality yet
   };
+
+  useEffect(() => {
+    axios.get('http://localhost:4000/hotels', { withCredentials : true})
+      .then((response) => {
+        console.log(response.data)
+        if(response.status === 200){
+          setHotels(response.data)
+        }
+      }).catch((error) => {
+        console.log(error)
+      })
+  }, [])
 
   return (
     <>
@@ -37,21 +53,13 @@ export default function Home() {
 
         {/* Hotel Cards */}
         <div className="hotel-cards">
-          <HotelCard 
-            name="Holiday Inn" 
-            description="Clean rooms, amenities, reliable stay"
-            image="/holiday.png" 
-          />
-          <HotelCard 
-            name="Mariott" 
-            description="Pool, Views, best stay at a bargain"
-            image="/marriot.png" 
-          />
-          <HotelCard 
-            name="Motel 6" 
-            description="Reliable stay, affordable prices, easy to stay"
-            image="/motel.png" 
-          />
+          {hotels.map((hotel) => (
+            <HotelCard
+              name={hotel.name}
+              description={hotel.rating}
+              image="/holiday.png"
+            />
+          ))}
         </div>
       </div>
 
