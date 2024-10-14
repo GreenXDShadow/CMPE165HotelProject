@@ -21,6 +21,10 @@ export default function reservation() {
                 </div>
                 <div className='details-container'>
                     <div className='item-container'>
+                        <p>Hotel: </p>
+                        <p id='hotel-name'>Hyatt San Jose</p>
+                    </div>
+                    <div className='item-container'>
                         <p>Confirmation Number: </p>
                         <p id='confirmation-number'>3945835</p>
                     </div>
@@ -33,10 +37,6 @@ export default function reservation() {
                         <p id='room-type'>Suite</p>
                     </div>
                     <div className='item-container'>
-                        <p>Room Number: </p>
-                        <p id='room-number'>205</p>
-                    </div>
-                    <div className='item-container'>
                         <p>Payment: </p>
                         <p id='payment'>AMEX 0945</p>
                     </div>
@@ -47,7 +47,7 @@ export default function reservation() {
                 </div>
                 <div classname='button-container'>
                     <button className='cancelButton'>Cancel</button>
-                    <button className='confirmButton'>Ok</button>
+                    <button className='editButton'>Edit...</button>
                 </div>
             </div> 
         </>
