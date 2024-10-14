@@ -25,6 +25,10 @@ export default function reservation() {
                         <p id='confirmation-number'>3945835</p>
                     </div>
                     <div className='item-container'>
+                        <p>Check-in: </p>
+                        <p id='check-in-date-time'>October 14th 1:00pm</p>
+                    </div>
+                    <div className='item-container'>
                         <p>Room Type: </p>
                         <p id='room-type'>Suite</p>
                     </div>
@@ -33,8 +37,8 @@ export default function reservation() {
                         <p id='room-number'>205</p>
                     </div>
                     <div className='item-container'>
-                        <p>Payment Type: </p>
-                        <p id='payment-type'>AMEX 0945</p>
+                        <p>Payment: </p>
+                        <p id='payment'>AMEX 0945</p>
                     </div>
                     <div className='item-container'>
                         <p>Address: </p>
