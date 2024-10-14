@@ -30,19 +30,29 @@ def hotel_search(dest_id, arrival_date, depart_date, guest_qty, room_qty):
     response = requests.get(url, headers=headers, params=querystring)
     hotels = response.json()
 
-    hotel_dict = {}
+    hotel_dict = []
     for h in hotels['result']:
         if 'hotel_name' in h:
-            hotel_id = h['hotel_id'] # int
             image = h['main_photo_url'] # images provided are very low quality, likely not usable but wanted to document it
-
-            h_details = {'name': h['hotel_name'], # name of hotel
-                         'cost_before_extra': round(h['composite_price_breakdown']['gross_amount']['value'], 2), # cost of cheapest hotel room at that hotel before taxes and fees
-                         'total_cost': round(h['composite_price_breakdown']['all_inclusive_amount']['value'], 2) # total cost of cheapest room
+            h_details = {
+                        'hotel_id': h['hotel_id'], # id of hotel as int
+                        'name': h['hotel_name'], # name of hotel
+                        'checkin_start': h['checkin']['from'], # some hotels have start and end times for both checkin and checkout
+                        'checkin_end': h['checkin']['until'],
+                        'checkout_start': h['checkout']['from'],
+                        'checkout_end': h['checkout']['until'],
+                        'cost_before_extra': round(h['composite_price_breakdown']['gross_amount']['value'], 2), # cost of cheapest hotel room at that hotel before taxes and fees
+                        'total_cost': round(h['composite_price_breakdown']['all_inclusive_amount']['value'], 2), # total cost of cheapest room
+                        'has_pool': 'has_swimming_pool' in h, # if has_pool isn't in the hotel dictionary, the hotel doesn't have a pool (has_pool is always 1 if present too) 
+                        'breakfast_included': 'ribbon_text' in h, # ribbon_text is only ever 'Breakfast Included', so if the key is present breakfast must be included with any booking
+                        'rating': h['review_score_word'], # Booking.com rating description
+                        'review_score': h['review_score'], # Booking.com rating/review score
+                        'longitude': h['longitude'],
+                        'latitude': h['latitude']
                         }
-            hotel_dict[hotel_id] = h_details
+            hotel_dict.append(h_details)
 
-    return hotel_dict # returns a dictionary with keys as the hotel_id of each hotel returned by the API, contents include hotel name and the hote's cheapest room cost
+    return hotel_dict # returns list of hotels in area of the input location
 
 # Same parameters as hotel_search but this time it uses hotel_id to search for available rooms within hotels
 # Take a hotel_id from one of the keys of the return from hotel_search
@@ -57,7 +67,7 @@ def room_search(hotel_id, arrival_date, depart_date, guest_qty, room_qty):
     roomInfo = json[0]['rooms'] # list of rooms with photo urls and advertised room highlights, keys are strings so conversion may be necessary if ids are given as int in other parts of the API
     block_of_rooms = json[0]['block']  # list of rooms with price data
 
-    rooms = {}
+    rooms_list = []
     for r in block_of_rooms:
         if (r['nr_adults'] >= int(guest_qty)): # filter out the rooms that can't fit the selected # of adults
             room_id = r['room_id'] # int
@@ -80,7 +90,9 @@ def room_search(hotel_id, arrival_date, depart_date, guest_qty, room_qty):
             for fc in roomInfo[str(room_id)]['facilities']:
                 facilities.append(fc['name'])
             
-            room_details = {'config': r['name_without_policy'], # room configuration (won't specify if cancellable)
+            room_details = {
+                            'room_id': room_id,
+                            'config': r['name_without_policy'], # room configuration (won't specify if cancellable)
                             'cancel_by': r['refundable_until'], # if booking is cancellable, a date will be provided
                             'recommended_for': r['nr_adults'], # number of adults/people recommended for the room
                             'size_ft2': round(r['room_surface_in_feet2'], 0), # room size
@@ -92,10 +104,13 @@ def room_search(hotel_id, arrival_date, depart_date, guest_qty, room_qty):
                             'facilities': facilities, # list of advertised 
                             'breakfast': r['mealplan'] # string of whether breakfast is included or costs money
                             }
-            rooms[room_id] = room_details # add dictionary of room details to a dictionary with the key as the room_id
+            rooms_list.append(room_details)
 
-    return rooms  # return dictionary of bookable rooms for the intended dates
+    return rooms_list  # return list of bookable rooms for the intended dates
 
-# Example calls, print returns
+# Example calls
+"""
 print(hotel_search("20015742", "2024-12-18", "2024-12-20", "2", "1")) # 20015742 is San Jose's dest_id
 print(room_search("742931", "2024-12-18", "2024-12-20", "3", "1")) # 742931 is the Hyatt Downtown San Jose hotel_id
+"""
+
