@@ -1,5 +1,6 @@
 import { Inter } from "next/font/google";
 import "./main.css";
+import ToggleComponent from "./mobileNav";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,6 +24,12 @@ export default function RootLayout({ children }) {
               <li><a className="nav-button" href="/registration">Register</a></li>
               <li><a className="nav-button" href="/payment">Payment</a></li>
             </ul>
+          </nav>
+          <nav className='nav-container-mobile'>
+            <a href="/">
+              <img src="/home.png" alt="Home Logo" className="nav-logo" />
+            </a>
+            <ToggleComponent />
           </nav>
         </header>
         <main style={{ minHeight: "100vh" }}>{children}</main>
