@@ -1,6 +1,6 @@
 import { Inter } from "next/font/google";
 import "./main.css";
-import ToggleComponent from "./mobileNav";
+import ToggleComponent from "./components/mobileNav";
 
 const inter = Inter({ subsets: ["latin"] });
 

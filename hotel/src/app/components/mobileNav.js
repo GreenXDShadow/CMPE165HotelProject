@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from "react";
-import styles from "./main.css"
+import styles from ".././main.css"
 
 const ToggleComponent = () => {
     const [isVisible, setIsVisible] = useState(false);
@@ -45,10 +45,10 @@ const ToggleComponent = () => {
                         </button>
                     </nav>
                     <div className='mobile-menu'>
-                        <a className="nav-button" href="/">Home</a>
-                        <a className="nav-button" href="/login">Login</a>
-                        <a className="nav-button" href="/registration">Register</a>
-                        <a className="nav-button" href="/payment">Payment</a>
+                        <a className="nav-button" style={{animationDelay: '0.1s'}} href="/">Home</a>
+                        <a className="nav-button" style={{animationDelay: '0.15s'}} href="/login">Login</a>
+                        <a className="nav-button" style={{animationDelay: '0.2s'}} href="/registration">Register</a>
+                        <a className="nav-button" style={{animationDelay: '0.25s'}} href="/payment">Payment</a>
                     </div>
                 </div>
             }

@@ -99,6 +99,11 @@
         100% {top: -100%}
       }
 
+      @keyframes font-ease-in {
+        0% { opacity: 0; transform: translateX(-25px); }
+        100% { opacity: 1; transform: translateX(0px); }
+      }
+
       .nav-container-mobile {
         display: flex;
         justify-content: space-between;
@@ -158,6 +163,7 @@
 
       .nav-button {
         font-size: 3rem;
+        animation: font-ease-in 1s forwards;
       }
   }
   
