@@ -28,9 +28,63 @@
     flex-direction: column;
     text-align: center;
     align-items: center; 
+    font-size: 1.25rem;
 }
 
-.name-container {
+.content-container {
     display: flex;
     flex-direction: row;
+    margin-top: 15px;
+    width: 35%;
+    justify-content: space-between;
+}
+
+.leading-title {
+    width: 40%;
+    margin-bottom: -10px;
+}
+
+.bookButton {
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+@media(max-width: 1300px) {
+    .content-container {
+        width: 70%;
+    }
+
+    .leading-title {
+        width: 80%;
+    }
+}
+
+@media(max-width: 680px) {
+    .container {
+        font-size: 1rem;
+    }
+
+    .image-nextjs {
+        width: 250px;
+        height: 250px;
+        aspect-ratio: 1;
+    }
+
+    .leading-title {
+        min-width: 90%;
+    }
+
+    .content-container {
+        width: 80%;
+    }
+}
+
+h1 {
+    color: black;
+}
+
+@media(prefers-color-scheme: dark) {
+    h1 {
+        color: white;
+    }
 }
