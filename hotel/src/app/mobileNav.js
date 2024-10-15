@@ -1,14 +1,31 @@
 'use client'
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styles from "./main.css"
 
 const ToggleComponent = () => {
     const [isVisible, setIsVisible] = useState(false);
+    const [isAnimating, setIsAnimating] = useState(false);
 
     const toggleVisibility = () => {
-        setIsVisible((prev) => !prev);
+        if (isVisible) {
+            setIsAnimating(true); // Start the slide-out animation
+            setTimeout(() => {
+                setIsVisible(false); // Remove from DOM after animation
+                setIsAnimating(false); // Reset animation state
+            }, 375); // Match this duration with the CSS animation duration
+        } else {
+            setIsVisible(true);
+        }
     };
+
+    useEffect(() => {
+        document.body.style.overflow = isVisible ? 'hidden' : 'auto';
+
+        return () => {
+            document.body.style.overflow = 'auto';
+        };
+    }, [isVisible]);
 
     return (
         <div>
@@ -17,7 +34,7 @@ const ToggleComponent = () => {
                 {isVisible ? false : true}
             </button>
             {isVisible && 
-                <div className='overlay' id='overlayElement'>
+                <div className={`overlay-${isAnimating ? 'shown' : 'hidden'}`}>
                     <nav className='nav-container-mobile'>
                         <a href="/">
                             <img src="/home.png" alt="Home Logo" className="nav-logo" />
