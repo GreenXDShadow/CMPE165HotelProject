@@ -89,6 +89,11 @@
         display: none;
       }
 
+      @keyframes slide {
+        0% {top: -100%;}
+        100% {top: 0%}
+      }
+
       .nav-container-mobile {
         display: flex;
         justify-content: space-between;
@@ -113,6 +118,7 @@
         left: 0;
         right: 0;
         overflow: hidden;
+        animation: slide 0.375s ease-in-out;
       }
 
       .nav-button-mobile {

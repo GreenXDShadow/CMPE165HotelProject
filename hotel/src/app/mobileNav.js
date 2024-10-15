@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from "react";
-import "./main.css"
+import styles from "./main.css"
 
 const ToggleComponent = () => {
     const [isVisible, setIsVisible] = useState(false);
@@ -17,7 +17,7 @@ const ToggleComponent = () => {
                 {isVisible ? false : true}
             </button>
             {isVisible && 
-                <div className='overlay'>
+                <div className='overlay' id='overlayElement'>
                     <nav className='nav-container-mobile'>
                         <a href="/">
                             <img src="/home.png" alt="Home Logo" className="nav-logo" />
