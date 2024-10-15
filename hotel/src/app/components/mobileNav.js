@@ -45,11 +45,11 @@ const ToggleComponent = () => {
                         </button>
                     </nav>
                     <div className='mobile-menu'>
-                        <a className="nav-button" style={{animationDelay: '0.1s'}} href="/">Home</a>
-                        <a className="nav-button" style={{animationDelay: '0.15s'}} href="/login">Login</a>
-                        <a className="nav-button" style={{animationDelay: '0.2s'}} href="/registration">Register</a>
-                        <a className="nav-button" style={{animationDelay: '0.25s'}} href="/payment">Payment</a>
-                        <a className="nav-button" style={{animationDelay: '0.3s'}} href="/search">Search</a>
+                        <a className="nav-button" style={{animationDelay: '0.15s'}} href="/">Home</a>
+                        <a className="nav-button" style={{animationDelay: '0.2s'}} href="/login">Login</a>
+                        <a className="nav-button" style={{animationDelay: '0.25s'}} href="/registration">Register</a>
+                        <a className="nav-button" style={{animationDelay: '0.3s'}} href="/payment">Payment</a>
+                        <a className="nav-button" style={{animationDelay: '0.35s'}} href="/search">Search</a>
                     </div>
                 </div>
             }
