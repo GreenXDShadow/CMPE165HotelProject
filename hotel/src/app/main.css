@@ -127,7 +127,7 @@
         top: 0;
         left: 0;
         right: 0;
-        overflow: hidden;
+        overflow: scroll;
         animation: slide-in 0.375s ease-in-out;
       }
 
@@ -140,7 +140,7 @@
         top: 0;
         left: 0;
         right: 0;
-        overflow: hidden;
+        overflow: scroll;
         animation: slide-out 0.375s ease-in-out;
       }
 
