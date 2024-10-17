@@ -47,12 +47,26 @@ def payment():
 def search():
     if request.method == 'POST':  # Checking if the request method is POST
         data = request.json  # Extracting JSON data from the request
+
         city_id = city_search(data.get('location')) # Get the and input into function for getting the id of the city searched
-        # hotel_list = hotel_search(city_id, data.get('arrival_date'), data.get('depart_date'), data.get('num_adults'), data.get('num_rooms'))
-        example = hotel_search(city_id, "2024-12-18", "2024-12-20", "2", "1") # use this example variable to run a default API call so that only input needed is the location, hotel_list will be used later on
+        
+        # use the function call below when we're demoing/using the finished website to actually search with the form parameters
+        # hotel_list = hotel_search(city_id, data.get('arrival_date'), data.get('depart_date'), data.get('num_adults'), data.get('num_children'), data.get('num_rooms'))
+        
+        # use this example variable below for now to run a default API call so that only input needed is the location, hotel_list will be used later on
+        example = hotel_search(city_id, "2024-12-18", "2024-12-20", "2", "1", "1")
+
         return jsonify(example)  # Returning list of hotels
     else:
         return 'False'  # Returning False as a response if the request method is not POST
+    
+# unfinalized route for calling API for rooms within a chosen hotel from the /hotelinfo page
+@app.route('/hotelinfo', methods=['GET', 'POST'])
+def hotels():
+    if request.method == 'POST':
+        return True
+    else:
+        return False
 
 if __name__ == '__main__':
     app.run(debug=True, port=4000)  # Running the Flask application in debug mode on port 4000
