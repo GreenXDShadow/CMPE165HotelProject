@@ -21,7 +21,7 @@ def city_search(location):
 
 # Get dest_id for city from city_search(), guest_qty is number of adults and room_qty is the number of rooms wanted
 # The hotel search API function still requires arrival+departure date and guest quanitities, which will be submitted by the user upon searching a city anyway
-def hotel_search(dest_id, arrival_date, depart_date, adult_qty, children_qty, room_qty):
+def hotel_search(dest_id, arrival_date, depart_date, adult_qty, children_qty, room_qty, sort_by):
     # dates must be in YYYY-MM-DD format 
 
     url = "https://apidojo-booking-v1.p.rapidapi.com/properties/v2/list"
@@ -33,7 +33,12 @@ def hotel_search(dest_id, arrival_date, depart_date, adult_qty, children_qty, ro
     hotel_dict = []
     for h in hotels['result']:
         if 'hotel_name' in h:
-            image = h['main_photo_url'] # images provided are very low quality, likely not usable but wanted to document it
+            image = h['main_photo_url'].replace("square60", "max500")
+            review_score = h['review_score']
+            rating = h['review_score_word']
+            if h['review_score'] is None: # account for properties without a rating
+                review_score = 0
+                rating = 'Not Yet Rated'
             h_details = {
                         'hotel_id': h['hotel_id'], # id of hotel as int
                         'name': h['hotel_name'], # name of hotel
@@ -45,14 +50,23 @@ def hotel_search(dest_id, arrival_date, depart_date, adult_qty, children_qty, ro
                         'total_cost': round(h['composite_price_breakdown']['all_inclusive_amount']['value'], 2), # total cost of cheapest room
                         'has_pool': 'has_swimming_pool' in h, # if has_pool isn't in the hotel dictionary, the hotel doesn't have a pool (has_pool is always 1 if present too) 
                         'breakfast_included': 'ribbon_text' in h, # ribbon_text is only ever 'Breakfast Included', so if the key is present breakfast must be included with any booking
-                        'rating': h['review_score_word'], # Booking.com rating description
-                        'review_score': h['review_score'], # Booking.com rating/review score
+                        'rating': rating, # Booking.com rating description
+                        'review_score': review_score, # Booking.com rating/review score
                         'longitude': h['longitude'],
                         'latitude': h['latitude'],
                         'image': image
                         }
             hotel_dict.append(h_details)
 
+    # default sorting is by popularity
+    if sort_by == 'Price (Low To High)':
+        hotel_dict = sorted(hotel_dict, key=lambda x: x['cost_before_extra'], reverse=False)
+    elif sort_by == 'Price (High To Low)':
+        hotel_dict = sorted(hotel_dict, key=lambda x: x['cost_before_extra'], reverse=True)
+    elif sort_by == 'Review Score (High To Low)':
+        hotel_dict = sorted(hotel_dict, key=lambda x: x['review_score'], reverse=True)
+    elif sort_by == 'Review Score (Low To High)':
+        hotel_dict = sorted(hotel_dict, key=lambda x: x['review_score'], reverse=False)
     return hotel_dict # returns list of hotels in area of the input location
 
 # Same parameters as hotel_search but this time it uses hotel_id to search for available rooms within hotels
