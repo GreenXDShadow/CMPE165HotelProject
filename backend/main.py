@@ -51,10 +51,10 @@ def search():
         city_id = city_search(data.get('location')) # Get the and input into function for getting the id of the city searched
         
         # use the function call below when we're demoing/using the finished website to actually search with the form parameters
-        # hotel_list = hotel_search(city_id, data.get('arrival_date'), data.get('depart_date'), data.get('num_adults'), data.get('num_children'), data.get('num_rooms'))
+        # hotel_list = hotel_search(city_id, data.get('arrival_date'), data.get('depart_date'), data.get('num_adults'), data.get('num_children'), data.get('num_rooms'), "Review Score (High To Low)")
         
         # use this example variable below for now to run a default API call so that only input needed is the location, hotel_list will be used later on
-        example = hotel_search(city_id, "2024-12-18", "2024-12-20", "2", "1", "1")
+        example = hotel_search(city_id, "2024-12-18", "2024-12-20", "2", "1", "1", "Price (Low To High)")
 
         return jsonify(example)  # Returning list of hotels
     else:
