@@ -29,10 +29,10 @@ const ToggleComponent = () => {
 
     return (
         <div>
-            {/* <button onClick={toggleVisibility} className='nav-button-mobile'>
+            <button onClick={toggleVisibility} className='nav-button-mobile'>
                 Menu
                 {isVisible ? false : true}
-            </button> */}
+            </button>
             {isVisible && 
                 <div className={`overlay-${isAnimating ? 'shown' : 'hidden'}`}>
                     <nav className='nav-container-mobile'>
