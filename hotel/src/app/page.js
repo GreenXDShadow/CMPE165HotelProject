@@ -72,18 +72,26 @@ const Home = () => {
             onChange={(e) => setLocation(e.target.value)}
           />
           <div className="calendar">
-            <DatePicker
-              minDate={todaysDate}
-              className="calendar-input"
-              selected={startDate}
-              onChange={(date) => setStartDate(date)}
-            />
-            <DatePicker
-              minDate={startDate}
-              className="calendar-input"
-              selected={endDate}
-              onChange={(date) => setEndDate(date)}
-            />
+            <div className="date-picker-wrapper">
+              <p className="date-label">From:</p>
+              <DatePicker
+                id="start-date"
+                minDate={todaysDate}
+                className="calendar-input"
+                selected={startDate}
+                onChange={(date) => setStartDate(date)}
+              />
+            </div>
+            <div className="date-picker-wrapper">
+              <p className="date-label">To:</p>
+              <DatePicker
+                id="end-date"
+                minDate={startDate}
+                className="calendar-input"
+                selected={endDate}
+                onChange={(date) => setEndDate(date)}
+              />
+            </div>
           </div>
           <div className="dropdown">
             <button className="dropdown-button"> Guests </button>
