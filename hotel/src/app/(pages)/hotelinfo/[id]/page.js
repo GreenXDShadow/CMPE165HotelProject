@@ -75,54 +75,30 @@ const HotelInfo = () => {
                 <div className="info-container">
                     {/* Needs to eventualy be variable */}
                     <p id="hotel-name" className='title' style={{marginBottom: '0px', fontSize: '30px'}}>{hotelDetails.name}</p>
-                    <Image id="main-photo" src="/holiday.png" alt="hotel image" width={1366} height={768} layout='responsive'/>
                     <p className='title'>Rating</p>
-                    <p id="rating">{hotelDetails.rating}/10</p>
+                    <p id="rating">{hotelDetails.rating}5/10</p>
                     <p className='title'>Address</p>
                     <p id="address">{hotelDetails.address}</p>
                     <p className='title'>Price Range</p>
-                    <p id="price-range">$39.00 — $72.00</p>
+                    <p id="price-range">$121-354</p>
                     <p className='title'>Hours</p>
                     <p id="hours">Open 24 Hours</p>
-                    <p className='title'>Description</p>
-                    <p id="review">{hotelDetails.review}</p>
                 </div>
                 <div className="map-container">
-                    {/* <Image src="/landing.png" alt="map" width={1366} height={1536} layout='responsive'/> */}
-                    <Image
-                        id="map-photo"
-                        className='image'
-                        src="/landing.png"
-                        alt="map to hotel"
-                        width={1366}
-                        height={768}
-                        objectFit='cover'
-                    />
                 </div>
                 <div className="break"></div>
                 <div className="calendar-container">
                     <label for="check-in">Check in:</label>
                     <p>{startDate}</p>
                     <input type ="date" id="check-in" name="check-in" value={startDate} onChange={handleStartDateChange} />
-                    <label for="check-out">Check out:</label>
-                    <p>{endDate}</p>
-                    <input type ="date" id="check-out" name="check-out" value={endDate} onChange={handleEndDateChange} />
+                    <div>
+                        <label for="check-out">Check out:</label>
+                        <p>{endDate}</p>
+                        <input type ="date" id="check-out" name="check-out" value={endDate} onChange={handleEndDateChange} />
+                    </div>
                 </div>
                 <div className="break"/>
                 <div className="booking-container">
-                    <p style={{fontSize: '20px', marginBottom: '-5px'}}>Rooms:</p>
-                    <div className='button-container'>
-                        <input type='radio' className="roomButton" name='rooms' value='room1'/>
-                        <span>Suite</span>
-                    </div>
-                    <div className='button-container'>
-                        <input type='radio' className="roomButton" name='rooms' value='room2'/>
-                        <span>Balcony</span>
-                    </div>
-                    <div className='button-container'>
-                        <input type='radio' className="roomButton" name='rooms' value='room3'/>
-                        <span>Window</span>
-                    </div>    
                     <button style={{marginTop: '40px'}} className='confirmButton' type='submit'>Book</button>
                 </div>
                 </form>
