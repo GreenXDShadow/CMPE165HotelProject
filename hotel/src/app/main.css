@@ -205,7 +205,7 @@ Button:hover {
     border: none;
     border-radius: 15px;
     background-color: #F3F3F3;
-    color: #AEAEAE;
+    color: black;
     font-size: 16px;
     box-shadow: 0px 20px 25px rgba(0, 0, 0, 0.3); 
     padding-left: 20px;
@@ -214,6 +214,7 @@ Button:hover {
 
   .searchInput::placeholder {
     color: #AEAEAE; 
+    opacity: 1; /* Ensure opacity is full */
   }
   
   .searchButton {
@@ -397,6 +398,10 @@ Button:hover {
   margin-top: 82px;
 }
 
+.nav-container {
+  background-color: #001C3F;
+}
+
 .search-container {
 margin: auto;
 }
@@ -419,6 +424,7 @@ margin: auto;
   font-size: 18px;
   box-shadow: 0px 20px 15px rgba(0, 0, 0, 0.3); 
   margin-bottom: 60px;
+  margin-top: 30px;
 }
 
 input {
@@ -429,8 +435,8 @@ border-radius: 10px;
 border: none;
 font-family: 'Crimson Text', serif;
 font-size: 20px;
-color: #AEAEAE;
-width: 400px;
+color: black;
+width: 700px;
 box-shadow: 0px 20px 12px rgba(0, 0, 0, 0.3); 
 }
 
@@ -473,10 +479,14 @@ display: inline;
 /* -------------------------------------------------- */
 
 /* -------------------- Calendar ------------------------------ */
+.calendar {
+  display: flex;
+  gap: 40px;
+}
 
 .calendar-input {
 background-color: #F3F3F3;
-margin-top: 20px;
+margin-top: 5px;
 width: 100px;
 border-radius: 10px;
 border: none;
@@ -487,6 +497,22 @@ color: black;
 box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.3); 
 cursor: pointer;
 }
+
+.date-picker-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center; 
+  margin: 40px 10px; 
+  margin-bottom: 0; 
+}
+
+.date-label {
+  font-family: 'Crimson Text', serif;
+  margin-bottom: 5px; 
+  font-size: 18px;
+}
+
+
 /* -------------------------------------------------- */
 
 /* -------------------- Dropdown Menu ------------------------------ */
