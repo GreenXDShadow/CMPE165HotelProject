@@ -1,19 +1,31 @@
 'use client'; // use client-side hooks
 
 import './payment.css';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
 export default function Payment() {
     const [cardnum, setCardnum] = useState('');
     const [cvc, setCVC] = useState('');
     const [expire, setExpire] = useState('');
-    const [error, setError] = useState('');
+    const [bookingDetails, setBookingDetails] = useState([]);
 
     const testID = 11235813; // test ID for the booking
 
     const handlePaymentInfo = (e) => {
         e.preventDefault();      
     };
+
+    useEffect(() => {
+        axios.get('http://localhost:4000/booking_details', { withCredentials: true })
+        .then((response) => {
+            console.log(response.data);
+            setBookingDetails(response.data);
+        })
+        .catch((error) => {
+            console.error('Error fetching data: ', error);
+        });
+    }, [])
 
     return (
         <div className="payment-page">
@@ -25,16 +37,24 @@ export default function Payment() {
                     <div className="left-column">
                         <div className="booking-info">
                             <h2 className="section-title">Your Booking Information</h2>
-                            <p>Check-in date:</p>
-                            <p>Check-out date:</p>
-                            <p>Hotel:</p>
-                            <p>Guests:</p>
-                            <p>Room and floor:</p>
-                            <p>Price:</p>
-                            <p>Tax:</p>
-                            <p>Convenience Fee:</p>
-                            <p>Total:</p>
-                            <p className="booking-id">Booking ID: {testID}</p>
+                            {Array.isArray(bookingDetails) && bookingDetails.length > 0 ? (
+                                bookingDetails.map((detail, index) => (
+                                    <div key={index} className="booking-detail">
+                                        <p>Check-in date: {detail.check_in_time}</p>
+                                        <p>Check-out date: {detail.check_out_time}</p>
+                                        <p>Hotel: {detail.hotel_name}</p>
+                                        <p>Guests: {detail.guests}</p>
+                                        <p>Room and floor: {detail.room_and_floor}</p>
+                                        <p>Price: {detail.pricing_per_night}</p>
+                                        <p>Tax: {detail.tax}</p>
+                                        <p>Convenience Fee: {detail.convenience_fee}</p>
+                                        <p>Total: {detail.cost}</p>
+                                        <p className="booking-id">Booking ID: {index}</p>
+                                    </div>
+                                ))
+                            ) : (
+                                <p>No booking details available.</p>
+                            )}
                         </div>
                     </div>
 
@@ -89,9 +109,6 @@ export default function Payment() {
                         </div>
                     </div>
                 </div>
-
-                {/* Error */}
-                {error && <p className="error-message">{error}</p>}
             </div>
         </div>
     );

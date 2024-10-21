@@ -1,7 +1,16 @@
+"use client"
 import React from 'react';
+import { useRouter } from 'next/navigation';
 import '../main.css'; 
 
-export default function HotelCard({ name, description, image, rating}) {
+export default function HotelCard({ id, name, description, image, rating, start_date, end_date }) {
+  const navigate = useRouter();
+  
+  const handleHotelInfo = (e) => {
+    e.preventDefault();
+    navigate.push(`/hotelinfo/${id}?start_date=${start_date}&end_date=${end_date}`)
+  }
+  
   return (
     <div className="hotel-card">
       <div className="hotel-card-left">
@@ -10,7 +19,7 @@ export default function HotelCard({ name, description, image, rating}) {
           <h2>{name}</h2>
           <p>Cheapest Rate For Your Stay: ${description}</p>
           <p>Rating: {rating}</p>
-          <button className="bookButton">Book</button>
+          <button className="bookButton" onClick={handleHotelInfo}>Learn More</button>
         </div>
       </div>
       <div className="hotel-card-right">

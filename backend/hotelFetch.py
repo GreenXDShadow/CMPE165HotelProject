@@ -112,6 +112,14 @@ def room_search(hotel_id, arrival_date, depart_date, adult_qty, children_qty, ro
 
     return rooms_list  # return list of bookable rooms for the intended dates
 
+def hotel_search_by_id(hotel_id, arrival_date, depart_date):
+    url = f"https://apidojo-booking-v1.p.rapidapi.com/properties/detail"
+    query = {"hotel_id": hotel_id, "arrival_date": arrival_date, "departure_date": depart_date, "languagecode": "en-us"}
+
+    response = requests.get(url, headers=headers, params=query)
+    hotel_details = response.json()
+    return hotel_details
+
 # Example calls
 # print(hotel_search("20015742", "2024-12-18", "2024-12-20", "2", "0", "1")) # 20015742 is San Jose's dest_id
 # print(room_search("4975592", "2024-12-18", "2024-12-20", "2", "1", "1")) # 742931 is the Hyatt Downtown San Jose hotel_id
