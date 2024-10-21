@@ -49,5 +49,6 @@ button {
 	color: white;
 	box-shadow: 0px 20px 12px rgba(0, 0, 0, 0.3); 
 	cursor: pointer;
+	font-weight: bold;
 }
 
