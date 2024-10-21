@@ -38,8 +38,7 @@ export default function Login(){ // Defining a functional component named Login
     return (
         <div className='login-page'>
             {/* A div element with a class name 'login-page' */}
-            <h1>Login</h1>
-            {/* Heading element with the text 'Login' */}
+
             <form onSubmit={handleLogin} className='form-container'>
             	<img src="/likehome.png" alt="LikeHome Logo" className="logo" />
             	<br></br>
