@@ -1,8 +1,8 @@
 import requests
 
 headers = {
-	"x-rapidapi-key": "e1133eb6c5msh93eeb803aa8893cp1c7d9djsn0cbd47c2ce94",
-	"x-rapidapi-host": "apidojo-booking-v1.p.rapidapi.com"
+    'x-rapidapi-key': "0ef4e9449emsh5d7b3e07754f32ep136219jsn83dd2526356c",
+    'x-rapidapi-host': "apidojo-booking-v1.p.rapidapi.com"
 }
 
 # Input string consisting of a city name, and the API will return a dictionary of different cities related to that search

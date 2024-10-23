@@ -62,9 +62,9 @@ class Purchase(db.Model):
     __tablename__ = 'Purchase'
     id = db.Column('ID', db.Integer, primary_key=True)
     payment_id = db.Column('Payment ID', db.String, db.ForeignKey('Payment Info.Payment ID'), nullable=False)  # Corrected table name
+    booking_id = db.Column('Booking ID',db.Integer,db.ForeignKey('Bookings.Booking ID'),nullable=False)
     user_id = db.Column('User ID', db.String, db.ForeignKey('Users.User ID'), nullable=False)
     total = db.Column('Total', db.String, nullable=False)
-    tax = db.Column('Tax', db.String, nullable=False)
     service_fee = db.Column('Service Fee', db.String, nullable=False)
 
 # Initialize the database and create tables
