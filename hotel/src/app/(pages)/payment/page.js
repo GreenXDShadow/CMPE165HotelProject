@@ -62,6 +62,7 @@ export default function Payment() {
                     <div className="right-column">
                         <div className="payment-form">
                             <h2 className="section-title">Payment Information</h2>
+                            {/* this should only be used for guest checkout */}
                             <form onSubmit={handlePaymentInfo}>
                                 <div className="form-group">
                                     <input
@@ -96,14 +97,19 @@ export default function Payment() {
 
 
                                 <button type="submit" className="btn">
-                                    Confirm
+                                    Confirm payment
                                 </button>
                             </form>
                         </div>
-
-                        <div className="login-section">
+                        <div>
+                            rewards
+                        </div>
+                            <a href = "/confirmation">
+                                <button className="btn">Confirm purchase</button>
+                            </a>
+                        <div className="login-section"> {/* this should all be hidden if the user is already logged in, we can just show a confirm button */}
                             <h2 className="section-title">You may also login to check out</h2>
-                            <a href="/pages/login">
+                            <a href="/login">
                                 <button className="btn">Login</button>
                             </a>
                         </div>
