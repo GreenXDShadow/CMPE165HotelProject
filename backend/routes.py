@@ -220,12 +220,17 @@ def payment():
     try:
         # would need a session['user_id'] to tie as a foreign key, then would make a new 'payment' by inserting the new info
         # schema needs a way to track the actual payment payment not just the used payment information
+
         data = request.get_json()
+        # get the booking the user just made on the previous page
+        booking = Booking.query.filter_by(user_id=session['user_id']).first()
+        fee = 100  # website fee
+        tax = 0.25 # constant sales tax percentage
 
-        fee = 100
-        tax = 0.25
-
-        cost = (data['room_cost'] * data['number_of_people']) + fee
+        print(booking.pricing_per_night)
+        print(booking.nights)
+        # price per night and nights from database mutiplied together = cost for all nights + fee
+        cost = (booking.pricing_per_night * booking.nights) + fee
 
         adjusted_tax = cost * tax
 
@@ -233,9 +238,9 @@ def payment():
 
         new_purchase = Purchase(
             payment_id = session['payment_id'],
+            booking_id = booking.booking_id,
             user_id = session['user_id'],
             total = total,
-            tax = tax,
             service_fee = fee
         )
 
@@ -245,3 +250,6 @@ def payment():
 
     except Exception as e:
         print(e)  
+@app.route('/confirmation',methods=['GET','POST'])
+def confirmation():
+    return jsonify({'Message': 'purchase confirmed'},200)
