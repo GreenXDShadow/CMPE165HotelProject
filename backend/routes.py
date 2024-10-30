@@ -2,6 +2,8 @@ from flask import Flask, request, jsonify, session  # Importing necessary module
 from flask_cors import CORS  # Importing CORS module for cross-origin resource sharing
 from flask_bcrypt import Bcrypt  # Importing Bcrypt module for password hashing
 import uuid  # Importing the uuid module for generating unique IDs
+from sqlalchemy import asc, desc
+
 
 from schema import *  # Importing the database schema
 from hotelFetch import *  # Importing the city_search and hotel_search functions from hotelFetch.py
@@ -91,16 +93,18 @@ def registration():
 def search():
     if request.method == 'POST':  # Checking if the request method is POST
         data = request.json  # Extracting JSON data from the request
+        arrival_date = data.get("arrival_date").split('T')[0]
+        depart_date = data.get("depart_date").split('T')[0]
 
         print(data)
 
         city_id = city_search(data.get('location')) # Get the and input into function for getting the id of the city searched
         
         # use the function call below when we're demoing/using the finished website to actually search with the form parameters
-        # hotel_list = hotel_search(city_id, data.get('arrival_date'), data.get('depart_date'), data.get('num_adults'), data.get('num_children'), data.get('num_rooms'))
+        # hotel_list = hotel_search(city_id, data.get('arrival_date').split('T')[0], data.get('depart_date').split('T')[0], data.get('num_adults'), data.get('num_children'), data.get('num_rooms'), "Price (Low To High)")
         
         # use this example variable below for now to run a default API call so that only input needed is the location, hotel_list will be used later on
-        example = hotel_search(city_id, "2024-12-18", "2024-12-20", "2", "1", "1")
+        example = hotel_search(city_id, "2024-12-18", "2024-12-20", "2", "1", "1", "Price (Low To High)")
 
         return jsonify(example)  # Returning list of hotels
     else:
@@ -110,12 +114,11 @@ def search():
 @app.route('/hotel/<hotel_id>', methods=['GET'])
 def hotel(hotel_id):
     if request.method == 'GET':
-        # arrival_date = request.args.get('start_date')
-        # departure_date = request.args.get('end_date')
-        # start = arrival_date.split('T')[0]
-        # end = departure_date.split('T')[0]
-        # print(start)
-        # print(end)
+        arrival_date = request.args.get('start_date').split('T')[0]
+        departure_date = request.args.get('end_date').split('T')[0]
+        num_adults = request.args.get('num_adults')
+        num_children = request.args.get('num_children')
+        num_rooms = request.args.get('num_rooms')
         hotel_info_response = hotel_search_by_id(hotel_id, "2024-12-18", "2024-12-20")
         print(hotel_info_response)
         print()
@@ -123,8 +126,8 @@ def hotel(hotel_id):
         data = {
             'name': hotel_info_response[0].get('hotel_name'),
             'address': hotel_info_response[0].get('address'),
-            'rating': hotel_info_response[0].get('review_score'),
-            'review': hotel_info_response[0].get('review_score_word')
+            # review score and review word are already in the data returned for each hotel in hotel_search, can be passed when redirecting
+            'rooms': room_search(hotel_id, "2024-12-18", "2024-12-20", "2", "1", "1")
         }
 
         print(data)
@@ -145,21 +148,21 @@ def booking():
 
         user_id = session['user_id']
         payment_id = session['payment_id']
-        hotel_id = data['hotel_id']
-        hotel_name = data['hotel_name']
-        check_in_start = data['startDate']
-        check_out_time = data['endDate']
+        hotel_id = data['hotel_data'].get('hotel_id')
+        hotel_name = data['hotel_data'].get('name')
+        check_in_start = data['form_data'].get('arrival_date')
+        check_out_time = data['form_data'].get('depart_date')
         email = user.email
         first_name = user.first_name
         last_name = user.last_name
         beds = 2
-        pricing_per_night = 100 #arbitrary value for now
-        cost = 200 #arbitrary value for now
+        pricing_per_night = data['room_data'].get('cost_before_extra') #arbitrary value for now
+        cost = data['room_data'].get('total_cost')
         canceled = 0
     
-        check_in_date = datetime.strptime(check_in_start, '%Y-%m-%d')
-        check_out_date = datetime.strptime(check_out_time, '%Y-%m-%d')
-        nights = (check_out_date - check_in_date).days
+        # check_in_date = datetime.strptime(check_in_start, '%Y-%m-%d')
+        # check_out_date = datetime.strptime(check_out_time, '%Y-%m-%d')
+        # nights = (check_out_date - check_in_date).days
     
 
         new_booking = Booking(
@@ -167,14 +170,14 @@ def booking():
             payment_id=payment_id,
             hotel_id=hotel_id,
             hotel_name=hotel_name,
-            room_and_floor= "Room 1, Floor 2",
+            room_and_floor= data['room_data'].get('config'),
             check_in_time=check_in_start,
             check_out_time=check_out_time,
             email=email,
             first_name=first_name,
             last_name=last_name,
             beds=beds,
-            nights=nights,
+            nights=2,
             pricing_per_night=pricing_per_night,
             cost=cost,
             canceled=canceled
@@ -196,7 +199,7 @@ def booking_details():
     if 'user_id' not in session:
         return jsonify({'message': 'User not logged in!'}), 401
 
-    booking = Booking.query.filter_by(user_id=session['user_id']).first()
+    booking = Booking.query.filter_by(user_id=session['user_id']).order_by(desc(Booking.booking_id)).first()
 
     if booking:
         data = [{
@@ -204,12 +207,13 @@ def booking_details():
             'hotel_name': booking.hotel_name,
             'check_in_time': booking.check_in_time,
             'check_out_time': booking.check_out_time,
-            'room_and_floor': booking.room_and_floor,
+            'room_config': booking.room_and_floor,
             'pricing_per_night': booking.pricing_per_night,
-            'cost': booking.cost,
+            'cost': booking.pricing_per_night+22+2.5,
             'tax': 0.25, # arbitrary value for now
             'guests': 2, # arbitrary value for now
-            'convenience_fee': 2.50 # arbitrary value for now
+            'convenience_fee': 2.50, # arbitrary value for now
+            'reward_points': round(booking.pricing_per_night*.06,0)
         }]
         return jsonify(data), 200
     else:

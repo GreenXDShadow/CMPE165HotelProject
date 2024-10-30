@@ -44,7 +44,8 @@ export default function Payment() {
                                         <p>Check-out date: {detail.check_out_time}</p>
                                         <p>Hotel: {detail.hotel_name}</p>
                                         <p>Guests: {detail.guests}</p>
-                                        <p>Room and floor: {detail.room_and_floor}</p>
+                                        {/* <p>Room and floor: {detail.room_and_floor}</p> */}
+                                        <p>Room Configuration: {detail.room_config}</p>
                                         <p>Price: {detail.pricing_per_night}</p>
                                         <p>Tax: {detail.tax}</p>
                                         <p>Convenience Fee: {detail.convenience_fee}</p>
