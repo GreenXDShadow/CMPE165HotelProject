@@ -1,9 +1,27 @@
+'use client'; // use client-side hooks
+
 import './user.css';
 import '../.././main.css'
 import '../.././globals.css'
 import Image from 'next/image'
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
 export default function user() {
+
+	const [bookingDetails, setBookingDetails] = useState([]);
+
+	useEffect(() => {
+        axios.get('http://localhost:4000/booking_details', { withCredentials: true })
+        .then((response) => {
+            console.log(response.data);
+            setBookingDetails(response.data);
+        })
+        .catch((error) => {
+            console.error('Error fetching data: ', error);
+        });
+    }, [])
+
     return (
         <>
             <div className='nav-bar-filler'></div>
@@ -28,9 +46,19 @@ export default function user() {
                         <p id='cumulative-nights'>12 nights total</p>
                     </div>
                 <div className='content-container leading-title'>
-                    <h2>Upcoming Booking</h2>
+                    <h2>Current Booking</h2>
                 </div>
                     <div className='content-container'>
+                    {Array.isArray(bookingDetails) && bookingDetails.length > 0 ? (
+                                bookingDetails.map((detail, index) => (
+                                    <div key={index} className="booking-detail">
+                                        <p>Hotel: {detail.hotel_name}</p>
+                                        <p className="booking-id">Booking ID: {index}</p>
+                                    </div>
+                                ))
+                            ) : (
+                                <p>No booking details available.</p>
+                            )}
                         <h3>Hyatt San Jose</h3>
                         <p>October 14th</p>
                         <p>4 nights</p>

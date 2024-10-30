@@ -45,7 +45,7 @@ export default function registration(){ // Exporting a default function named 'r
  
     return(
         <div className="registration-page"> {/* Rendering a div element with the class name 'registration-page' */}
-            <h1>Registration</h1> {/* Rendering a heading element with the text 'Registration' */}
+            
             <form onSubmit={handleRegistration} className='form-container'> {/* Rendering a form element with the 'handleRegistration' function as the submit event handler */}
                 <img src="/likehome.png" alt="LikeHome Logo" className="logo" />
                 <br></br>

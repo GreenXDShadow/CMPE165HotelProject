@@ -23,6 +23,7 @@ export default function RootLayout({ children }) {
               <li><a className="nav-button" href="/login">Login</a></li>
               <li><a className="nav-button" href="/registration">Register</a></li>
               <li><a className="nav-button" href="/payment">Payment</a></li>
+              <li><a className="nav-button" href="/user">Profile</a></li>
             </ul>
           </nav>
           <nav className='nav-container-mobile'>
