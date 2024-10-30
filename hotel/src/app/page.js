@@ -77,7 +77,7 @@ const Home = () => {
               <DatePicker
                 id="start-date"
                 minDate={todaysDate}
-                className="calendar-input"
+                className="calendar-input-first"
                 selected={startDate}
                 onChange={(date) => setStartDate(date)}
               />
@@ -92,47 +92,51 @@ const Home = () => {
                 onChange={(date) => setEndDate(date)}
               />
             </div>
+            <div className="date-picker-wrapper">
+              <img src="/guestIcon.png" alt="Guests" className="guest-icon" />
+                <div className="dropdown">
+                <button className="dropdown-button"> Guests</button>
+                <div className="dropdown-content">
+                  <p> Number of adults:</p>
+                  <input
+                    type="number"
+                    name="adult-guests"
+                    placeholder="2"
+                    min="1"
+                    max="20"
+                    className="guest-input"
+                    value={numAdults}
+                    onChange={(e) => setNumAdults(e.target.value)}
+                  />
+                  <br />
+                  <p> Number of children: </p>
+                  <input
+                    type="number"
+                    name="child-guests"
+                    placeholder="0"
+                    min="0"
+                    max="20"
+                    className="guest-input"
+                    value={numChildren}
+                    onChange={(e) => setNumChildren(e.target.value)}
+                  />
+                  <br />
+                  <p> Number of rooms:</p>
+                  <input
+                    type="number"
+                    name="room-qty"
+                    placeholder="1"
+                    min="1"
+                    max="4"
+                    className="guest-input"
+                    value={numRooms}
+                    onChange={(e) => setNumRooms(e.target.value)}
+                  />
+                </div>
+              </div>
           </div>
-          <div className="dropdown">
-            <button className="dropdown-button"> Guests </button>
-            <div className="dropdown-content">
-              <p> Number of adults:</p>
-              <input
-                type="number"
-                name="adult-guests"
-                placeholder="2"
-                min="1"
-                max="20"
-                className="guest-input"
-                value={numAdults}
-                onChange={(e) => setNumAdults(e.target.value)}
-              />
-              <br />
-              <p> Number of children: </p>
-              <input
-                type="number"
-                name="child-guests"
-                placeholder="0"
-                min="0"
-                max="20"
-                className="guest-input"
-                value={numChildren}
-                onChange={(e) => setNumChildren(e.target.value)}
-              />
-              <br />
-              <p> Number of rooms:</p>
-              <input
-                type="number"
-                name="room-qty"
-                placeholder="1"
-                min="1"
-                max="4"
-                className="guest-input"
-                value={numRooms}
-                onChange={(e) => setNumRooms(e.target.value)}
-              />
-            </div>
           </div>
+
           <button type="submit" className="searchButton">Search</button>
         </form>
       </div>
@@ -150,6 +154,7 @@ const Home = () => {
             <p>Book your next vacation with us!</p>
           </div>
           <div className="footer-right">
+            <hr className="mobile-hr" />
             <p>Contact Us</p>
             <form onSubmit={handleContactSubmit} className="contact-form">
               <input type="text" name="name" placeholder="Name" className="contact-input" />

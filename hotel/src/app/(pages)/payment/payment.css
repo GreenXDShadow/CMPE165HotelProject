@@ -138,3 +138,37 @@
 .nav-container {
     background-color: #001C3F; 
 }
+
+
+@media (max-width: 680px) {
+    .columns-container {
+        flex-direction: column; 
+    }
+
+    .left-column, .right-column {
+        width: 100%; 
+        padding-right: 0; 
+        padding-left: 0; 
+        margin-bottom: 20px; 
+    }
+
+    .payment-title {
+        font-size: 32px; 
+        margin-top: 100px;
+    }
+
+    .section-title {
+        font-size: 24px; 
+    }
+
+    .payment-input, .payment-input2 {
+        width: 100%; 
+        margin-right: 0; 
+        font-size: 18px;
+    }
+
+    .btn {
+        width: 100%; 
+        margin-left: 0; 
+    }
+}
