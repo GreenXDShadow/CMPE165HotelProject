@@ -1,7 +1,7 @@
 "use client";
 import './main.css';
 import HotelCard from './components/HotelCard';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -21,6 +21,16 @@ const Home = () => {
     // No functionality yet
   };
 
+  // Retrieve data from localStorage when the page loads
+  useEffect(() => {
+    const cachedHotelSearch = localStorage.getItem('saveHotelList');
+    if (cachedHotelSearch) {
+        console.log("Hotels taken from cache")
+        setHotels(JSON.parse(cachedHotelSearch));
+    }
+  }, []);
+
+
   const handleSearch = async (e) => {
     e.preventDefault();
     const data = {
@@ -33,8 +43,10 @@ const Home = () => {
     };
 
     try {
+      localStorage.setItem('searchData', JSON.stringify(data));
       const response = await axios.post('http://localhost:4000/search', data, {withCredentials: true});
-      console.log(response.data)
+      console.log("hotel_search: ", response.data)
+      localStorage.setItem('saveHotelList', JSON.stringify(response.data));
       setHotels(response.data);
     } catch (e) {
       console.log(e);
@@ -51,6 +63,10 @@ const Home = () => {
         image={hotel.image}
         start_date={startDate}
         end_date={endDate}
+        num_adults = {numAdults}
+        num_children = {numChildren}
+        num_rooms = {numRooms}
+        hotel_data = {hotel}
       />
     </div>
   ));
