@@ -254,6 +254,23 @@ def payment():
 
     except Exception as e:
         print(e)  
-@app.route('/confirmation',methods=['GET','POST'])
+
+@app.route('/confirmation', methods=['GET','POST'])
 def confirmation():
     return jsonify({'Message': 'purchase confirmed'},200)
+
+@app.route('/user', methods=['GET','POST'])
+def user():
+    if 'user_id' not in session:
+        return jsonify({'message': 'User not logged in!'}), 401
+
+    user = User.query.filter_by(user_id=session['user_id']).first()
+    bookings = Booking.query.filter_by(user_id=session['user_id']).order_by(desc(Booking.booking_id)).all()
+    
+    if bookings:
+        user_dict = {key: value for key, value in user.__dict__.items() if not key.startswith('_')}
+        booking_dicts = [{key: value for key, value in b.__dict__.items() if not key.startswith('_')} for b in bookings]
+        print(booking_dicts)
+        return jsonify({'user': user_dict, 'upcoming_bookings': booking_dicts, 'recent_bookings': {}}), 200
+    else:
+        return jsonify([{}])
