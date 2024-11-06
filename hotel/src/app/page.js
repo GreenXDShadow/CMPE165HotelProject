@@ -14,10 +14,28 @@ const Home = () => {
   const [numChildren, setNumChildren] = useState('');
   const [numRooms, setNumRooms] = useState('');
   const [hotelsList, setHotels] = useState([]);
+
+  const [breakfastIncluded, setBreakfastIncluded] = useState(false);
+  const [parkingIncluded, setParkingIncluded] = useState(false);
+  const [rating, setRating] = useState('');
+  const [bedType, setBedType] = useState('');
+
   const todaysDate = new Date();
+
   const handleContactSubmit = (event) => {
     event.preventDefault();
     // No functionality yet
+  };
+
+  const handleApplyFilters = () => {
+
+    // NEEDS IMPLEMENTATION
+    console.log("Filters Applied: ");
+    console.log("Breakfast Included:", breakfastIncluded);
+    console.log("Parking Included:", parkingIncluded);
+    console.log("Rating:", rating);
+    console.log("Bed Type:", bedType);
+    
   };
 
   // Retrieve data from localStorage when the page loads
@@ -167,8 +185,69 @@ const Home = () => {
           </div>
 
           <button type="submit" className="searchButton">Search</button>
+
+
+          {/* Filters row */}
+          <div className="filters-row">
+            <label>
+              <input
+                type="checkbox"
+                checked={breakfastIncluded}
+                onChange={(e) => setBreakfastIncluded(e.target.checked)}
+              />
+              Breakfast Included
+              <div className="vertical-line2"></div>
+            </label>
+
+            <label>
+              <input
+                type="checkbox"
+                checked={parkingIncluded}
+                onChange={(e) => setParkingIncluded(e.target.checked)}
+              />
+              Parking Included
+              <div className="vertical-line2"></div>
+            </label>
+
+            <label>
+              Rating:
+              <select value={rating} onChange={(e) => setRating(e.target.value)}>
+                <option value="">Any</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+              </select>
+              <div className="vertical-line2"></div>
+            </label>
+
+            <label>
+              Bed Type:
+              <select value={bedType} onChange={(e) => setBedType(e.target.value)}>
+                <option value="">Any</option>
+                <option value="king">King</option>
+                <option value="queen">Queen</option>
+                <option value="twin">Twin</option>
+              </select>
+            </label>
+
+              
+            <button type="button" className="apply-filters-button" onClick={handleApplyFilters}>
+              Apply Filters
+            </button>
+          </div>
+
+          
         </form>
       </div>
+
+
       <div className='search-results'>
         {renderHotels}
       </div>
