@@ -660,7 +660,62 @@ display: block;
 .guest-icon {
   width: 32px; 
   height: auto; 
-  margin-bottom: 6px;
+  margin-bottom: 5px;
   margin-top: 14px;
 }
 /* -------------------------------------------------- */
+
+
+.filters-row {
+  display: flex;
+  align-items: center;
+  gap: 40px; 
+  margin-top: -40px;
+  flex-wrap: wrap; 
+  margin-bottom: 80px;
+}
+
+.filters-row label {
+  display: flex;
+  align-items: center;
+  font-size: 18px;
+  font-family: 'Crimson Text', serif;
+  cursor: pointer;
+}
+
+.filters-row select {
+  margin-left: 14px;
+  margin-right: 10px;
+  font-family: 'Crimson Text', serif;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.filters-row input[type="checkbox"] {
+  margin-right: 10px;
+  width: auto; 
+  box-shadow: none;
+  transform: translateY(-9px);
+  cursor: pointer;
+}
+
+.apply-filters-button {
+  background-color: #CDC379; 
+  color: white; 
+  border: none;
+  cursor: pointer;
+  border-radius: 10px; 
+  font-size: 16px;
+  padding: 10px;
+  margin-left: 10px;
+  margin-bottom: 12px;
+  width: 150px;
+  box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.3); 
+}
+
+.vertical-line2 {
+  width: 1px; 
+  height: 20px; 
+  background-color: gray; 
+  margin-left: 40px;
+}
