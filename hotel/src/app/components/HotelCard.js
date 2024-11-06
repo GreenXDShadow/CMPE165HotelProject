@@ -9,7 +9,6 @@ export default function HotelCard({ id, name, description, image, rating, start_
   const handleHotelInfo = (e) => {
     e.preventDefault();
     localStorage.setItem('hotelData', JSON.stringify(hotel_data));
-    console.log(start_date)
     navigate.push(`/hotelinfo/${id}?start_date=${start_date}&end_date=${end_date}&num_adults=${num_adults}&num_children=${num_children}&num_rooms=${num_rooms}`)
   }
   
@@ -19,7 +18,7 @@ export default function HotelCard({ id, name, description, image, rating, start_
         <div className="vertical-line"></div>
         <div className="hotel-info">
           <h2>{name}</h2>
-          <p>Cheapest Rate For mYour Stay: ${description}</p>
+          <p>Cheapest Rate For Your Stay: ${description}</p>
           <p>Rating: {rating}</p>
           <button className="bookButton" onClick={handleHotelInfo}>Learn More</button>
         </div>

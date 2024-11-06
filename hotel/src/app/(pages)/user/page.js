@@ -6,11 +6,14 @@ import '../.././globals.css'
 import Image from 'next/image'
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useRouter } from 'next/navigation';  // Import the useRouter hook
 
 export default function user() {
     const [user, setUser] = useState([]);
     const [upcoming_bookings, setUBookings] = useState([]);
     const [recent_bookings, setRBookings] = useState([]);
+
+    const router = useRouter();  // Initialize the router
 
     useEffect(() => {
         axios.get('http://localhost:4000/user', { withCredentials: true })
@@ -24,6 +27,11 @@ export default function user() {
             console.error('Error fetching data: ', error);
         });
     }, [])
+
+    const handleViewPress = async (e, id) => {
+        e.preventDefault();
+        router.push(`/reservation?id=${id}`)
+    }
 
     return (
         <>
@@ -44,12 +52,11 @@ export default function user() {
                 </div>
                 {Array.isArray(upcoming_bookings) && upcoming_bookings.length > 0 ? (
                     upcoming_bookings.map((b, index) => (
-                        <div key={index} className="content-container">
+                        <div key={b.booking_id} className="content-container">
                             <h3>{b.hotel_name}</h3>
                             <p>{b.check_in_time}</p>
                             <p>{b.nights}</p>
-                            <button className='bookButton' style={{marginTop: '0px', marginBottom: '5px', marginLeft: '10px', marginRight: '5px', background: 'grey'}}>View</button>
-                            <button className='bookButton' style={{marginTop: '0px', marginBottom: '5px', marginLeft: '10px', marginRight: '5px', background: 'grey'}}>Change</button>
+                            <button className='bookButton' onClick={(e) => handleViewPress(e, b.booking_id)} style={{marginTop: '0px', marginBottom: '5px', marginLeft: '10px', marginRight: '5px', background: 'grey'}}>View</button>
                         </div>
                     ))
                 ) : (
@@ -70,18 +77,6 @@ export default function user() {
                     ) : (
                         <p>No recent completed stays.</p>
                     )}
-                    {/* <div className='content-container'>
-                        <h3>Hilton Apple Valley</h3>
-                        <p>3 nights</p>
-                    </div>
-                    <div className='content-container'>
-                        <h3>Mariott Cupertino</h3>
-                        <p>4 nights</p>
-                    </div>
-                    <div className='content-container'>
-                        <h3>Hyatt San Jose Airport</h3>
-                        <p>1 night</p>
-                    </div> */}
                 <button className='bookButton' style={{background: 'maroon', marginLeft: '0px', marginRight: '0px'}}>Logout</button>
             </div>
         </>
