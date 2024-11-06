@@ -24,8 +24,7 @@ const HotelInfo = () => {
     const [prevHotelData, setPrevHotelData] = useState({})
     const [roomsList, setRooms] = useState([]);
     const todaysDate = new Date();
-
-    console.log(id)
+    console.log(startDate)
 
     // Retrieve data from localStorage when the page loads
     useEffect(() => {
@@ -34,11 +33,11 @@ const HotelInfo = () => {
             console.log("Received data about the selected hotel")
             setPrevHotelData(JSON.parse(hasPrevHotel))
         }
-        const roomsFound = localStorage.getItem('saveRoomList');
-        if (roomsFound) {
-            setRooms(JSON.parse(roomsFound))
-            console.log("Rooms taken from cache")
-        }
+        // const roomsFound = localStorage.getItem('saveRoomList');
+        // if (roomsFound) {
+        //     setRooms(JSON.parse(roomsFound))
+        //     console.log("Rooms taken from cache")
+        // }
     }, []);
 
     useEffect(() => {
@@ -46,15 +45,21 @@ const HotelInfo = () => {
             console.log(startDate)
             axios.get(`http://localhost:4000/hotel/${id}?start_date=${startDate}&end_date=${endDate}&num_adults=${numAdults}&num_children=${numChildren}&num_rooms=${numRooms}`)
             .then((response) => {
-                console.log(response.data + " hotelinfo page")
+                console.log("hotel_info page", response.data)
+                console.log("Hotel Page Start Date", startDate)
                 setHotelDetails(response.data);
                 setRooms(response.data.rooms);
+                localStorage.setItem('saveRoomList', JSON.stringify(response.data.rooms));
             })
             .catch((error) => {
                 console.error('Error fetching data: ', error);
             });
         }
     }, [id])
+
+    const handleSearch = async (e) => {
+        e.preventDefault();
+      };
 
     const formData = {
         arrival_date: startDate,
@@ -99,6 +104,79 @@ const HotelInfo = () => {
                     <p className='title'>Check Out Time</p>
                     <p id="checkout">{prevHotelData.checkout_end}</p>
                 </div>
+
+                {/* <div className="search-container">
+                <form onSubmit={handleSearch} className="search">
+                <div className="calendar">
+                    <div className="date-picker-wrapper">
+                    <p className="date-label">From:</p>
+                    <DatePicker
+                        id="start-date"
+                        minDate={todaysDate}
+                        className="calendar-input-first"
+                        selected={startDate}
+                        onChange={(date) => setStartDate(date)}
+                    />
+                    </div>
+                    <div className="date-picker-wrapper">
+                    <p className="date-label">To:</p>
+                    <DatePicker
+                        id="end-date"
+                        minDate={startDate}
+                        className="calendar-input"
+                        selected={endDate}
+                        onChange={(date) => setEndDate(date)}
+                    />
+                    </div>
+                    <div className="date-picker-wrapper">
+                    <img src="/guestIcon.png" alt="Guests" className="guest-icon" />
+                        <div className="dropdown">
+                        <button className="dropdown-button"> Guests</button>
+                        <div className="dropdown-content">
+                        <p> Number of adults:</p>
+                        <input
+                            type="number"
+                            name="adult-guests"
+                            placeholder="2"
+                            min="1"
+                            max="20"
+                            className="guest-input"
+                            value={numAdults}
+                            onChange={(e) => setNumAdults(e.target.value)}
+                        />
+                        <br />
+                        <p> Number of children: </p>
+                        <input
+                            type="number"
+                            name="child-guests"
+                            placeholder="0"
+                            min="0"
+                            max="20"
+                            className="guest-input"
+                            value={numChildren}
+                            onChange={(e) => setNumChildren(e.target.value)}
+                        />
+                        <br />
+                        <p> Number of rooms:</p>
+                        <input
+                            type="number"
+                            name="room-qty"
+                            placeholder="1"
+                            min="1"
+                            max="4"
+                            className="guest-input"
+                            value={numRooms}
+                            onChange={(e) => setNumRooms(e.target.value)}
+                            onClick={(e) => e.stopPropagation()} // Stop click event from bubbling
+                        />
+                        </div>
+                    </div>
+                </div>
+                </div>
+
+                <button type="submit" className="searchButton">Search</button>
+                </form>
+                </div> */}
                 
                 <div className="map-container">
                 </div>

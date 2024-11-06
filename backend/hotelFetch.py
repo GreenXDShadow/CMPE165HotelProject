@@ -106,6 +106,10 @@ def room_search(hotel_id, arrival_date, depart_date, adult_qty, children_qty, ro
                     highlights.append(hl['translated_name'])
                 for fc in roomInfo[str(room_id)]['facilities']:
                     facilities.append(fc['name'])
+
+                image = 'https://cf.bstatic.com/xdata/images/hotel/max500/322605990.jpg?k=fbc8a6d0fae9fca3010fd62853ba4efc0a4f4f5489563ae09140890e8452941b&o='
+                if len(roomInfo[str(room_id)]['photos']) > 0:
+                    image = roomInfo[str(room_id)]['photos'][0]['url_original'], # single image of room, somewhat good quality
                 
                 room_details = {
                                 'room_id': room_id,
@@ -115,7 +119,7 @@ def room_search(hotel_id, arrival_date, depart_date, adult_qty, children_qty, ro
                                 'cost_before_extra': round(price_breakdown['net_amount']['value'], 2), # cost of booking before taxes and fees
                                 'extra': extra, # dictionary of the taxes and fees, key is the tax/fee description, value is the amount
                                 'total_cost': round(price_breakdown['all_inclusive_amount']['value'], 2), # total cost of booking, should add up to the sum of cost_before_extra and extra
-                                'image': roomInfo[str(room_id)]['photos'][0]['url_original'], # single image of room, somewhat good quality
+                                'image': image,
                                 'highlights': highlights, # list of advertised room features
                                 'facilities': facilities, # list of advertised room facilities
                                 'breakfast': r['mealplan'] # string of whether breakfast is included or costs money

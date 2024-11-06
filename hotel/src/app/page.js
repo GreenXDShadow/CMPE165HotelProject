@@ -15,7 +15,6 @@ const Home = () => {
   const [numRooms, setNumRooms] = useState('');
   const [hotelsList, setHotels] = useState([]);
   const todaysDate = new Date();
-
   const handleContactSubmit = (event) => {
     event.preventDefault();
     // No functionality yet
@@ -27,6 +26,16 @@ const Home = () => {
     if (cachedHotelSearch) {
         console.log("Hotels taken from cache")
         setHotels(JSON.parse(cachedHotelSearch));
+    }
+    const cachedForm = JSON.parse(localStorage.getItem('saveForm'));
+    if (cachedForm) {
+      console.log(cachedForm)
+      setLocation(cachedForm.location);
+      setStartDate(cachedForm.arrival_date);
+      setEndDate(cachedForm.depart_date);
+      setNumAdults(cachedForm.num_adults);
+      setNumChildren(cachedForm.num_children);
+      setNumRooms(cachedForm.num_rooms);
     }
   }, []);
 
@@ -43,11 +52,14 @@ const Home = () => {
     };
 
     try {
-      localStorage.setItem('searchData', JSON.stringify(data));
+      localStorage.setItem('saveForm', JSON.stringify(data));
       const response = await axios.post('http://localhost:4000/search', data, {withCredentials: true});
-      console.log("hotel_search: ", response.data)
-      localStorage.setItem('saveHotelList', JSON.stringify(response.data));
-      setHotels(response.data);
+      console.log("hotel_search: ", response.data.hotels)
+      console.log("form: ", response.data.processed_form_data)
+      localStorage.setItem('saveHotelList', JSON.stringify(response.data.hotels));
+      setHotels(response.data.hotels);
+      setStartDate(response.data.processed_form_data.arrival_date);
+      setEndDate(response.data.processed_form_data.depart_date);
     } catch (e) {
       console.log(e);
     }
@@ -147,6 +159,7 @@ const Home = () => {
                     className="guest-input"
                     value={numRooms}
                     onChange={(e) => setNumRooms(e.target.value)}
+                    onClick={(e) => e.stopPropagation()} // Stop click event from bubbling
                   />
                 </div>
               </div>

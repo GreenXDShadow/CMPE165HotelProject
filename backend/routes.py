@@ -95,8 +95,9 @@ def search():
         data = request.json  # Extracting JSON data from the request
         arrival_date = data.get("arrival_date").split('T')[0]
         depart_date = data.get("depart_date").split('T')[0]
-
-        print(data)
+        num_adults = request.args.get('num_adults')
+        num_children = request.args.get('num_children')
+        num_rooms = request.args.get('num_rooms')
 
         city_id = city_search(data.get('location')) # Get the and input into function for getting the id of the city searched
         
@@ -104,9 +105,11 @@ def search():
         # hotel_list = hotel_search(city_id, data.get('arrival_date').split('T')[0], data.get('depart_date').split('T')[0], data.get('num_adults'), data.get('num_children'), data.get('num_rooms'), "Price (Low To High)")
         
         # use this example variable below for now to run a default API call so that only input needed is the location, hotel_list will be used later on
-        example = hotel_search(city_id, "2024-12-18", "2024-12-20", "2", "1", "1", "Price (Low To High)")
+        example = hotel_search(city_id, arrival_date, depart_date, "2", "1", "1", "Price (Low To High)")
 
-        return jsonify(example)  # Returning list of hotels
+        data['arrival_date'] = arrival_date
+        data['depart_date'] = depart_date
+        return jsonify({'hotels': example, 'processed_form_data': data})  # Returning list of hotels + form data with jsonified/cleaner date values
     else:
         return 'False'  # Returning False as a response if the request method is not POST
     
@@ -129,6 +132,11 @@ def hotel(hotel_id):
             # review score and review word are already in the data returned for each hotel in hotel_search, can be passed when redirecting
             'rooms': room_search(hotel_id, "2024-12-18", "2024-12-20", "2", "1", "1")
         }
+        # data = {
+        #     'name': 'Test Hotel',
+        #     'address': '123 Help St',
+        #     'rooms': [{'room_id': 156509023, 'config': 'Superior Quadruple Room', 'recommended_for': 4, 'size_ft2': 108.0, 'cost_before_extra': 169.1, 'extra': {"You don't pay the cleaning fee thanks to Genius": 0, '17.70 % TAX': 29.93, 'total_extra': 29.93}, 'total_cost': 199.03, 'image': ('https://cf.bstatic.com/xdata/images/hotel/max500/322605971.jpg?k=8bfb505c9ce9e1373c2f0f30a55b83b45ece3b5fdc86391785e19ccde4095023&o=',), 'highlights': ['Free WiFi', 'Air conditioning', 'Attached bathroom'], 'facilities': ['Linens', 'Upper floors accessible by elevator', 'Toilet', 'Single-room AC for guest accommodation', 'Iron', 'Heating', 'Internet facilities', 'Towels', 'Wardrobe or closet', 'Free toiletries', 'Toilet paper', 'Wireless internet', 'Air conditioning', 'Bathtub or shower', 'Private bathroom', 'Hairdryer'], 'breakfast': 'There is no meal option with this room.'}, {'room_id': 156509024, 'config': 'Queen Room', 'recommended_for': 2, 'size_ft2': 108.0, 'cost_before_extra': 169.1, 'extra': {"You don't pay the cleaning fee thanks to Genius": 0, '17.70 % TAX': 29.93, 'total_extra': 29.93}, 'total_cost': 199.03, 'image': ('https://cf.bstatic.com/xdata/images/hotel/max500/445360743.jpg?k=5485cb1161751b5fdae0d2f118a86a556df60c6e09534f4ceb1acab4bb3690ff&o=',), 'highlights': ['Free WiFi', 'Air conditioning', 'Attached bathroom', 'Flat-screen TV'], 'facilities': ['TV', 'Linens', 'Upper floors accessible by elevator', 'Toilet', 'Flat-screen TV', 'Single-room AC for guest accommodation', 'Iron', 'Heating', 'Internet facilities', 'Towels', 'Wardrobe or closet', 'Free toiletries', 'Toilet paper', 'Wireless internet', 'Air conditioning', 'Bathtub or shower', 'Private bathroom', 'Hairdryer'], 'breakfast': 'There is no meal option with this room.'}, {'room_id': 156509027, 'config': 'Superior Twin Room', 'recommended_for': 2, 'size_ft2': 108.0, 'cost_before_extra': 169.1, 'extra': {"You don't pay the cleaning fee thanks to Genius": 0, '17.70 % TAX': 29.93, 'total_extra': 29.93}, 'total_cost': 199.03, 'image': ('https://cf.bstatic.com/xdata/images/hotel/max500/322605919.jpg?k=3fc7de4540423f309c88407c22cb49684f901e8ded8207693368100c1c11e1b8&o=',), 'highlights': ['Free WiFi', 'Air conditioning', 'Attached bathroom', 'Flat-screen TV'], 'facilities': ['TV', 'Linens', 'Upper floors accessible by elevator', 'Toilet', 'Flat-screen TV', 'Single-room AC for guest accommodation', 'Iron', 'Heating', 'Internet facilities', 'Towels', 'Wardrobe or closet', 'Free toiletries', 'Toilet paper', 'Wireless internet', 'Air conditioning', 'Bathtub or shower', 'Private bathroom', 'Hairdryer'], 'breakfast': 'There is no meal option with this room.'}, {'room_id': 156509025, 'config': 'King Room', 'recommended_for': 2, 'size_ft2': 183.0, 'cost_before_extra': 197.6, 'extra': {"You don't pay the cleaning fee thanks to Genius": 0, '17.70 % TAX': 34.98, 'total_extra': 34.98}, 'total_cost': 232.58, 'image': ('https://cf.bstatic.com/xdata/images/hotel/max500/322605990.jpg?k=fbc8a6d0fae9fca3010fd62853ba4efc0a4f4f5489563ae09140890e8452941b&o=',), 'highlights': ['Free WiFi', 'Air conditioning', 'Attached bathroom', 'Flat-screen TV'], 'facilities': ['TV', 'Linens', 'Upper floors accessible by elevator', 'Toilet', 'Flat-screen TV', 'Single-room AC for guest accommodation', 'Iron', 'Heating', 'Internet facilities', 'Towels', 'Wardrobe or closet', 'Free toiletries', 'Toilet paper', 'Wireless internet', 'Air conditioning', 'Bathtub or shower', 'Private bathroom', 'Hairdryer'], 'breakfast': 'There is no meal option with this room.'}]
+        # }
 
         print(data)
         return jsonify(data), 200
@@ -150,8 +158,8 @@ def booking():
         payment_id = session['payment_id']
         hotel_id = data['hotel_data'].get('hotel_id')
         hotel_name = data['hotel_data'].get('name')
-        check_in_start = data['form_data'].get('arrival_date')
-        check_out_time = data['form_data'].get('depart_date')
+        check_in_start = data['form_data'].get('arrival_date').split('T')[0]
+        check_out_time = data['form_data'].get('depart_date').split('T')[0]
         email = user.email
         first_name = user.first_name
         last_name = user.last_name
@@ -254,6 +262,42 @@ def payment():
 
     except Exception as e:
         print(e)  
-@app.route('/confirmation',methods=['GET','POST'])
+
+@app.route('/confirmation', methods=['GET','POST'])
 def confirmation():
     return jsonify({'Message': 'purchase confirmed'},200)
+
+@app.route('/user', methods=['GET','POST'])
+def user():
+    if 'user_id' not in session:
+        return jsonify({'message': 'User not logged in!'}), 401
+
+    user = User.query.filter_by(user_id=session['user_id']).first()
+    bookings = Booking.query.filter_by(user_id=session['user_id']).order_by(desc(Booking.booking_id)).all()
+    
+    if bookings:
+        user_dict = {key: value for key, value in user.__dict__.items() if not key.startswith('_')}
+        booking_dicts = [{key: value for key, value in b.__dict__.items() if not key.startswith('_')} for b in bookings]
+        print(booking_dicts)
+        return jsonify({'user': user_dict, 'upcoming_bookings': booking_dicts, 'recent_bookings': {}}), 200
+    else:
+        return jsonify([{}])
+    
+@app.route('/cancel', methods=['DELETE'])
+def cancel():
+    if 'user_id' not in session:
+        return jsonify({'message': 'User not logged in!'}), 401
+    
+    booking_id = request.args.get('id')
+    booking = Booking.query.filter_by(booking_id=booking_id).first()
+    
+    if booking:
+        booking.canceled = 1
+        # db.session.delete(booking)
+        db.session.commit()
+        print(booking_id, "deleted")
+        return '', 204
+    else:
+        print("Booking not found")
+        return '', 204
+    
