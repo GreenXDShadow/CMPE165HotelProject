@@ -12,14 +12,13 @@ export default function RoomCard({roomData, hotelData, formData}) {
   
   const handleBookPress = async (e) => {
     e.preventDefault();
-    console.log("pressed")
+    console.log("Booking requested")
     try {
         const response = await axios.post('http://localhost:4000/booking', {
             hotel_data: hotelData,
             room_data: roomData,
             form_data: formData
         }, { withCredentials: true });
-        console.log('Booking successful:', response.data);
         if(response.status === 200){
             NotificationManager.success('Hotel booked successfully');
             console.log(response.data)
@@ -29,6 +28,9 @@ export default function RoomCard({roomData, hotelData, formData}) {
         }
         if(response.status === 401) {
             NotificationManager.error('You must be logged in to book a hotel');
+        }
+        if (response.status === 202) {
+            console.log("Overlapping Booking");
         }
     } catch (error) {
         console.error('Error booking hotel:', error);

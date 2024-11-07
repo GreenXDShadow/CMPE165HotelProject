@@ -146,11 +146,11 @@ def hotel(hotel_id):
 @app.route('/booking', methods=['POST'])
 def booking():
     if request.method == "POST":
-        data = request.get_json()
-            
         if 'user_id' not in session:
             print("user_id not in session")
             return jsonify({'message': 'User not logged in!'}), 401
+        
+        data = request.get_json()
         
         user = User.query.filter_by(user_id=session['user_id']).first()
 
@@ -171,7 +171,14 @@ def booking():
         # check_in_date = datetime.strptime(check_in_start, '%Y-%m-%d')
         # check_out_date = datetime.strptime(check_out_time, '%Y-%m-%d')
         # nights = (check_out_date - check_in_date).days
-    
+
+        bookings = Booking.query.filter_by(user_id=session['user_id']).filter(Booking.check_out_time >= datetime.today()).all()
+        print(str(datetime.today()).split(' ')[0])
+        print(bookings)
+        for b in bookings:
+            if b.check_out_time >= check_in_start:
+                print(b.booking_id)
+                return jsonify({'message': 'Failed to book!'}), 202
 
         new_booking = Booking(
             user_id=user_id,
