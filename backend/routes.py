@@ -157,44 +157,51 @@ def booking():
         user_id = session['user_id']
         payment_id = session['payment_id']
         hotel_id = data['hotel_data'].get('hotel_id')
+        room_id = data['room_data'].get('room_id')
         hotel_name = data['hotel_data'].get('name')
-        check_in_start = data['form_data'].get('arrival_date').split('T')[0]
-        check_out_time = data['form_data'].get('depart_date').split('T')[0]
+        room_configuration = data['room_data'].get('config')
+        arrival_date = data['form_data'].get('arrival_date').split('T')[0]
+        departure_date = data['form_data'].get('depart_date').split('T')[0]
+        nights = (datetime.strptime(departure_date, '%Y-%m-%d')-datetime.strptime(arrival_date, '%Y-%m-%d')).days
+        num_adults = data['form_data'].get('num_adults')
+        num_children = data['form_data'].get('num_children')
+        num_rooms = data['form_data'].get('num_rooms')
         email = user.email
         first_name = user.first_name
         last_name = user.last_name
-        beds = 2
-        pricing_per_night = data['room_data'].get('cost_before_extra') #arbitrary value for now
-        cost = data['room_data'].get('total_cost')
+        cost_before_extra = data['room_data'].get('cost_before_extra')
+        extra = cost_before_extra*0.25 + 2.5
+        total = cost_before_extra+extra
         canceled = 0
-    
-        # check_in_date = datetime.strptime(check_in_start, '%Y-%m-%d')
-        # check_out_date = datetime.strptime(check_out_time, '%Y-%m-%d')
-        # nights = (check_out_date - check_in_date).days
 
-        bookings = Booking.query.filter_by(user_id=session['user_id']).filter(Booking.check_out_time >= datetime.today()).all()
+        bookings = Booking.query.filter_by(user_id=session['user_id']).filter(Booking.departure_date >= datetime.today()).all() # only check bookings that haven't passed
         print(str(datetime.today()).split(' ')[0])
         print(bookings)
         for b in bookings:
-            if b.check_out_time >= check_in_start:
+            if b.departure_date >= arrival_date:
                 print(b.booking_id)
                 return jsonify({'message': 'Failed to book!'}), 202
 
         new_booking = Booking(
+            #booking_id set automatically
             user_id=user_id,
-            payment_id=payment_id,
             hotel_id=hotel_id,
+            room_id = room_id,
             hotel_name=hotel_name,
-            room_and_floor= data['room_data'].get('config'),
-            check_in_time=check_in_start,
-            check_out_time=check_out_time,
+            room_configuration= room_configuration,
+            arrival_date=arrival_date,
+            departure_date=departure_date,
+            num_nights=nights,
+            num_adults=num_adults,
+            num_children=num_children,
+            num_rooms=num_rooms,
             email=email,
             first_name=first_name,
             last_name=last_name,
-            beds=beds,
-            nights=2,
-            pricing_per_night=pricing_per_night,
-            cost=cost,
+            cost_before_extra=cost_before_extra,
+            extra=extra,
+            total=total,
+            payment_id=payment_id,
             canceled=canceled
         )
 
@@ -220,15 +227,15 @@ def booking_details():
         data = [{
             'hotel_id': booking.hotel_id,
             'hotel_name': booking.hotel_name,
-            'check_in_time': booking.check_in_time,
-            'check_out_time': booking.check_out_time,
-            'room_config': booking.room_and_floor,
-            'pricing_per_night': booking.pricing_per_night,
-            'cost': booking.pricing_per_night+22+2.5,
-            'tax': 0.25, # arbitrary value for now
-            'guests': 2, # arbitrary value for now
+            'arrival_date': booking.arrival_date,
+            'departure_date': booking.departure_date,
+            'room_configuration': booking.room_configuration,
+            'cost_before_extra': booking.cost_before_extra,
             'convenience_fee': 2.50, # arbitrary value for now
-            'reward_points': round(booking.pricing_per_night*.06,0)
+            'tax': 0.25, # arbitrary value for now
+            'total': booking.total, # convenience fee already accounted for in booking logic
+            'guests': str(booking.num_adults) + " adult(s) & " + str(booking.num_children) + " child(ren)",
+            'reward_points': round(booking.cost_before_extra*.06,0)
         }]
         return jsonify(data), 200
     else:
@@ -246,14 +253,12 @@ def payment():
         fee = 100  # website fee
         tax = 0.25 # constant sales tax percentage
 
-        print(booking.pricing_per_night)
-        print(booking.nights)
         # price per night and nights from database mutiplied together = cost for all nights + fee
-        cost = (booking.pricing_per_night * booking.nights) + fee
+        cost_before_extra = booking.cost_before_extra + fee
 
-        adjusted_tax = cost * tax
+        adjusted_tax = cost_before_extra * tax
 
-        total = cost + adjusted_tax
+        total = cost_before_extra + adjusted_tax
 
         new_purchase = Purchase(
             payment_id = session['payment_id'],
@@ -299,8 +304,8 @@ def cancel():
     booking = Booking.query.filter_by(booking_id=booking_id).first()
     
     if booking:
-        booking.canceled = 1
-        # db.session.delete(booking)
+        # booking.canceled = 1
+        db.session.delete(booking)
         db.session.commit()
         print(booking_id, "deleted")
         return '', 204

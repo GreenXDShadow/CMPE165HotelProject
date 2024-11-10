@@ -29,6 +29,11 @@ export default function reservation() {
         router.push(`/cancel?id=${id}`)
     }
 
+    const handleEditPress = async (e) => {
+        e.preventDefault();
+        router.push(`/edit/${bookingDetails.hotel_id}?edit=${bookingDetails.room_id}=&start_date=${bookingDetails.arrival_date}&end_date=${bookingDetails.departure_date}&num_adults${bookingDetails.num_adults}&num_children=${bookingDetails.num_children}&num_rooms=${bookingDetails.num_rooms}`)
+    }
+
     return (
         <>
             <div className='navbar'></div>
@@ -56,11 +61,11 @@ export default function reservation() {
                     </div>
                     <div className='item-container'>
                         <p>Check-in: </p>
-                        <p id='check-in-date-time'>{bookingDetails.check_in_time}</p>
+                        <p id='check-in-date-time'>{bookingDetails.arrival_date}</p>
                     </div>
                     <div className='item-container'>
                         <p>Room Type: </p>
-                        <p id='room-type'>{bookingDetails.room_config}</p>
+                        <p id='room-type'>{bookingDetails.room_configuration}</p>
                     </div>
                     <div className='item-container'>
                         <p>Payment: </p>
@@ -74,7 +79,7 @@ export default function reservation() {
                 <div classname='button-container'>
                     <button className='bookButton' onClick={() => router.back()}>Back</button>
                     <button className='cancelButton' onClick={handleCancelPress}>Cancel</button>
-                    <button className='editButton'>Edit...</button>
+                    <button className='editButton' onClick={handleEditPress}>Edit...</button>
                 </div>
             </div> 
         </>

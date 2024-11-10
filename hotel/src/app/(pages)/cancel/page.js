@@ -46,23 +46,23 @@ export default function reservation() {
                     </div>
                     <div className='item-container'>
                         <p>Check-in: </p>
-                        <p id='check-in-date-time'>{bookingDetails.check_in_time}</p>
+                        <p id='check-in-date-time'>{bookingDetails.arrival_date}</p>
                     </div>
                     <div className='item-container'>
                         <p>Room Type: </p>
-                        <p id='room-type'>{bookingDetails.room_config}</p>
+                        <p id='room-type'>{bookingDetails.room_configuration}</p>
                     </div>
                     <div className='item-container'>
                         <p>Payment: </p>
                         <p id='payment'>AMEX 0945</p>
                     </div>
                     <div className='item-container'>
-                        <p>Booking Cost: </p>
-                        <p id='address'>${bookingDetails.cost}</p>
+                        <p>Base Booking Cost: </p>
+                        <p id='address'>${bookingDetails.cost_before_extra}</p>
                     </div>
                     <div className='item-container'>
                         <p>Cancellation Cost: </p>
-                        <p id='address'>${bookingDetails.cost * 0.1}</p>
+                        <p id='address'>${bookingDetails.cost_before_extra * 0.1}</p>
                     </div>
                 </div>
                 <div classname='button-container'>

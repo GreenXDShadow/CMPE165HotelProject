@@ -40,16 +40,16 @@ export default function Payment() {
                             {Array.isArray(bookingDetails) && bookingDetails.length > 0 ? (
                                 bookingDetails.map((detail, index) => (
                                     <div key={index} className="booking-detail">
-                                        <p>Check-in date: {detail.check_in_time}</p>
-                                        <p>Check-out date: {detail.check_out_time}</p>
+                                        <p>Check-in date: {detail.arrival_date}</p>
+                                        <p>Check-out date: {detail.departure_date}</p>
                                         <p>Hotel: {detail.hotel_name}</p>
                                         <p>Guests: {detail.guests}</p>
                                         {/* <p>Room and floor: {detail.room_and_floor}</p> */}
-                                        <p>Room Configuration: {detail.room_config}</p>
-                                        <p>Price: {detail.pricing_per_night}</p>
+                                        <p>Room Configuration: {detail.room_configuration}</p>
+                                        <p>Price: {detail.cost_before_extra}</p>
                                         <p>Tax: {detail.tax}</p>
                                         <p>Convenience Fee: {detail.convenience_fee}</p>
-                                        <p>Total: {detail.cost}</p>
+                                        <p>Total: {detail.total}</p>
                                         <p className="booking-id">Booking ID: {index}</p>
                                     </div>
                                 ))
