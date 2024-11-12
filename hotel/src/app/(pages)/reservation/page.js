@@ -9,12 +9,12 @@ import { NotificationManager, NotificationContainer } from 'react-notifications'
 import 'react-notifications/lib/notifications.css'
 
 export default function reservation() {
-    const id = useSearchParams().get('id');
+    const booking_id = useSearchParams().get('id');
     const [bookingDetails, setBookingDetails] = useState([]);
     const router = useRouter();  // Initialize the router
 
     useEffect(() => {
-        axios.get('http://localhost:4000/booking_details', { withCredentials: true })
+        axios.get(`http://localhost:4000/booking_details/${booking_id}`, { withCredentials: true })
         .then((response) => {
             console.log(response.data);
             setBookingDetails(response.data[0]);
@@ -26,12 +26,12 @@ export default function reservation() {
 
     const handleCancelPress = async (e) => {
         e.preventDefault();
-        router.push(`/cancel?id=${id}`)
+        router.push(`/cancel?id=${booking_id}`)
     }
 
     const handleEditPress = async (e) => {
         e.preventDefault();
-        router.push(`/edit/${bookingDetails.hotel_id}?edit=${bookingDetails.room_id}=&start_date=${bookingDetails.arrival_date}&end_date=${bookingDetails.departure_date}&num_adults${bookingDetails.num_adults}&num_children=${bookingDetails.num_children}&num_rooms=${bookingDetails.num_rooms}`)
+        router.push(`/edit/${bookingDetails.hotel_id}?edit=${bookingDetails.booking_id}&start_date=${bookingDetails.arrival_date}&end_date=${bookingDetails.departure_date}&num_adults=${bookingDetails.num_adults}&num_children=${bookingDetails.num_children}&num_rooms=${bookingDetails.num_rooms}`)
     }
 
     return (
@@ -57,7 +57,7 @@ export default function reservation() {
                     </div>
                     <div className='item-container'>
                         <p>Confirmation Number: </p>
-                        <p id='confirmation-number'>{id}</p>
+                        <p id='confirmation-number'>{booking_id}</p>
                     </div>
                     <div className='item-container'>
                         <p>Check-in: </p>

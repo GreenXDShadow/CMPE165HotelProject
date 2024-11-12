@@ -55,7 +55,7 @@ export default function user() {
                         <div key={b.booking_id} className="content-container">
                             <h3>{b.hotel_name}</h3>
                             <p>{b.arrival_date}</p>
-                            <p>{b.nights}</p>
+                            <p>{b.num_nights}</p>
                             <button className='bookButton' onClick={(e) => handleViewPress(e, b.booking_id)} style={{marginTop: '0px', marginBottom: '5px', marginLeft: '10px', marginRight: '5px', background: 'grey'}}>View</button>
                         </div>
                     ))
@@ -70,7 +70,7 @@ export default function user() {
                             <div key={index} className="content-container">
                                 <h3>{b.hotel_name}</h3>
                                 <p>{b.arrival_date}</p>
-                                <p>{b.nights}</p>
+                                <p>{b.num_nights}</p>
                                 <button className='bookButton' style={{marginTop: '0px', marginBottom: '5px', marginLeft: '10px', marginRight: '5px', background: 'grey'}}>View</button>
                             </div>
                         ))

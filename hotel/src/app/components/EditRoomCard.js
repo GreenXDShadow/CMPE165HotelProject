@@ -6,7 +6,7 @@ import { NotificationManager, NotificationContainer } from 'react-notifications'
 import 'react-notifications/lib/notifications.css'
 
 
-export default function EditRoomCard({roomData, hotelData, formData, cancel}) {
+export default function EditRoomCard({roomData, hotelData, formData}) {
 
   const router = useRouter();  // Initialize the router
   
@@ -14,7 +14,7 @@ export default function EditRoomCard({roomData, hotelData, formData, cancel}) {
     e.preventDefault();
     console.log("Booking requested")
     try {
-        const response = await axios.post('http://localhost:4000/booking', {
+        const response = await axios.post('http://localhost:4000/edit', {
             hotel_data: hotelData,
             room_data: roomData,
             form_data: formData
@@ -23,7 +23,7 @@ export default function EditRoomCard({roomData, hotelData, formData, cancel}) {
             NotificationManager.success('Hotel booked successfully');
             console.log(response.data)
             setTimeout(() => {
-                window.location.href = '/payment'
+                window.location.href = `/payment?id=${hotelData.booking_id}` // id set to a specific booking_id means the payment page fetches a specific booking (for showing an edited reservation)
             }, 1500) // 1.5 second delay before redirecting to the payment page
         }
         if(response.status === 401) {

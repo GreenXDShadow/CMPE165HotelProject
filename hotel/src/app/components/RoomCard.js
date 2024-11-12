@@ -23,7 +23,7 @@ export default function RoomCard({roomData, hotelData, formData}) {
             NotificationManager.success('Hotel booked successfully');
             console.log(response.data)
             setTimeout(() => {
-                window.location.href = '/payment'
+                window.location.href = '/payment?id=0' // id=0 means the payment page fetches info for the new booking 
             }, 1500) // 1.5 second delay before redirecting to the payment page
         }
         if(response.status === 401) {

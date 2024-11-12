@@ -2,9 +2,11 @@
 
 import './payment.css';
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import axios from 'axios';
 
 export default function Payment() {
+    const booking_id = useSearchParams().get('id');
     const [cardnum, setCardnum] = useState('');
     const [cvc, setCVC] = useState('');
     const [expire, setExpire] = useState('');
@@ -17,7 +19,7 @@ export default function Payment() {
     };
 
     useEffect(() => {
-        axios.get('http://localhost:4000/booking_details', { withCredentials: true })
+        axios.get(`http://localhost:4000/booking_details/${booking_id}`, { withCredentials: true }) // booking_id = 0 tells backend to return latest entry for adding a new reservation, any other value is returns the specific booking (when editing reservations)
         .then((response) => {
             console.log(response.data);
             setBookingDetails(response.data);
@@ -50,7 +52,7 @@ export default function Payment() {
                                         <p>Tax: {detail.tax}</p>
                                         <p>Convenience Fee: {detail.convenience_fee}</p>
                                         <p>Total: {detail.total}</p>
-                                        <p className="booking-id">Booking ID: {index}</p>
+                                        {/* <p className="booking-id">Booking ID: {index}</p> */}
                                     </div>
                                 ))
                             ) : (
