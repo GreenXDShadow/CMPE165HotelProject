@@ -38,6 +38,25 @@ const Home = () => {
     
   };
 
+  function formatDate(d) {
+    const months = {
+      Jan: "01",
+      Feb: "02",
+      Mar: "03",
+      Apr: "04",
+      May: "05",
+      Jun: "06",
+      Jul: "07",
+      Aug: "08",
+      Sep: "09",
+      Oct: "10",
+      Nov: "11",
+      Dec: "12"
+    };
+    const splitD = d.toString().split(" ");
+    return splitD[3] + "-" + months[splitD[1]] + "-" +  splitD[2];j
+  };
+
   // Retrieve data from localStorage when the page loads
   useEffect(() => {
     const cachedHotelSearch = localStorage.getItem('saveHotelList');
@@ -49,8 +68,14 @@ const Home = () => {
     if (cachedForm) {
       console.log(cachedForm)
       setLocation(cachedForm.location);
-      setStartDate(cachedForm.arrival_date);
-      setEndDate(cachedForm.depart_date);
+
+      const a_date = new Date(cachedForm.arrival_date)
+      const d_date = new Date(cachedForm.departure_date)
+      a_date.setDate(a_date.getDate()+1) // Date() is stupid and returns the day before the actual date so we need to correct it with an offset
+      d_date.setDate(d_date.getDate()+1)
+      setStartDate(a_date);
+      setEndDate(d_date);
+
       setNumAdults(cachedForm.num_adults);
       setNumChildren(cachedForm.num_children);
       setNumRooms(cachedForm.num_rooms);
@@ -62,27 +87,27 @@ const Home = () => {
     e.preventDefault();
     const data = {
       location,
-      arrival_date: startDate,
-      depart_date: endDate,
+      arrival_date: formatDate(startDate),
+      departure_date: formatDate(endDate),
       num_adults: numAdults,
       num_children: numChildren,
       num_rooms: numRooms
     };
 
     try {
+      console.log(data);
       localStorage.setItem('saveForm', JSON.stringify(data));
       const response = await axios.post('http://localhost:4000/search', data, {withCredentials: true});
       console.log("hotel_search: ", response.data.hotels)
-      console.log("form: ", response.data.processed_form_data)
       localStorage.setItem('saveHotelList', JSON.stringify(response.data.hotels));
       setHotels(response.data.hotels);
-      setStartDate(response.data.processed_form_data.arrival_date);
-      setEndDate(response.data.processed_form_data.depart_date);
     } catch (e) {
       console.log(e);
     }
   };
 
+  const splitArrival = startDate.toString().split(" ");
+  const splitDeparture = endDate.toString().split(" ");
   const renderHotels = hotelsList.map((hotel) => (
     <div className="hotel-list" key={hotel.hotel_id}>
       <HotelCard
@@ -91,8 +116,8 @@ const Home = () => {
         description={hotel.cost_before_extra}
         rating={`${hotel.review_score}/10 (${hotel.rating})`}
         image={hotel.image}
-        start_date={startDate}
-        end_date={endDate}
+        start_date={formatDate(startDate)}
+        end_date={formatDate(endDate)}
         num_adults = {numAdults}
         num_children = {numChildren}
         num_rooms = {numRooms}
@@ -125,7 +150,7 @@ const Home = () => {
                 minDate={todaysDate}
                 className="calendar-input-first"
                 selected={startDate}
-                onChange={(date) => setStartDate(date)}
+                onChange={(date) => {setStartDate(date); console.log(date)}}
               />
             </div>
             <div className="date-picker-wrapper">

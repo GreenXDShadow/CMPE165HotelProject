@@ -32,17 +32,21 @@ class Booking(db.Model):
     booking_id = db.Column('Booking ID', db.Integer, primary_key=True)
     user_id = db.Column('User ID', db.Integer, db.ForeignKey('Users.User ID'), nullable=False)
     hotel_id = db.Column('Hotel ID', db.Integer, nullable=False)
+    room_id = db.Column('Room ID', db.Integer, nullable=False)
     hotel_name = db.Column('Hotel Name', db.String, nullable=False)
-    room_and_floor = db.Column('Room and Floor', db.String)  # Room number and floor number
-    check_in_time = db.Column('Check In Start', db.String)  # No need for check-in ending time
-    check_out_time = db.Column('Check Out Time', db.String)
+    room_configuration = db.Column('Room Configuration', db.String)  # Room number and floor number
+    arrival_date= db.Column('Arrival Date', db.String)  # No need for check-in ending time
+    departure_date = db.Column('Departure Date', db.String)
+    num_nights = db.Column('# of Nights', db.Integer)
+    num_adults = db.Column('# of Adults', db.Integer)
+    num_children = db.Column('# of Children', db.Integer)
+    num_rooms = db.Column('# of Rooms', db.Integer)
     email = db.Column('Email', db.String, nullable=False)
     first_name = db.Column('First Name', db.String, nullable=False)
     last_name = db.Column('Last Name', db.String, nullable=False)
-    beds = db.Column('Beds', db.Integer)   # Count is type String to include bed type, 1 King bed would be 1K, 2 Queens is 2Q
-    nights = db.Column('Nights', db.Integer)
-    pricing_per_night = db.Column('Pricing', db.Float)
-    cost = db.Column('Cost', db.Float)
+    cost_before_extra = db.Column('Cost', db.Float)
+    extra = db.Column('Extra', db.Float)
+    total = db.Column('Total', db.Float)
     payment_id = db.Column('Payment ID', db.String, db.ForeignKey('Payment Info.Payment ID'))
     canceled = db.Column('Canceled', db.Integer)  # may be used to keep record of canceled reservations 
 

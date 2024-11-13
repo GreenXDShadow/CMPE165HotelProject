@@ -24,7 +24,6 @@ const HotelInfo = () => {
     const [prevHotelData, setPrevHotelData] = useState({})
     const [roomsList, setRooms] = useState([]);
     const todaysDate = new Date();
-    console.log(startDate)
 
     // Retrieve data from localStorage when the page loads
     useEffect(() => {
@@ -42,7 +41,6 @@ const HotelInfo = () => {
 
     useEffect(() => {
         if (id) {
-            console.log(startDate)
             axios.get(`http://localhost:4000/hotel/${id}?start_date=${startDate}&end_date=${endDate}&num_adults=${numAdults}&num_children=${numChildren}&num_rooms=${numRooms}`)
             .then((response) => {
                 console.log("hotel_info page", response.data)
@@ -61,9 +59,10 @@ const HotelInfo = () => {
         e.preventDefault();
       };
 
+    // no need to format date because it takes from parameter which is not a Date() string
     const formData = {
         arrival_date: startDate,
-        depart_date: endDate,
+        departure_date: endDate,
         num_adults: numAdults,
         num_children: numChildren,
         num_rooms: numRooms

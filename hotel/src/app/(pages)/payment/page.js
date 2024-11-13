@@ -2,11 +2,13 @@
 
 import './payment.css';
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import axios from 'axios';
 import { NotificationContainer, NotificationManager } from 'react-notifications'; // Importing NotificationContainer and NotificationManager from 'react-notifications'
 import 'react-notifications/lib/notifications.css'
 
 export default function Payment() {
+    const booking_id = useSearchParams().get('id');
     const [cardnum, setCardnum] = useState('');
     const [cvc, setCVC] = useState('');
     const [expire, setExpire] = useState('');
@@ -42,7 +44,8 @@ export default function Payment() {
     }
     // end zander rewards above
     useEffect(() => {
-        axios.get('http://localhost:4000/booking_details',{ withCredentials: true })
+        axios.get(`http://localhost:4000/booking_details/${booking_id}`, { withCredentials: true }) // booking_id = 0 tells backend to return latest entry for adding a new reservation, any other value is returns the specific booking (when editing reservations)
+
         .then((response) => {
             console.log(response.data);
             setBookingDetails(response.data);
@@ -65,17 +68,17 @@ export default function Payment() {
                             {Array.isArray(bookingDetails) && bookingDetails.length > 0 ? (
                                 bookingDetails.map((detail, index) => (
                                     <div key={index} className="booking-detail">
-                                        <p>Check-in date: {detail.check_in_time}</p>
-                                        <p>Check-out date: {detail.check_out_time}</p>
+                                        <p>Check-in date: {detail.arrival_date}</p>
+                                        <p>Check-out date: {detail.departure_date}</p>
                                         <p>Hotel: {detail.hotel_name}</p>
                                         <p>Guests: {detail.guests}</p>
                                         {/* <p>Room and floor: {detail.room_and_floor}</p> */}
-                                        <p>Room Configuration: {detail.room_config}</p>
-                                        <p>Price: {detail.pricing_per_night}</p>
+                                        <p>Room Configuration: {detail.room_configuration}</p>
+                                        <p>Price: {detail.cost_before_extra}</p>
                                         <p>Tax: {detail.tax}</p>
                                         <p>Convenience Fee: {detail.convenience_fee}</p>
-                                        <p>Total: {detail.cost}</p>
-                                        <p className="booking-id">Booking ID: {index}</p>
+                                        <p>Total: {detail.total}</p>
+                                        {/* <p className="booking-id">Booking ID: {index}</p> */}
                                     </div>
                                 ))
                             ) : (

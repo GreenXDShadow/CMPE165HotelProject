@@ -93,23 +93,21 @@ def registration():
 def search():
     if request.method == 'POST':  # Checking if the request method is POST
         data = request.json  # Extracting JSON data from the request
-        arrival_date = data.get("arrival_date").split('T')[0]
-        depart_date = data.get("depart_date").split('T')[0]
+        arrival_date = data.get("arrival_date")
+        departure_date = data.get("departure_date")
         num_adults = request.args.get('num_adults')
         num_children = request.args.get('num_children')
         num_rooms = request.args.get('num_rooms')
 
         city_id = city_search(data.get('location')) # Get the and input into function for getting the id of the city searched
         
-        # use the function call below when we're demoing/using the finished website to actually search with the form parameters
-        # hotel_list = hotel_search(city_id, data.get('arrival_date').split('T')[0], data.get('depart_date').split('T')[0], data.get('num_adults'), data.get('num_children'), data.get('num_rooms'), "Price (Low To High)")
+        # # use the function call below when we're demoing/using the finished website to actually search with the form parameters
+        # # hotel_list = hotel_search(city_id, data.get('arrival_date').split('T')[0], data.get('departure_date').split('T')[0], data.get('num_adults'), data.get('num_children'), data.get('num_rooms'), "Price (Low To High)")
         
-        # use this example variable below for now to run a default API call so that only input needed is the location, hotel_list will be used later on
-        example = hotel_search(city_id, arrival_date, depart_date, "2", "1", "1", "Price (Low To High)")
+        # # use this example variable below for now to run a default API call so that only input needed is the location, hotel_list will be used later on
+        example = hotel_search(city_id, arrival_date, departure_date, "2", "1", "1", "Price (Low To High)")
 
-        data['arrival_date'] = arrival_date
-        data['depart_date'] = depart_date
-        return jsonify({'hotels': example, 'processed_form_data': data})  # Returning list of hotels + form data with jsonified/cleaner date values
+        return jsonify({'hotels': example})  # Returning list of hotels + form data with jsonified/cleaner date values
     else:
         return 'False'  # Returning False as a response if the request method is not POST
     
@@ -146,48 +144,62 @@ def hotel(hotel_id):
 @app.route('/booking', methods=['POST'])
 def booking():
     if request.method == "POST":
-        data = request.get_json()
-            
         if 'user_id' not in session:
             print("user_id not in session")
             return jsonify({'message': 'User not logged in!'}), 401
+        
+        data = request.get_json()
         
         user = User.query.filter_by(user_id=session['user_id']).first()
 
         user_id = session['user_id']
         payment_id = session['payment_id']
         hotel_id = data['hotel_data'].get('hotel_id')
+        room_id = data['room_data'].get('room_id')
         hotel_name = data['hotel_data'].get('name')
-        check_in_start = data['form_data'].get('arrival_date').split('T')[0]
-        check_out_time = data['form_data'].get('depart_date').split('T')[0]
+        room_configuration = data['room_data'].get('config')
+        arrival_date = data['form_data'].get('arrival_date').split('T')[0]
+        departure_date = data['form_data'].get('departure_date').split('T')[0]
+        nights = (datetime.strptime(departure_date, '%Y-%m-%d')-datetime.strptime(arrival_date, '%Y-%m-%d')).days
+        num_adults = data['form_data'].get('num_adults')
+        num_children = data['form_data'].get('num_children')
+        num_rooms = data['form_data'].get('num_rooms')
         email = user.email
         first_name = user.first_name
         last_name = user.last_name
-        beds = 2
-        pricing_per_night = data['room_data'].get('cost_before_extra') #arbitrary value for now
-        cost = data['room_data'].get('total_cost')
+        cost_before_extra = data['room_data'].get('cost_before_extra')
+        extra = cost_before_extra*0.25 + 2.5
+        total = cost_before_extra+extra
         canceled = 0
-    
-        # check_in_date = datetime.strptime(check_in_start, '%Y-%m-%d')
-        # check_out_date = datetime.strptime(check_out_time, '%Y-%m-%d')
-        # nights = (check_out_date - check_in_date).days
-    
+
+        bookings = Booking.query.filter_by(user_id=session['user_id']).filter(Booking.departure_date >= datetime.today()).all() # only check bookings that haven't passed
+        print(str(datetime.today()).split(' ')[0])
+        print(bookings)
+        for b in bookings:
+            if b.departure_date > arrival_date and b.arrival_date < departure_date:
+                print("Overlapping with", b.booking_id)
+                return jsonify({'message': 'Overlapping Booking!'}), 202
 
         new_booking = Booking(
+            #booking_id set automatically
             user_id=user_id,
-            payment_id=payment_id,
             hotel_id=hotel_id,
+            room_id = room_id,
             hotel_name=hotel_name,
-            room_and_floor= data['room_data'].get('config'),
-            check_in_time=check_in_start,
-            check_out_time=check_out_time,
+            room_configuration= room_configuration,
+            arrival_date=arrival_date,
+            departure_date=departure_date,
+            num_nights=nights,
+            num_adults=num_adults,
+            num_children=num_children,
+            num_rooms=num_rooms,
             email=email,
             first_name=first_name,
             last_name=last_name,
-            beds=beds,
-            nights=2,
-            pricing_per_night=pricing_per_night,
-            cost=cost,
+            cost_before_extra=cost_before_extra,
+            extra=extra,
+            total=total,
+            payment_id=payment_id,
             canceled=canceled
         )
 
@@ -202,80 +214,80 @@ def booking():
     else:
         return jsonify({'message': 'Invalid request method!'}), 405
 
-@app.route('/booking_details', methods=['GET'])
-def booking_details():
+@app.route('/booking_details/<booking_id>', methods=['GET'])
+def booking_details(booking_id):
     if 'user_id' not in session:
         return jsonify({'message': 'User not logged in!'}), 401
-
-    booking = Booking.query.filter_by(user_id=session['user_id']).order_by(desc(Booking.booking_id)).first()
-
+    
+    if booking_id != "0":
+        booking = Booking.query.filter_by(booking_id=booking_id).first() # find specific booking (for the edit page)
+    else:
+        booking = Booking.query.filter_by(user_id=session['user_id']).order_by(desc(Booking.booking_id)).first() # find last booking (for the payment page)
+    
     if booking:
         data = [{
+            'booking_id': booking_id,
             'hotel_id': booking.hotel_id,
+            'room_id': booking.room_id,
             'hotel_name': booking.hotel_name,
-            'check_in_time': booking.check_in_time,
-            'check_out_time': booking.check_out_time,
-            'room_config': booking.room_and_floor,
-            'pricing_per_night': booking.pricing_per_night,
-            'cost': booking.pricing_per_night+22+2.5,
-            'tax': 0.25, # arbitrary value for now
-            'guests': 2, # arbitrary value for now
+            'arrival_date': booking.arrival_date,
+            'departure_date': booking.departure_date,
+            'room_configuration': booking.room_configuration,
+            'num_adults': booking.num_adults,
+            'num_children': booking.num_children,
+            'num_rooms': booking.num_rooms,
+            'cost_before_extra': booking.cost_before_extra,
             'convenience_fee': 2.50, # arbitrary value for now
-            'reward_points': round(booking.pricing_per_night*.06,0)
+            'tax': 0.25, # arbitrary value for now
+            'total': booking.total, # convenience fee already accounted for in booking logic
+            'guests': str(booking.num_adults) + " adult(s) & " + str(booking.num_children) + " child(ren)",
+            'reward_points': round(booking.cost_before_extra*.06,0)
         }]
         return jsonify(data), 200
     else:
         return jsonify({'message': 'No payment information found!'}), 404
 
-@app.route('/payment', methods=['GET', 'POST'])  # Defining a route for '/payment' with GET and POST methods
+@app.route('/payment', methods=['GET', 'POST'])
 def payment():
     try:
-        # would need a session['user_id'] to tie as a foreign key, then would make a new 'payment' by inserting the new info
-        # schema needs a way to track the actual payment payment not just the used payment information
-
         data = request.get_json()
         # get the booking the user just made on the previous page
         booking = Booking.query.filter_by(user_id=session['user_id']).first()
         fee = 100  # website fee
-        tax = 0.25 # constant sales tax percentage
-
+        tax = 0.25  # constant sales tax percentage
         
-        # price per night and nights from database mutiplied together = cost for all nights + fee
-        cost = (booking.pricing_per_night * booking.nights) + fee
-
-        
+        # price per night and nights from database multiplied together = cost for all nights + fee
+        cost_before_extra = booking.cost_before_extra + fee
 
         if 'user_id' not in session:
             return jsonify({'message': 'User not logged in!'}), 401
-        # to do
-        # if user logged in, then display account rewards points   
-                
-        
-        
-        # subtract input from account points and dollar amount from total
+
+        # Handle rewards points
         user = User.query.filter_by(user_id=session['user_id']).first()
         inputRewards = int(data['rewardsPoints'])
-        if(inputRewards <= user.reward_points):
+        
+        if inputRewards <= user.reward_points:
             newRewardsPoints = user.reward_points - inputRewards
             user.reward_points = newRewardsPoints
-            costAfterRewards = cost - (inputRewards/100.00) # total cost - $ amount from rewards redeemed
+            costAfterRewards = cost_before_extra - (inputRewards/100.00)  # total cost - $ amount from rewards redeemed
         else:
-            costAfterRewards = cost
+            costAfterRewards = cost_before_extra
 
+        # Calculate earned rewards points from this purchase
         earnedRewardsPoints = costAfterRewards/100
         currentRewardsPoints = user.reward_points
         user.reward_points = currentRewardsPoints + earnedRewardsPoints
         
+        # Calculate final total with tax
         adjusted_tax = costAfterRewards * tax
-
         total = costAfterRewards + adjusted_tax
 
         new_purchase = Purchase(
-            payment_id = session['payment_id'],
-            booking_id = booking.booking_id,
-            user_id = session['user_id'],
-            total = total,
-            service_fee = fee
+            payment_id=session['payment_id'],
+            booking_id=booking.booking_id,
+            user_id=session['user_id'],
+            total=total,
+            service_fee=fee
         )
 
         db.session.add(new_purchase)
@@ -283,7 +295,6 @@ def payment():
         return jsonify({'Message': 'Purchase confirmed'}), 200
 
     except Exception as e:
-
         print(e)
         return jsonify({'Message': 'Error'}, 404)
 @app.route('/confirmation',methods=['GET','POST'])
@@ -316,8 +327,8 @@ def cancel():
     booking = Booking.query.filter_by(booking_id=booking_id).first()
     
     if booking:
-        booking.canceled = 1
-        # db.session.delete(booking)
+        # booking.canceled = 1
+        db.session.delete(booking)
         db.session.commit()
         print(booking_id, "deleted")
         return '', 204
@@ -325,3 +336,83 @@ def cancel():
         print("Booking not found")
         return '', 204
     
+@app.route('/edit', methods=['POST'])
+def edit():
+    if request.method == "POST":
+        if 'user_id' not in session:
+            print("user_id not in session")
+            return jsonify({'message': 'User not logged in!'}), 401
+        
+        data = request.get_json()
+        
+        user = User.query.filter_by(user_id=session['user_id']).first()
+
+        user_id = session['user_id']
+        payment_id = session['payment_id']
+        hotel_id = data['hotel_data'].get('hotel_id')
+        room_id = data['room_data'].get('room_id')
+        booking_id = data['hotel_data'].get('booking_id')
+        booking = Booking.query.filter_by(booking_id=booking_id).first()
+        # hotel_name = data['hotel_data'].get('name')
+        room_configuration = data['room_data'].get('config')
+        arrival_date = data['form_data'].get('arrival_date').split('T')[0]
+        departure_date = data['form_data'].get('departure_date').split('T')[0]
+        nights = (datetime.strptime(departure_date, '%Y-%m-%d')-datetime.strptime(arrival_date, '%Y-%m-%d')).days
+        num_adults = data['form_data'].get('num_adults')
+        num_children = data['form_data'].get('num_children')
+        num_rooms = data['form_data'].get('num_rooms')
+        email = user.email
+        first_name = user.first_name
+        last_name = user.last_name
+        cost_before_extra = data['room_data'].get('cost_before_extra')
+        extra = cost_before_extra*0.25 + 2.5
+        total = cost_before_extra+extra
+        canceled = 0
+
+        
+        if booking:
+            try:
+                bookings = Booking.query.filter_by(user_id=session['user_id']).filter(Booking.departure_date >= datetime.today(), Booking.booking_id != booking_id).all() # only check bookings that haven't passed
+                for b in bookings:
+                    if b.departure_date > arrival_date and b.arrival_date < departure_date:
+                        print("Overlapping with", b.booking_id)
+                        return jsonify({'message': 'Overlapping Booking!'}), 202
+
+                hotel_name = booking.hotel_name
+                db.session.delete(booking)
+                db.session.commit()
+
+                new_booking = Booking(
+                    booking_id=booking_id, # previous booking was deleted so one can be assigned its id
+                    user_id=user_id,
+                    hotel_id=hotel_id,
+                    room_id = room_id,
+                    hotel_name=hotel_name,
+                    room_configuration= room_configuration,
+                    arrival_date=arrival_date,
+                    departure_date=departure_date,
+                    num_nights=nights,
+                    num_adults=num_adults,
+                    num_children=num_children,
+                    num_rooms=num_rooms,
+                    email=email,
+                    first_name=first_name,
+                    last_name=last_name,
+                    cost_before_extra=cost_before_extra,
+                    extra=extra,
+                    total=total,
+                    payment_id=payment_id,
+                    canceled=canceled
+                )
+                
+                db.session.add(new_booking)
+                db.session.commit()
+                return jsonify({'Message': 'Booking edited'}), 200
+            except Exception as e:
+                db.session.rollback()
+                print(e)
+                return jsonify({'message': 'Failed to book!', 'error': str(e)}), 500
+        else:
+            print("Booking not found")
+            return '', 204
+
