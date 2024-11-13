@@ -239,14 +239,36 @@ def payment():
         fee = 100  # website fee
         tax = 0.25 # constant sales tax percentage
 
-        print(booking.pricing_per_night)
-        print(booking.nights)
+        
         # price per night and nights from database mutiplied together = cost for all nights + fee
         cost = (booking.pricing_per_night * booking.nights) + fee
 
-        adjusted_tax = cost * tax
+        
 
-        total = cost + adjusted_tax
+        if 'user_id' not in session:
+            return jsonify({'message': 'User not logged in!'}), 401
+        # to do
+        # if user logged in, then display account rewards points   
+                
+        
+        
+        # subtract input from account points and dollar amount from total
+        user = User.query.filter_by(user_id=session['user_id']).first()
+        inputRewards = int(data['rewardsPoints'])
+        if(inputRewards <= user.reward_points):
+            newRewardsPoints = user.reward_points - inputRewards
+            user.reward_points = newRewardsPoints
+            costAfterRewards = cost - (inputRewards/100.00) # total cost - $ amount from rewards redeemed
+        else:
+            costAfterRewards = cost
+
+        earnedRewardsPoints = costAfterRewards/100
+        currentRewardsPoints = user.reward_points
+        user.reward_points = currentRewardsPoints + earnedRewardsPoints
+        
+        adjusted_tax = costAfterRewards * tax
+
+        total = costAfterRewards + adjusted_tax
 
         new_purchase = Purchase(
             payment_id = session['payment_id'],
@@ -258,12 +280,14 @@ def payment():
 
         db.session.add(new_purchase)
         db.session.commit()
-        return jsonify({'Message': 'Booking purchased'}, 200)
+        return jsonify({'Message': 'Purchase confirmed'}), 200
 
     except Exception as e:
-        print(e)  
 
-@app.route('/confirmation', methods=['GET','POST'])
+        print(e)
+        return jsonify({'Message': 'Error'}, 404)
+@app.route('/confirmation',methods=['GET','POST'])
+
 def confirmation():
     return jsonify({'Message': 'purchase confirmed'},200)
 
