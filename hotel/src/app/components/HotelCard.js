@@ -3,12 +3,13 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 import '../main.css'; 
 
-export default function HotelCard({ id, name, description, image, rating, start_date, end_date }) {
+export default function HotelCard({ id, name, description, image, rating, start_date, end_date, num_adults, num_children, num_rooms, hotel_data}) {
   const navigate = useRouter();
   
   const handleHotelInfo = (e) => {
     e.preventDefault();
-    navigate.push(`/hotelinfo/${id}?start_date=${start_date}&end_date=${end_date}`)
+    localStorage.setItem('hotelData', JSON.stringify(hotel_data));
+    navigate.push(`/hotelinfo/${id}?start_date=${start_date}&end_date=${end_date}&num_adults=${num_adults}&num_children=${num_children}&num_rooms=${num_rooms}`)
   }
   
   return (

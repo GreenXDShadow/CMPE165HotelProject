@@ -21,7 +21,7 @@ def city_search(location):
 
 # Get dest_id for city from city_search(), guest_qty is number of adults and room_qty is the number of rooms wanted
 # The hotel search API function still requires arrival+departure date and guest quanitities, which will be submitted by the user upon searching a city anyway
-def hotel_search(dest_id, arrival_date, depart_date, adult_qty, children_qty, room_qty):
+def hotel_search(dest_id, arrival_date, depart_date, adult_qty, children_qty, room_qty, sort_by):
     # dates must be in YYYY-MM-DD format 
 
     url = "https://apidojo-booking-v1.p.rapidapi.com/properties/v2/list"
@@ -33,7 +33,12 @@ def hotel_search(dest_id, arrival_date, depart_date, adult_qty, children_qty, ro
     hotel_dict = []
     for h in hotels['result']:
         if 'hotel_name' in h:
-            image = h['main_photo_url'] # images provided are very low quality, likely not usable but wanted to document it
+            image = h['main_photo_url'].replace("square60", "max500")
+            review_score = h['review_score']
+            rating = h['review_score_word']
+            if h['review_score'] is None: # account for properties without a rating
+                review_score = 0
+                rating = 'Not Yet Rated'
             h_details = {
                         'hotel_id': h['hotel_id'], # id of hotel as int
                         'name': h['hotel_name'], # name of hotel
@@ -45,14 +50,23 @@ def hotel_search(dest_id, arrival_date, depart_date, adult_qty, children_qty, ro
                         'total_cost': round(h['composite_price_breakdown']['all_inclusive_amount']['value'], 2), # total cost of cheapest room
                         'has_pool': 'has_swimming_pool' in h, # if has_pool isn't in the hotel dictionary, the hotel doesn't have a pool (has_pool is always 1 if present too) 
                         'breakfast_included': 'ribbon_text' in h, # ribbon_text is only ever 'Breakfast Included', so if the key is present breakfast must be included with any booking
-                        'rating': h['review_score_word'], # Booking.com rating description
-                        'review_score': h['review_score'], # Booking.com rating/review score
+                        'rating': rating, # Booking.com rating description
+                        'review_score': review_score, # Booking.com rating/review score
                         'longitude': h['longitude'],
                         'latitude': h['latitude'],
                         'image': image
                         }
             hotel_dict.append(h_details)
 
+    # default sorting is by popularity
+    if sort_by == 'Price (Low To High)':
+        hotel_dict = sorted(hotel_dict, key=lambda x: x['cost_before_extra'], reverse=False)
+    elif sort_by == 'Price (High To Low)':
+        hotel_dict = sorted(hotel_dict, key=lambda x: x['cost_before_extra'], reverse=True)
+    elif sort_by == 'Review Score (High To Low)':
+        hotel_dict = sorted(hotel_dict, key=lambda x: x['review_score'], reverse=True)
+    elif sort_by == 'Review Score (Low To High)':
+        hotel_dict = sorted(hotel_dict, key=lambda x: x['review_score'], reverse=False)
     return hotel_dict # returns list of hotels in area of the input location
 
 # Same parameters as hotel_search but this time it uses hotel_id to search for available rooms within hotels
@@ -92,16 +106,20 @@ def room_search(hotel_id, arrival_date, depart_date, adult_qty, children_qty, ro
                     highlights.append(hl['translated_name'])
                 for fc in roomInfo[str(room_id)]['facilities']:
                     facilities.append(fc['name'])
+
+                image = 'https://cf.bstatic.com/xdata/images/hotel/max500/322605990.jpg?k=fbc8a6d0fae9fca3010fd62853ba4efc0a4f4f5489563ae09140890e8452941b&o='
+                if len(roomInfo[str(room_id)]['photos']) > 0:
+                    image = roomInfo[str(room_id)]['photos'][0]['url_original'], # single image of room, somewhat good quality
                 
                 room_details = {
                                 'room_id': room_id,
                                 'config': r['name_without_policy'], # room configuration (won't specify if cancellable)
                                 'recommended_for': r['nr_adults'], # number of adults/people recommended for the room
-                                'size_ft2': round(r['room_surface_in_feet2'], 0), # room size
+                                'size_ft2': round(r['room_surface_in_feet2'], 0) if 'room_surface_in_feet2' in r else "Not Given", # room size
                                 'cost_before_extra': round(price_breakdown['net_amount']['value'], 2), # cost of booking before taxes and fees
                                 'extra': extra, # dictionary of the taxes and fees, key is the tax/fee description, value is the amount
                                 'total_cost': round(price_breakdown['all_inclusive_amount']['value'], 2), # total cost of booking, should add up to the sum of cost_before_extra and extra
-                                'image': roomInfo[str(room_id)]['photos'][0]['url_original'], # single image of room, somewhat good quality
+                                'image': image,
                                 'highlights': highlights, # list of advertised room features
                                 'facilities': facilities, # list of advertised room facilities
                                 'breakfast': r['mealplan'] # string of whether breakfast is included or costs money

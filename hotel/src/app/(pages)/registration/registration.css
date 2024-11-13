@@ -1,6 +1,6 @@
-.login-page{
+.registration-page{
     background-color: white;
-    margin-top: 83px;
+    margin-top: 100px;
 }
 
 .nav-container {
@@ -62,3 +62,40 @@ button {
 	background-color: white;
 	color: black;
 }
+
+@media (max-width: 680px) {
+	input {
+		width: 86px;
+		padding: 16px;
+		margin-top: 18px;
+		margin-right: 6px;
+		transform: translateY(-20px); 
+		font-size: 18px;
+	}	
+
+	input[type='email'],
+    input[type='password'],
+    input[type='cardnum'] {
+        width: 100%; 
+        max-width: 234px; 
+        padding: 16px; 
+        margin-top: 18px;
+		margin-right: 8px;
+        transform: translateY(-20px); 
+    }
+
+	.logo {
+		margin-top: 30px;
+	}
+
+	.form-container{
+		max-width:300px;
+		padding: 40px 18px;
+		border-radius: 20px;
+	}
+
+	button {
+		margin-top: 20px;
+	}
+}
+

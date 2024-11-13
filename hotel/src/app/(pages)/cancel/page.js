@@ -1,6 +1,6 @@
 "use client";
 import Image from 'next/image';
-import './reservation.css';
+import './cancel.css';
 import '../.././main.css';
 import React, { useState, useEffect } from 'react';
 import { useRouter, useParams, useSearchParams } from 'next/navigation';  // Import the useRouter hook
@@ -24,35 +24,25 @@ export default function reservation() {
         });
     }, [])
 
-    const handleCancelPress = async (e) => {
+    const handleConfirmPress = async (e) => {
         e.preventDefault();
-        router.push(`/cancel?id=${id}`)
+        console.log("Canceling")
+        NotificationManager.success('Booking Canceled');
+        axios.delete(`http://localhost:4000/cancel?id=${id}`, { withCredentials: true })
+        setTimeout(() => {
+            router.push(`/user`)
+        }, 1500) // 1.5 second delay before redirecting to the user page
     }
 
     return (
         <>
             <div className='navbar'></div>
             <div className="container">
-                <h1>Your Reservation</h1>
-                <div className="image-wrapper">
-                    <Image
-                        id="map-photo"
-                        className='image'
-                        src="/marriot.png"
-                        alt="reservation image"
-                        width="1366"
-                        height="768"
-                        style={{ width: '90%', height: 'auto', borderRadius: '0.5rem', minWidth: '350px' }}
-                    />
-                </div>
+                <h1>Cancel Booking #{id}</h1>
                 <div className='details-container'>
                     <div className='item-container'>
                         <p>Hotel: </p>
                         <p id='hotel-name'>{bookingDetails.hotel_name}</p>
-                    </div>
-                    <div className='item-container'>
-                        <p>Confirmation Number: </p>
-                        <p id='confirmation-number'>{id}</p>
                     </div>
                     <div className='item-container'>
                         <p>Check-in: </p>
@@ -67,14 +57,17 @@ export default function reservation() {
                         <p id='payment'>AMEX 0945</p>
                     </div>
                     <div className='item-container'>
-                        <p>Address: </p>
-                        <p id='address'>1 Alameden Dr. San Jose, CA.</p>
+                        <p>Booking Cost: </p>
+                        <p id='address'>${bookingDetails.cost}</p>
+                    </div>
+                    <div className='item-container'>
+                        <p>Cancellation Cost: </p>
+                        <p id='address'>${bookingDetails.cost * 0.1}</p>
                     </div>
                 </div>
                 <div classname='button-container'>
                     <button className='bookButton' onClick={() => router.back()}>Back</button>
-                    <button className='cancelButton' onClick={handleCancelPress}>Cancel</button>
-                    <button className='editButton'>Edit...</button>
+                    <button className='bookButton' onClick={handleConfirmPress}>Confirm</button>
                 </div>
             </div> 
         </>

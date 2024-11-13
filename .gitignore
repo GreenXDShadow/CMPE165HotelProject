@@ -4,3 +4,4 @@ node_modules/
 .swc/
 .*.env
 .DS_Store
+database.db
