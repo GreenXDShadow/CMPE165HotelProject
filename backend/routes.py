@@ -247,41 +247,58 @@ def booking_details(booking_id):
     else:
         return jsonify({'message': 'No payment information found!'}), 404
 
-@app.route('/payment', methods=['GET', 'POST'])  # Defining a route for '/payment' with GET and POST methods
+@app.route('/payment', methods=['GET', 'POST'])
 def payment():
     try:
-        # would need a session['user_id'] to tie as a foreign key, then would make a new 'payment' by inserting the new info
-        # schema needs a way to track the actual payment payment not just the used payment information
-
         data = request.get_json()
         # get the booking the user just made on the previous page
         booking = Booking.query.filter_by(user_id=session['user_id']).first()
         fee = 100  # website fee
-        tax = 0.25 # constant sales tax percentage
-
-        # price per night and nights from database mutiplied together = cost for all nights + fee
+        tax = 0.25  # constant sales tax percentage
+        
+        # price per night and nights from database multiplied together = cost for all nights + fee
         cost_before_extra = booking.cost_before_extra + fee
 
-        adjusted_tax = cost_before_extra * tax
+        if 'user_id' not in session:
+            return jsonify({'message': 'User not logged in!'}), 401
 
-        total = cost_before_extra + adjusted_tax
+        # Handle rewards points
+        user = User.query.filter_by(user_id=session['user_id']).first()
+        inputRewards = int(data['rewardsPoints'])
+        
+        if inputRewards <= user.reward_points:
+            newRewardsPoints = user.reward_points - inputRewards
+            user.reward_points = newRewardsPoints
+            costAfterRewards = cost_before_extra - (inputRewards/100.00)  # total cost - $ amount from rewards redeemed
+        else:
+            costAfterRewards = cost_before_extra
+
+        # Calculate earned rewards points from this purchase
+        earnedRewardsPoints = costAfterRewards/100
+        currentRewardsPoints = user.reward_points
+        user.reward_points = currentRewardsPoints + earnedRewardsPoints
+        
+        # Calculate final total with tax
+        adjusted_tax = costAfterRewards * tax
+        total = costAfterRewards + adjusted_tax
 
         new_purchase = Purchase(
-            payment_id = session['payment_id'],
-            booking_id = booking.booking_id,
-            user_id = session['user_id'],
-            total = total,
-            service_fee = fee
+            payment_id=session['payment_id'],
+            booking_id=booking.booking_id,
+            user_id=session['user_id'],
+            total=total,
+            service_fee=fee
         )
 
         db.session.add(new_purchase)
         db.session.commit()
-        return jsonify({'Message': 'Booking purchased'}, 200)
+        return jsonify({'Message': 'Purchase confirmed'}), 200
 
     except Exception as e:
-        print(e)  
+        print(e)
+        return jsonify({'Message': 'Error'}, 404)
+@app.route('/confirmation',methods=['GET','POST'])
 
-@app.route('/confirmation', methods=['GET','POST'])
 def confirmation():
     return jsonify({'Message': 'purchase confirmed'},200)
 

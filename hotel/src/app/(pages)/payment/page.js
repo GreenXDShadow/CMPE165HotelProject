@@ -4,6 +4,8 @@ import './payment.css';
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import axios from 'axios';
+import { NotificationContainer, NotificationManager } from 'react-notifications'; // Importing NotificationContainer and NotificationManager from 'react-notifications'
+import 'react-notifications/lib/notifications.css'
 
 export default function Payment() {
     const booking_id = useSearchParams().get('id');
@@ -11,15 +13,39 @@ export default function Payment() {
     const [cvc, setCVC] = useState('');
     const [expire, setExpire] = useState('');
     const [bookingDetails, setBookingDetails] = useState([]);
+    // zander rewards
+    const [rewardsPoints, setRewards] = useState('');
 
     const testID = 11235813; // test ID for the booking
 
     const handlePaymentInfo = (e) => {
         e.preventDefault();      
     };
-
+    // zander rewards below
+    const handleRewards = async(r) => {
+        r.preventDefault();
+        const data = {
+            rewardsPoints : rewardsPoints
+        }
+        console.log(data)
+        try{
+            const response = await axios.post('http://localhost:4000/payment', data, { withCredentials: true })
+            if(response.status === 200){ // Checking if the response data is equal to 'Success'
+                console.log("Help");
+                NotificationManager.success('Payment successful') // Updating the 'response' state variable with the success message
+                setTimeout(() => {
+                    window.location.href = '/confirmation' // Redirecting to the confirmation page after a delay
+                }, 1500)
+            }
+            else {}
+        }catch(r){
+            console.log(r)
+        }
+    }
+    // end zander rewards above
     useEffect(() => {
         axios.get(`http://localhost:4000/booking_details/${booking_id}`, { withCredentials: true }) // booking_id = 0 tells backend to return latest entry for adding a new reservation, any other value is returns the specific booking (when editing reservations)
+
         .then((response) => {
             console.log(response.data);
             setBookingDetails(response.data);
@@ -63,9 +89,10 @@ export default function Payment() {
 
                     {/* Payment Form and Login */}
                     <div className="right-column">
+                        {/* commented out guest checkout form
                         <div className="payment-form">
                             <h2 className="section-title">Payment Information</h2>
-                            {/* this should only be used for guest checkout */}
+                            {/* this should only be used for guest checkout 
                             <form onSubmit={handlePaymentInfo}>
                                 <div className="form-group">
                                     <input
@@ -104,12 +131,30 @@ export default function Payment() {
                                 </button>
                             </form>
                         </div>
+                         end of guest checkout form   */}
                         <div>
                             rewards
+                            Display current user rewards points
+                            1 point = $0.01
                         </div>
-                            <a href = "/confirmation">
-                                <button className="btn">Confirm purchase</button>
-                            </a>
+                        <div>
+                        <form onSubmit={handleRewards}>
+
+                            <input
+                                type="number"
+                                min = "0"
+                                max = "100000"
+                                className="redeem-amt"
+                                placeholder="points"
+                                value={rewardsPoints}
+                                onChange={(r) => setRewards(r.target.value)}
+                                required
+                            />
+                                
+                            <button type = "submit" className="btn">Confirm purchase and rewards</button>
+                                
+                        </form>
+                        </div>
                         <div className="login-section"> {/* this should all be hidden if the user is already logged in, we can just show a confirm button */}
                             <h2 className="section-title">You may also login to check out</h2>
                             <a href="/login">
@@ -119,6 +164,7 @@ export default function Payment() {
                     </div>
                 </div>
             </div>
+            <NotificationContainer />
         </div>
     );
 }
