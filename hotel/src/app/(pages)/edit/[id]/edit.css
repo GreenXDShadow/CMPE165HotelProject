@@ -1,0 +1,721 @@
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Text:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+
+.main {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background-image: url('/landing.png');
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+    color: white;
+    z-index: 1;
+}
+
+/* Dark overlay on the background image */
+.main::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5); 
+    z-index: -1; 
+}
+
+.content-wrapper {
+    background-color: white; 
+    padding: 20px;
+}
+
+.logo {
+    width: 500px; 
+    margin-right: 20px;
+}
+
+@media (max-width: 680px) {
+  .logo {
+    width: 340px; 
+    margin-right: 20px;
+    transform: translateY(-40px); 
+}
+}
+
+/* -------------------- Navbar -------------------- */
+.nav-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px;
+    background-color: #001C3F;
+    position: fixed; 
+    top: 0; 
+    left: 0;
+    right: 0;
+    z-index: 1000;
+  }
+  
+  .nav-container ul {
+    list-style-type: none; 
+    display: flex;
+    margin: 0; 
+    padding: 0; 
+  }
+  
+  .nav-container li {
+    margin: 0 15px; 
+  }
+  
+  .nav-button {
+    color: white; 
+    text-decoration: none; 
+    padding: 10px 20px;
+    font-family: 'Crimson Text', serif; 
+    font-size: 24px;
+  }
+  
+  .nav-logo {
+    display: block;
+    width: 60px; 
+    height: auto;
+    margin-left: 30px;
+  }
+
+  .nav-container-mobile {
+    display: none;
+  }
+  @media (max-width: 680px) {
+      .nav-container {
+        display: none;
+      }
+      @keyframes slide-in {
+        0% {top: -100%;}
+        100% {top: 0%}
+      }
+      @keyframes slide-out {
+        0% {top: 0%;}
+        100% {top: -100%}
+      }
+      @keyframes font-slide {
+        0% { opacity: 0; transform: translateX(-25px); }
+        100% { opacity: 1; transform: translateX(0px); }
+      }
+      .nav-container-mobile {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: fixed;
+        padding: 14px;
+        background-color: #001C3F;
+        top: 0;
+        left: 0;
+        right: 0;
+        margin: 0px;
+        z-index: 1000;
+      }
+      .overlay-hidden {
+        display: flex;
+        width: 100%;
+        height: 100%;
+        position: fixed;
+        background-color: #001C3F;
+        top: 0;
+        left: 0;
+        right: 0;
+        overflow: scroll;
+        animation: slide-in 0.375s ease-in-out;
+      }
+      .overlay-shown {
+        display: flex;
+        width: 100%;
+        height: 100%;
+        position: fixed;
+        background-color: #001C3F;
+        top: 0;
+        left: 0;
+        right: 0;
+        overflow: scroll;
+        animation: slide-out 0.375s ease-in-out;
+      }
+      .nav-button-mobile {
+        all: unset;
+        color: white; 
+        text-decoration: none; 
+        padding: 10px 20px;
+        font-family: 'Crimson Text', serif; 
+        font-size: 24px;
+        background: none;
+      }
+      .mobile-menu {
+        margin-top: 83px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .nav-button {
+        font-size: 3rem;
+        opacity: 0;
+        animation: font-slide 1s forwards;
+      }
+  }
+/* -------------------------------------------------- */
+
+/* ----------------- Buttons/Search ----------------- */
+Button {
+    transition: 0.3s;
+}
+
+Button:hover {
+    background-color: #F5F3DF;
+    color: #4a4a4a;
+}
+
+.main-buttons{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.button{
+    background-color: #f1f1f1;
+    border: none;
+    color: black;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: 0.3s;
+}
+
+.searchBar {
+    display: flex;
+    flex-direction: column; 
+    align-items: center; 
+    margin-top: 40px;
+    width: 100%; 
+}
+  
+.searchInput {
+    padding: 15px;
+    width: 75%;
+    max-width: 900px; 
+    border: none;
+    border-radius: 15px;
+    background-color: #F3F3F3;
+    color: black;
+    font-size: 16px;
+    box-shadow: 0px 20px 25px rgba(0, 0, 0, 0.3); 
+    padding-left: 20px;
+    margin-bottom: 40px; 
+}
+
+  .searchInput::placeholder {
+    color: #AEAEAE; 
+    opacity: 1; /* Ensure opacity is full */
+  }
+  
+  .searchButton {
+    padding: 10px 50px;
+    margin-left: 20px; 
+    background-color: #CDC379; 
+    color: white; 
+    border: none;
+    cursor: pointer;
+    border-radius: 10px; 
+    font-size: 18px;
+    font-weight: bold;
+    box-shadow: 0px 20px 15px rgba(0, 0, 0, 0.3); 
+    margin-bottom: 60px;
+    transition: 0.3s;
+  }
+  
+  h1 {
+    font-family: 'Crimson Text', serif;
+    font-size: 60px; 
+    margin-bottom: 10px;
+    color: white;
+  }
+
+    /* Media query for smaller devices */
+  @media (max-width: 680px) {
+    h1 {
+        font-size: 46px; 
+        transform: translateY(-40px); 
+    }
+  }
+
+  .infoText {
+    font-family: 'Crimson Text', serif;
+    font-size: 60px; 
+    color: black; 
+    margin-top: 60px; 
+    margin-bottom: 100px;
+}
+/* -------------------------------------------------- */
+
+/* -------------------- Footer --------------------------- */
+.footer {
+    background-color: #001C3F;
+    padding: 25px;
+    color: white;
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+    text-align: center; 
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 1400px; 
+    align-items: center;
+}
+
+.footer-left, .footer-right {
+    width: 50%; 
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+    text-align: center;  
+}
+
+.footer-logo {
+    width: 280px;
+    margin-bottom: 5px;
+}
+
+.footer-left p {
+    font-family: 'Crimson Text', serif;
+    font-size: 18px;
+    margin: 10px 0;
+}
+
+.footer-right p {
+    font-family: 'Inter', sans-serif;
+    font-size: 32px; 
+    font-weight: 400; 
+    margin-bottom: 20px;
+    color: white; 
+    text-align: center; 
+}
+
+.contact-form {
+    width: 60%;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center; 
+}
+
+.contact-input {
+    padding: 5px 10px;
+    font-family: 'Crimson Text', serif;
+    font-size: 16px;
+    border: none;
+    border-radius: 10px;
+    background-color: white;
+    color: #333;
+    width: 100%;
+}
+
+.contact-form textarea {
+    height: 80px; 
+}
+
+.contact-button {
+    padding: 10px 50px;
+    background-color: #CDC379;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-family: 'Crimson Text', serif;
+    font-size: 18px;
+    font-weight: bold;
+    box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.3);
+    transition: box-shadow 0.3s;
+}
+
+.mobile-hr {
+  border: none;
+  border-top: 1px solid white;
+  width: 90%; 
+  margin: 0 auto; 
+  margin-bottom: 15px; 
+  margin-top: 15px;
+  display: none; 
+}
+
+@media (max-width: 680px) {
+  .footer-content {
+      flex-direction: column; 
+      align-items: center; 
+  }
+
+  .footer-left, .footer-right {
+      width: 100%; 
+      margin-bottom: 40px;
+  }
+
+  .mobile-hr {
+    display: block; 
+  }
+}
+
+/* -------------------------------------------------- */
+
+/* -------------------- Hotel Card ------------------------------ */
+.hotel-card {
+    display: flex;
+    justify-content: center; 
+    margin-bottom: 140px;
+    padding: 20px;
+    gap: 20px; 
+  }
+  
+  .hotel-card-left {
+    display: flex;
+    align-items: center;
+    width: 35%; 
+  }
+  
+  .vertical-line {
+    width: 3px;
+    height: 210px;
+    background-color: black;
+    margin-right: 40px;
+    margin-top: 40px;
+  }
+  
+  .hotel-info {
+    flex: 1; 
+  }
+
+  .hotel-info h2 {
+    font-size: 48px;
+    font-family: 'Crimson Text', serif;
+    margin-bottom: 10px; 
+  }
+  
+  .hotel-info p {
+    margin-bottom: 18px; 
+    font-size: 20px;
+    font-family: 'Crimson Text', serif;
+  }
+  
+  .bookButton {
+    padding: 10px 50px;
+    margin-left: 20px; 
+    background-color: #CDC379; 
+    color: white; 
+    border: none;
+    cursor: pointer;
+    border-radius: 10px; 
+    font-size: 18px;
+    font-weight: bold;
+    box-shadow: 0px 20px 15px rgba(0, 0, 0, 0.3); 
+  }
+  
+  .hotel-card-right .hotel-image {
+    max-width: 500px;
+    height: 300;
+    border-radius: 5px;
+  }
+  
+/* -------------------- Home Page Search ------------------------------ */
+.search-page{
+  background-color: white;
+  margin-top: 82px;
+}
+
+.nav-container {
+  background-color: #001C3F;
+}
+
+.search-container {
+margin: auto;
+}
+
+.search {
+  display: flex;
+  flex-direction: column; 
+  align-items: center; 
+  margin-top: 40px;
+  width: 100%; 
+}
+
+.searchButton {
+  padding: 10px 50px;
+  background-color: #CDC379; 
+  color: white; 
+  border: none;
+  cursor: pointer;
+  border-radius: 10px; 
+  font-size: 18px;
+  box-shadow: 0px 20px 15px rgba(0, 0, 0, 0.3); 
+  margin-bottom: 140px;
+  margin-top: 30px;
+}
+
+input {
+margin-top: 40px;
+margin-bottom: 20px;
+padding: 16px;
+border-radius: 10px;
+border: none;
+font-family: 'Crimson Text', serif;
+font-size: 20px;
+color: black;
+width: 700px;
+box-shadow: 0px 20px 12px rgba(0, 0, 0, 0.3); 
+}
+
+@media (max-width: 680px) {
+  input {
+    width: 300px;
+    }
+}
+
+button {
+background-color: #CDC379;
+margin-top: 20px;
+width: 200px;
+border-radius: 10px;
+border: none;
+padding: 10px;
+font-family: 'Crimson Text', serif;
+font-size: 25px;
+color: white;
+box-shadow: 0px 20px 12px rgba(0, 0, 0, 0.3); 
+cursor: pointer;
+}
+
+/* p {
+font-family: 'Crimson Text', serif;
+font-size: 15px;
+}
+
+p, form {
+display: inline-block;
+} */
+
+.guest-input {
+border-radius: 5px;
+margin-top: 5px;
+margin-bottom: 5px;
+padding: 10px;
+border: none;
+font-family: 'Crimson Text', serif;
+font-size: 15px;
+color: black;
+width: 25px;
+box-shadow: 0px 10px 12px rgba(0, 0, 0, 0.3); 
+display: inline;
+}
+/* -------------------------------------------------- */
+
+/* -------------------- Calendar ------------------------------ */
+.calendar {
+  display: flex;
+}
+
+.calendar-input {
+  background-color: #F3F3F3;
+  margin-top: 5px;
+  width: 100px;
+  border-radius: 0px;
+  border-top: 3px solid #CDC379;   
+  border-right: 3px solid #CDC379;  
+  border-bottom: 3px solid #CDC379; 
+  padding: 10px;
+  font-family: 'Crimson Text', serif;
+  font-size: 15px;
+  color: black;
+  box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.3); 
+  cursor: pointer;
+}
+
+.calendar-input-first {
+  background-color: #F3F3F3;
+  margin-top: 5px;
+  width: 100px;
+  border-radius: 0px;
+  border: 3px solid #CDC379;    
+  padding: 10px;
+  font-family: 'Crimson Text', serif;
+  font-size: 15px;
+  color: black;
+  box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.3); 
+  cursor: pointer;
+}
+
+
+.calendar-input-first {
+  border-left: 3px solid #CDC379;   
+}
+
+@media (max-width: 680px) {
+  .calendar-input {
+      width: 72px; 
+  }
+
+  .calendar-input-first {
+    width: 72px;
+  }
+}
+
+.date-picker-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center; 
+  margin-top: 40px; 
+  margin-bottom: 0; 
+}
+
+.date-label {
+  font-family: 'Crimson Text', serif;
+  margin-bottom: 5px; 
+  font-size: 18px;
+}
+
+
+/* -------------------------------------------------- */
+
+/* -------------------- Dropdown Menu ------------------------------ */
+
+.dropdown-button {
+background-color: #F3F3F3;
+margin-top: 5px;
+width: 192px;
+border-radius: 0px;
+border-top: 3px solid #CDC379;   
+border-right: 3px solid #CDC379;  
+border-bottom: 3px solid #CDC379; 
+border-left: 1px solid #CDC379;  
+padding: 10px;
+font-family: 'Crimson Text', serif;
+font-size: 15px;
+color: black;
+box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.3); 
+cursor: pointer;
+position: relative;
+}
+
+@media (max-width: 680px) {
+  .dropdown-button {
+    width: 110px;
+    margin-top: 4px;
+  }
+}
+
+
+.dropdown-content {
+display: none;
+position: absolute;
+background-color: #F3F3F3;
+min-width: 160px;
+box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+padding: 12px 16px;
+z-index: 1;
+}
+
+@media (max-width: 680px) {
+  .dropdown-content {
+      min-width: 90px;
+      max-width:20vw;
+      box-shadow: 0px 4px 16px 0px rgba(0,0,0,0.2);
+      padding: 8px 10px;
+  }
+}
+
+.dropdown:hover .dropdown-content {
+display: block;
+}
+
+.dropdown-button::after {
+  content: "";
+  position: absolute;
+  right: 12px; 
+  top: 50%; 
+  transform: translateY(-50%); 
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid #4a4a4a; 
+}
+
+.guest-icon {
+  width: 32px; 
+  height: auto; 
+  margin-bottom: 5px;
+  margin-top: 14px;
+}
+/* -------------------------------------------------- */
+
+
+.filters-row {
+  display: flex;
+  align-items: center;
+  gap: 40px; 
+  margin-top: -40px;
+  flex-wrap: wrap; 
+  margin-bottom: 80px;
+}
+
+.filters-row label {
+  display: flex;
+  align-items: center;
+  font-size: 18px;
+  font-family: 'Crimson Text', serif;
+  cursor: pointer;
+}
+
+.filters-row select {
+  margin-left: 14px;
+  margin-right: 10px;
+  font-family: 'Crimson Text', serif;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.filters-row input[type="checkbox"] {
+  margin-right: 10px;
+  width: auto; 
+  box-shadow: none;
+  transform: translateY(-9px);
+  cursor: pointer;
+}
+
+.apply-filters-button {
+  background-color: #CDC379; 
+  color: white; 
+  border: none;
+  cursor: pointer;
+  border-radius: 10px; 
+  font-size: 16px;
+  padding: 10px;
+  margin-left: 10px;
+  margin-bottom: 12px;
+  width: 150px;
+  box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.3); 
+}
+
+.vertical-line2 {
+  width: 1px; 
+  height: 20px; 
+  background-color: gray; 
+  margin-left: 40px;
+}
