@@ -39,52 +39,59 @@ const Home = () => {
   };
 
   function formatDate(d) {
+    // Check if d exists, is a Date object, and is valid
+    if (!d || !(d instanceof Date) || isNaN(d.getTime())) {
+      return null;
+    }
+
     const months = {
-      Jan: "01",
-      Feb: "02",
-      Mar: "03",
-      Apr: "04",
-      May: "05",
-      Jun: "06",
-      Jul: "07",
-      Aug: "08",
-      Sep: "09",
-      Oct: "10",
-      Nov: "11",
-      Dec: "12"
+      // Reformatted for readability (nothing was wrong before)
+      Jan: "01", Feb: "02", Mar: "03", Apr: "04",
+      May: "05", Jun: "06", Jul: "07", Aug: "08",
+      Sep: "09", Oct: "10", Nov: "11", Dec: "12"
     };
     const splitD = d.toString().split(" ");
-    return splitD[3] + "-" + months[splitD[1]] + "-" +  splitD[2];j
+    return splitD[3] + "-" + months[splitD[1]] + "-" +  splitD[2];
   };
 
   // Retrieve data from localStorage when the page loads
   useEffect(() => {
+    // Handle hotels cache
     const cachedHotelSearch = localStorage.getItem('saveHotelList');
     if (cachedHotelSearch) {
         console.log("Hotels taken from cache")
         setHotels(JSON.parse(cachedHotelSearch));
     }
-    const cachedForm = JSON.parse(localStorage.getItem('saveForm'));
-    if (cachedForm) {
-      console.log(cachedForm)
-      setLocation(cachedForm.location);
 
-      const a_date = new Date(cachedForm.arrival_date)
-      const d_date = new Date(cachedForm.departure_date)
-      a_date.setDate(a_date.getDate()+1) // Date() is stupid and returns the day before the actual date so we need to correct it with an offset
-      d_date.setDate(d_date.getDate()+1)
-      setStartDate(a_date);
-      setEndDate(d_date);
+    // Handle form cache
+    try {
+        const cachedForm = JSON.parse(localStorage.getItem('saveForm'));
+        if (cachedForm) {
+            setLocation(cachedForm.location);
 
-      setNumAdults(cachedForm.num_adults);
-      setNumChildren(cachedForm.num_children);
-      setNumRooms(cachedForm.num_rooms);
+            //Set form fields from cache if not use defaults
+            setStartDate(new Date(cachedForm.arrival_date || new Date()));
+            setEndDate(new Date(cachedForm.departure_date || new Date()));
+            setNumAdults(cachedForm.num_adults);
+            setNumChildren(cachedForm.num_children);
+            setNumRooms(cachedForm.num_rooms);
+        }
+    } catch (error) {
+        console.error('Error loading cached form data:', error);
+        // If there's an error parsing, we just keep the default states
     }
-  }, []);
+}, []);
 
 
   const handleSearch = async (e) => {
     e.preventDefault();
+
+    // Validate dates before proceeding (extra precaution)
+    if (!startDate || !endDate || isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+      console.error('Invalid dates');
+      return;
+    }
+
     const data = {
       location,
       arrival_date: formatDate(startDate),
@@ -94,15 +101,16 @@ const Home = () => {
       num_rooms: numRooms
     };
 
-    try {
-      console.log(data);
-      localStorage.setItem('saveForm', JSON.stringify(data));
-      const response = await axios.post('http://localhost:4000/search', data, {withCredentials: true});
-      console.log("hotel_search: ", response.data.hotels)
-      localStorage.setItem('saveHotelList', JSON.stringify(response.data.hotels));
-      setHotels(response.data.hotels);
-    } catch (e) {
-      console.log(e);
+    // Only proceed if we have valid dates
+    if (data.arrival_date && data.departure_date) {
+      try {
+        localStorage.setItem('saveForm', JSON.stringify(data));
+        const response = await axios.post('http://localhost:4000/search', data, {withCredentials: true});
+        localStorage.setItem('saveHotelList', JSON.stringify(response.data.hotels));
+        setHotels(response.data.hotels);
+      } catch (e) {
+        console.log(e);
+      }
     }
   };
 
