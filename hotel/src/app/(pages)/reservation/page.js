@@ -38,7 +38,7 @@ export default function reservation() {
         <>
             <div className='navbar'></div>
             <div className="container">
-                <h1>Your Reservation</h1>
+            <div className="container-left">
                 <div className="image-wrapper">
                     <Image
                         id="map-photo"
@@ -50,6 +50,9 @@ export default function reservation() {
                         style={{ width: '90%', height: 'auto', borderRadius: '0.5rem', minWidth: '350px' }}
                     />
                 </div>
+            </div>
+            <div className="container-right">
+                <h1 style={{ color: 'black' }}>Your Reservation</h1>
                 <div className='details-container'>
                     <div className='item-container'>
                         <p>Hotel: </p>
@@ -72,8 +75,8 @@ export default function reservation() {
                         <p id='payment'>AMEX 0945</p>
                     </div>
                     <div className='item-container'>
-                        <p>Address: </p>
-                        <p id='address'>1 Alameden Dr. San Jose, CA.</p>
+                        <p>Guests: </p>
+                        <p id='guests'>{bookingDetails.guests}</p>
                     </div>
                 </div>
                 <div classname='button-container'>
@@ -82,6 +85,7 @@ export default function reservation() {
                     <button className='editButton' onClick={handleEditPress}>Edit...</button>
                 </div>
             </div> 
+            </div>
         </>
     );
 };

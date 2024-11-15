@@ -36,17 +36,18 @@ export default function user() {
     return (
         <>
             <div className='nav-bar-filler'></div>
-            <div className='container'>
+            <div className='user-page'>
+            <div className='top-container'>
                 <h1 id='name' style={{fontSize: '2.5rem', margin: '0px'}}>{user.first_name} {user.last_name}</h1>
-                <p id='membership-status'>Platinum Member</p>
-                <button className='bookButton' style={{marginTop: '5px', marginBottom: '5px', marginLeft: '0px', marginRight: '0px', background: 'grey'}}>Edit Profile</button>
-                <div className='content-container leading-title'>
-                    <h2>Points</h2>
-                </div>
-                    <div className='content-container'>
-                        <h3 id='points'>{user.reward_points}pts</h3>
-                        <p id='cumulative-nights'>12 nights total</p>
-                    </div>
+
+                <h2> Platinum Member </h2>
+                <p>Points: {user.reward_points}pts</p>
+                <button className='logoutButton'>Logout</button>
+                <button className='bookButton' style={{marginTop: '5px', marginBottom: '5px', marginLeft: '0px', marginRight: '0px', background: '#cdc379'}}>Edit Profile</button>
+                
+            </div>
+            <div className='column-container'>
+            <div className='left-container'>
                 <div className='content-container leading-title'>
                     <h2>Upcoming Booking</h2>
                 </div>
@@ -62,10 +63,15 @@ export default function user() {
                 ) : (
                     <p>No booking details available.</p>
                 )}
+
+            </div>
+            <div className='right-container'>
+                
                 <div className='content-container leading-title'>
                     <h2>Recent Stays</h2>
                 </div>
-                    {Array.isArray(recent_bookings) && recent_bookings.length > 0 ? (
+                
+                {Array.isArray(recent_bookings) && recent_bookings.length > 0 ? (
                         recent_bookings.map((b, index) => (
                             <div key={index} className="content-container">
                                 <h3>{b.hotel_name}</h3>
@@ -76,9 +82,11 @@ export default function user() {
                         ))
                     ) : (
                         <p>No recent completed stays.</p>
-                    )}
-                <button className='bookButton' style={{background: 'maroon', marginLeft: '0px', marginRight: '0px'}}>Logout</button>
+                )}
             </div>
+            </div>
+            </div>
+
         </>
     );
 };
