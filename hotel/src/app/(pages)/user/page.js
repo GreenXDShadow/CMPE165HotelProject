@@ -8,85 +8,136 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';  // Import the useRouter hook
 
-export default function user() {
-    const [user, setUser] = useState([]);
+export default function User() {
+    // Default user state to prevent null entries in Array
+    const [user, setUser] = useState({
+        first_name: '',
+        last_name: '',
+        reward_points: 0
+    });
     const [upcoming_bookings, setUBookings] = useState([]);
     const [recent_bookings, setRBookings] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     const router = useRouter();  // Initialize the router
 
     useEffect(() => {
+        setLoading(true);
         axios.get('http://localhost:4000/user', { withCredentials: true })
         .then((response) => {
-            console.log(response.data);
-            setUBookings(response.data.upcoming_bookings);
-            setRBookings(response.data.recent_bookings)
-            setUser(response.data.user);
+            console.log('User API Response:', response.data);
+            if (response.data && response.data.user) {
+                setUser(response.data.user);
+                setUBookings(response.data.upcoming_bookings || []);
+                setRBookings(response.data.recent_bookings || []);
+            }
         })
         .catch((error) => {
             console.error('Error fetching data: ', error);
+            setError(error.message);
+        })
+        .finally(() => {
+            setLoading(false);
         });
-    }, [])
+    }, []);
 
     const handleViewPress = async (e, id) => {
         e.preventDefault();
-        router.push(`/reservation?id=${id}`)
-    }
+        router.push(`/reservation?id=${id}`);
+    };
 
     return (
-        <>
+        <div className="page-container">
             <div className='nav-bar-filler'></div>
-            <div className='user-page'>
-            <div className='top-container'>
-                <h1 id='name' style={{fontSize: '2.5rem', margin: '0px'}}>{user.first_name} {user.last_name}</h1>
+            <div className='user-page' style={{ minHeight: '100vh', paddingBottom: '2rem' }}>
+                <div className='top-container'>
+                    <h1 style={{
+                        fontSize: '2.5rem',
+                        margin: '0px',
+                        color: 'white',  // Ensure text is visible
+                        textShadow: '2px 2px 4px rgba(0,0,0,0.5)'  // Add shadow for better visibility
+                    }}>
+                        {user.first_name} {user.last_name}
+                    </h1>
 
-                <h2> Platinum Member </h2>
-                <p>Points: {user.reward_points}pts</p>
-                <button className='logoutButton'>Logout</button>
-                <button className='bookButton' style={{marginTop: '5px', marginBottom: '5px', marginLeft: '0px', marginRight: '0px', background: '#cdc379'}}>Edit Profile</button>
-                
-            </div>
-            <div className='column-container'>
-            <div className='left-container'>
-                <div className='content-container leading-title'>
-                    <h2>Upcoming Booking</h2>
+                    <h2 style={{ color: 'white' }}>Platinum Member</h2>
+                    <p style={{ color: 'white' }}>Points: {user.reward_points}pts</p>
+                    <button
+                        className='bookButton'
+                        style={{
+                            marginTop: '5px',
+                            marginBottom: '5px',
+                            marginLeft: '0px',
+                            marginRight: '0px',
+                            background: '#cdc379'
+                        }}
+                    >
+                        Edit Profile
+                    </button>
                 </div>
-                {Array.isArray(upcoming_bookings) && upcoming_bookings.length > 0 ? (
-                    upcoming_bookings.map((b, index) => (
-                        <div key={b.booking_id} className="content-container">
-                            <h3>{b.hotel_name}</h3>
-                            <p>{b.arrival_date}</p>
-                            <p>{b.num_nights}</p>
-                            <button className='bookButton' onClick={(e) => handleViewPress(e, b.booking_id)} style={{marginTop: '0px', marginBottom: '5px', marginLeft: '10px', marginRight: '5px', background: 'grey'}}>View</button>
+
+                <div className='column-container'>
+                    <div className='left-container'>
+                        <div className='content-container leading-title'>
+                            <h2>Upcoming Bookings</h2>
                         </div>
-                    ))
-                ) : (
-                    <p>No booking details available.</p>
-                )}
+                        {Array.isArray(upcoming_bookings) && upcoming_bookings.length > 0 ? (
+                            upcoming_bookings.map((b) => (
+                                <div key={b.booking_id} className="content-container">
+                                    <div>
+                                        <h3>{b.hotel_name}</h3>
+                                        <p>Check-in: {b.arrival_date}</p>
+                                        <p>{b.num_nights} nights</p>
+                                    </div>
+                                    <button
+                                        className='bookButton'
+                                        onClick={(e) => handleViewPress(e, b.booking_id)}
+                                        style={{
+                                            marginTop: 'auto',
+                                            marginBottom: 'auto',
+                                            background: 'grey'
+                                        }}
+                                    >
+                                        View
+                                    </button>
+                                </div>
+                            ))
+                        ) : (
+                            <p>No booking details available.</p>
+                        )}
+                    </div>
 
-            </div>
-            <div className='right-container'>
-                
-                <div className='content-container leading-title'>
-                    <h2>Recent Stays</h2>
+                    <div className='right-container'>
+                        <div className='content-container leading-title'>
+                            <h2>Recent Stays</h2>
+                        </div>
+                        {Array.isArray(recent_bookings) && recent_bookings.length > 0 ? (
+                            recent_bookings.map((b, index) => (
+                                <div key={index} className="content-container">
+                                    <div>
+                                        <h3>{b.hotel_name}</h3>
+                                        <p>Stayed: {b.arrival_date}</p>
+                                        <p>{b.num_nights} nights</p>
+                                    </div>
+                                    <button
+                                        className='bookButton'
+                                        style={{
+                                            marginTop: 'auto',
+                                            marginBottom: 'auto',
+                                            background: 'grey'
+                                        }}
+                                    >
+                                        View
+                                    </button>
+                                </div>
+                            ))
+                        ) : (
+                            <p>No recent completed stays.</p>
+                        )}
+                    </div>
                 </div>
-                
-                {Array.isArray(recent_bookings) && recent_bookings.length > 0 ? (
-                        recent_bookings.map((b, index) => (
-                            <div key={index} className="content-container">
-                                <h3>{b.hotel_name}</h3>
-                                <p>{b.arrival_date}</p>
-                                <p>{b.num_nights}</p>
-                                <button className='bookButton' style={{marginTop: '0px', marginBottom: '5px', marginLeft: '10px', marginRight: '5px', background: 'grey'}}>View</button>
-                            </div>
-                        ))
-                    ) : (
-                        <p>No recent completed stays.</p>
-                )}
             </div>
-            </div>
-            </div>
-
-        </>
+        </div>
     );
-};
+}
