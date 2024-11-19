@@ -1,80 +1,209 @@
-body {
-    width: 100%;
+.content-wrapper {
+    background-color: #fff;
     margin: 0;
-    background-color: whitesmoke;
-    scroll-behavior: smooth;
-}
-
-img {
+    padding: 0;
     width: 100%;
-    aspect-ratio: inherit;
-    margin: 0.5em 0;
-    border-radius: 25px;
 }
 
-.spacer {
-    margin-bottom: 100px;
+.image-container {
+    margin-top: 82.7px;
+    display: grid;
+    grid-template-columns: minmax(1fr, 1024px) 1fr;
+    grid-template-rows: repeat(2, 1fr);
+    padding: 10px;
 }
 
-.masonry-container {
-    z-index: 0;
-    columns: 250px;
-    margin: 0 0.75em;
-    overflow: hidden;
+.image-wrapper {
+    position: relative;
+    grid-row: span 2;
+    grid-column: span 1;
 }
 
-.sheet {
-    z-index: 10;
-    width: 100%;
-    height: 100%;
-    top: 30vh;
-    background-color: rgba(255, 255, 255, 0.5);
-    backdrop-filter: blur(150px);
-    overflow-y: auto;
-    border-style: outset;
-    border-width: 2px 0px 0px 0px;
-    border-color: black;
-    
+.overview {
+    text-indent: 40px;
+    grid-row: span 2;
+    grid-column: 2 / 2;
 }
 
-.content-title {
-    display: flex;
-    width: 100%;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 30px;
+/* Map would go in space 2,2, leaving it occupied by overview for now */
+
+.main-photo {
+    width: calc(100% - 20px);
+    border-radius: 10px;
+    max-width: 1024px;
 }
 
-.hotel-title {
-    font-size: 3rem;
+.title {
+    font-size: 2rem;
     font-weight: bold;
 }
 
-.toggle-images {
+.name-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: calc(100% - 20px);
+}
+
+.stats-section {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-wrap: wrap;
+    background-color: #c8c8c8;
+}
+
+.rating-stat, .price-stat, .hours-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px;
+}
+
+.subheading {
+    font-weight: bold;
+    font-size: 1.25rem;
+}
+
+.stat {
+    font-weight: bolder;
+    font-size: 2rem;
+}
+
+.image-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 100vw;
+    min-height: 100vh;
+    z-index: 999999;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+}
+
+.open-button {
     all: unset;
+    width: 35px;
+    height: 35px;
 }
 
-.filler {
-    height: 800px;
-    width: 100px;
-    background-color: blue;
-    
+.masonry-container {
+    position: fixed;
+    display: block;
+    width: 100%;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    padding: 20px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
-@media(max-width: 720px) {
-    .masonry-container {
-        columns: 150px;
+.close-button {
+    all: unset;
+    width: 35px;
+    height: 35px;
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999999999;
+    fill: white;
+}
+
+svg {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+button:hover {
+    background-color: rgba(100, 100, 100, 0.5);
+    cursor: pointer;
+    border-radius: 50%;
+}
+
+.photo {
+   display: block;
+    max-width: 50%;
+    margin: 10px;
+    border-radius: 10px;
+}
+
+@media(max-width: 680px) {
+    .main-photo {
+        border-radius: 0;
+        width: 100%;
+        margin: 0;
     }
 
-    img {
-        border-radius: 12.5px;
+    .open-button {
+        fill: white;
     }
 
-    .content-title {
-        padding: 5px 15px;
+    .photo {
+        max-width: calc(100% - 20px);
+        margin: 0;
+        padding: 10px 0;
+        border-radius: 20px;
     }
 
-    .hotel-title {
-        font-size: 2rem;
+    .image-container {
+        display: block;
+        padding: 0;
+    }
+
+    .image-wrapper {
+        display: block;
+        padding: 0;
+    }
+
+    .name-wrapper {
+        position: absolute;
+        bottom: 0;
+        margin-bottom: 4px;
+        width: 100%;
+        padding: 10px;
+        backdrop-filter: blur(1.5px);
+    }
+
+    .title {
+        color: white;
+    }
+
+    .images {
+        color: white;
+    }
+
+    .overview {
+        padding: 10px;
+    }
+
+    .stats-section {
+        flex-direction: column;
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    .stats-section {
+        background-color: #111;
+    }
+
+    .content-wrapper {
+        background-color: #000;
+    }
+
+    svg {
+        fill: white;
     }
 }
