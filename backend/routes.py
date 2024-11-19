@@ -112,15 +112,41 @@ def search():
         num_adults = request.args.get('num_adults')
         num_children = request.args.get('num_children')
         num_rooms = request.args.get('num_rooms')
-
-        city_id = city_search(
-            data.get('location'))  # Get the and input into function for getting the id of the city searched
-
+        
+        # start zander search efficiency code below
+        inputLocation = data.get('location')
+        locationString = inputLocation.lower().strip() # makes all the characters lower case and removes white space around the edges
+        #query the database for any instance of the input city id
+        existing_location = Hotel.query.filter_by(city=locationString).first() 
+        if not existing_location: # if the city hasn't been searched before and therefore hasn't been cached
+            city_id = city_search(inputLocation) # Get the and input into function for getting the id of the city searched
+        else:
+            city_id = existing_location.region_id
+        # end zander search efficiency code above
         # # use the function call below when we're demoing/using the finished website to actually search with the form parameters
         # # hotel_list = hotel_search(city_id, data.get('arrival_date').split('T')[0], data.get('departure_date').split('T')[0], data.get('num_adults'), data.get('num_children'), data.get('num_rooms'), "Price (Low To High)")
 
         # # use this example variable below for now to run a default API call so that only input needed is the location, hotel_list will be used later on
         example = hotel_search(city_id, arrival_date, departure_date, "2", "1", "1", "Price (Low To High)")
+
+        # zander caching code start\/\/\/\/\/
+        for h_details in example:
+            new_hotel = Hotel(
+                hotel_id = h_details['hotel_id'],
+                longitude = h_details['longitude'], 
+                latitude = h_details['latitude'],
+                name = h_details['name'],
+                address = None, # not sure where to get address or region_id
+                city = locationString, # String of the city name for example "San Jose" (initialized above)
+                region_id = city_id, # integer representing the region searched, this is returned by an API call (initialized above)
+                rating = h_details['rating'],
+                check_in_start = h_details['checkin_start'],
+                check_in_end = h_details['checkin_end'],
+                check_out_time = h_details['checkout_end']
+            )
+            db.session.add(new_hotel)
+            db.session.commit()
+        # end zander caching code^^^^
 
         return jsonify({'hotels': example})  # Returning list of hotels + form data with jsonified/cleaner date values
     else:
