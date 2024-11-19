@@ -9,14 +9,19 @@ export default function hotelinfo2() {
     const [overlay, setOverlay] = useState(false);
 
     const toggleOverlay = () => {
+
+        {/* More photos API call here */}
+
         if(overlay) {
             setOverlay(false);
             document.querySelector('.image-overlay').style.display = 'none';
             document.querySelector('.content-wrapper').style.overflow = 'scroll';
+            document.body.style.overflowY = 'scroll';
         } else {
             setOverlay(true)
             document.querySelector('.image-overlay').style.display = 'block';
             document.querySelector('.content-wrapper').style.overflow = 'hidden';
+            document.body.style.overflowY = 'hidden';
         };
     };
 

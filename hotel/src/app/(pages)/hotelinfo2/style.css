@@ -50,7 +50,7 @@
     justify-content: space-around;
     align-items: center;
     flex-wrap: wrap;
-    background-color: #c8c8c8;
+    background-color: #ddd;
 }
 
 .rating-stat, .price-stat, .hours-stat {
@@ -92,7 +92,6 @@
 
 .masonry-container {
     position: fixed;
-    display: block;
     width: 100%;
     top: 0;
     left: 0;
@@ -104,10 +103,12 @@
     width: 100vw;
     height: 100vh;
     background-color: rgba(0, 0, 0, 0);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    display: grid;
+    grid-template-columns: repeat(3, 300px);
+    grid-template-rows: repeat(auto, 300px);
+    width: max-content;
+    gap: 10px;
+    margin: 0 auto;
 }
 
 .close-button {
@@ -135,9 +136,35 @@ button:hover {
 
 .photo {
    display: block;
-    max-width: 50%;
-    margin: 10px;
-    border-radius: 10px;
+    width: 300px;
+    height: 300px;
+    object-fit: cover;
+    margin: 0;
+    padding: 0;
+    border-radius: 20px;
+}
+
+@media (max-width: 958px) {
+    .masonry-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        overflow-x: hidden;
+        overflow-y: scroll;
+    }
+
+    .masonry-container, .image-overlay {
+        width: 100vw;
+        height: 100vh;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .photo {
+        width: calc(100vw - 20px);
+        padding: 10px;
+        border-radius: 20px;
+    }
 }
 
 @media(max-width: 680px) {
@@ -149,13 +176,6 @@ button:hover {
 
     .open-button {
         fill: white;
-    }
-
-    .photo {
-        max-width: calc(100% - 20px);
-        margin: 0;
-        padding: 10px 0;
-        border-radius: 20px;
     }
 
     .image-container {
