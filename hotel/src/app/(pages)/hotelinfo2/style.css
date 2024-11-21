@@ -1,3 +1,7 @@
+body {
+    background-color: white;
+}
+
 .content-wrapper {
     background-color: #fff;
     margin: 0;
@@ -38,6 +42,11 @@
     font-weight: bold;
 }
 
+.section-title {
+    font-size: 2rem;
+    font-weight: bold;
+}
+
 .name-wrapper {
     display: flex;
     justify-content: space-between;
@@ -50,7 +59,7 @@
     justify-content: space-around;
     align-items: center;
     flex-wrap: wrap;
-    background-color: #ddd;
+    background-color: #eee;
 }
 
 .rating-stat, .price-stat, .hours-stat {
@@ -144,6 +153,25 @@ button:hover {
     border-radius: 20px;
 }
 
+.book-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 0;
+}
+
+button:hover {
+    border-radius: 10px;
+}
+
+.dropdown > button:hover {
+    border-radius: 0;
+}
+
+.calendar-input, .calendar-input-first {
+    min-width: 100px;
+}
+
 @media (max-width: 958px) {
     .masonry-container {
         display: flex;
@@ -212,6 +240,11 @@ button:hover {
     .stats-section {
         flex-direction: column;
     }
+
+    .dropdown-content {
+        min-width: max-content;
+        translate: -50px 0;
+    }
 }
 
 @media (prefers-color-scheme: dark) {
@@ -225,5 +258,13 @@ button:hover {
 
     svg {
         fill: white;
+    }
+
+    body {
+        background-color: #000;
+    }
+
+    .section-title {
+        color: white;
     }
 }

@@ -3,10 +3,19 @@
 import { useState } from 'react';
 import './style.css';
 import '../.././globals.css';
+import '../.././main.css';
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 export default function hotelinfo2() {
 
     const [overlay, setOverlay] = useState(false);
+    const todaysDate = new Date();
+    const [startDate, setStartDate] = useState(new Date());
+    const [endDate, setEndDate] = useState(new Date());
+    const [numAdults, setNumAdults] = useState('');
+    const [numChildren, setNumChildren] = useState('');
+    const [numRooms, setNumRooms] = useState('');
 
     const toggleOverlay = () => {
 
@@ -38,6 +47,7 @@ export default function hotelinfo2() {
             </svg>
             </button>
                 <div className="masonry-container">
+                    {/* Load photos here */}
                     <img
                         src="https://plus.unsplash.com/premium_photo-1661964071015-d97428970584?q=80&w=2220&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
                         className="photo"
@@ -135,21 +145,90 @@ export default function hotelinfo2() {
                 <div className="stats-section">
                     <div className="rating-stat">
                         <p className="subheading">Rating:</p>
+                        {/* replace with rating */}
                         <p className="stat">5.0 Stars</p>
                     </div>
                     <div className="price-stat">
                         <p className="subheading">Price:</p>
+                        {/* replace with price range */}
                         <p className="stat">$149/night</p>
                     </div>
                     <div className="hours-stat">
                         <p className="subheading">Hours:</p>
+                        {/* replace with hours */}
                         <p className="stat">Open 24hrs</p>
                     </div>
                 </div>
                 <div className="book-section">
-
-                </div>   
-            </div> 
-        </div>
+                    <span className="section-title">Book Now</span>
+                    <div className="calendar">
+                        <div className="date-picker-wrapper">
+                            <p className="date-label">From:</p>
+                            <DatePicker
+                                id="start-date"
+                                minDate={todaysDate}
+                                className="calendar-input-first"
+                                selected={startDate}
+                                onChange={(date) => setStartDate(date)}
+                            />
+                        </div>
+                        <div className="date-picker-wrapper">
+                            <p className="date-label">To:</p>
+                            <DatePicker
+                                id="end-date"
+                                minDate={startDate}
+                                className="calendar-input"
+                                selected={endDate}
+                                onChange={(date) => setEndDate(date)}
+                            />
+                        </div>
+                        <div className="date-picker-wrapper">
+                            <img src="/guestIcon.png" alt="Guests" className="guest-icon" />
+                            <div className="dropdown">
+                                <button className="dropdown-button"> Guests</button>
+                                <div className="dropdown-content">
+                                    <p> Number of adults:</p>
+                                    <input
+                                        type="number"
+                                        name="adult-guests"
+                                        placeholder="2"
+                                        min="1"
+                                        max="20"
+                                        className="guest-input"
+                                        value={numAdults}
+                                        onChange={(e) => setNumAdults(e.target.value)}
+                                    />
+                                    <br />
+                                    <p> Number of children: </p>
+                                    <input
+                                        type="number"
+                                        name="child-guests"
+                                        placeholder="0"
+                                        min="0"
+                                        max="20"
+                                        className="guest-input"
+                                        value={numChildren}
+                                        onChange={(e) => setNumChildren(e.target.value)}
+                                    />
+                                    <br />
+                                    <p> Number of rooms:</p>
+                                    <input
+                                        type="number"
+                                        name="room-qty"
+                                        placeholder="1"
+                                        min="1"
+                                        max="4"
+                                        className="guest-input"
+                                        value={numRooms}
+                                        onChange={(e) => setNumRooms(e.target.value)}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" className="searchButton">Book</button>
+                </div> 
+            </div>   
+        </div> 
     )
 }

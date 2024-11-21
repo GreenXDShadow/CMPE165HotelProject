@@ -49,7 +49,6 @@ const ToggleComponent = () => {
                         <a className="nav-button" style={{animationDelay: '0.2s'}} href="/login">Login</a>
                         <a className="nav-button" style={{animationDelay: '0.25s'}} href="/registration">Register</a>
                         <a className="nav-button" style={{animationDelay: '0.3s'}} href="/payment">Payment</a>
-                        <a className="nav-button" style={{animationDelay: '0.35s'}} href="/search">Search</a>
                     </div>
                 </div>
             }
