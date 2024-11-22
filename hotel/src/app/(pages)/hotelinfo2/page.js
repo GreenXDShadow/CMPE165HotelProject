@@ -183,7 +183,8 @@ export default function hotelinfo2() {
                             />
                         </div>
                         <div className="date-picker-wrapper">
-                            <img src="/guestIcon.png" alt="Guests" className="guest-icon" />
+                           {/* <img src="/guestIcon.png" alt="Guests" className="guest-icon" /> */}
+                           <p className="date-label">Guests:</p>
                             <div className="dropdown">
                                 <button className="dropdown-button"> Guests</button>
                                 <div className="dropdown-content">

@@ -172,6 +172,10 @@ button:hover {
     min-width: 100px;
 }
 
+.guest-input {
+    min-width: 75px;
+}
+
 @media (max-width: 958px) {
     .masonry-container {
         display: flex;
@@ -244,6 +248,11 @@ button:hover {
     .dropdown-content {
         min-width: max-content;
         translate: -50px 0;
+        justify-content: center;
+    }
+
+    .guest-input {
+        width: 100%;
     }
 }
 
