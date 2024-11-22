@@ -1,5 +1,5 @@
 body {
-    background-color: white;
+    background-color: #fff;
 }
 
 .content-wrapper {
@@ -253,6 +253,10 @@ button:hover {
 
     .guest-input {
         width: 100%;
+    }
+
+    body {
+        background-color: #001C3F;
     }
 }
 
