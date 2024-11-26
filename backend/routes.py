@@ -139,7 +139,7 @@ def search():
                 address = None, # not sure where to get address or region_id
                 city = locationString, # String of the city name for example "San Jose" (initialized above)
                 region_id = city_id, # integer representing the region searched, this is returned by an API call (initialized above)
-                rating = h_details['rating'],
+                rating = h_details['review_score'],
                 check_in_start = h_details['checkin_start'],
                 check_in_end = h_details['checkin_end'],
                 check_out_time = h_details['checkout_end']
