@@ -22,6 +22,8 @@ const Home = () => {
 
   const todaysDate = new Date();
 
+  const [loading, setLoading] = useState(false);
+
   const handleContactSubmit = (event) => {
     event.preventDefault();
     // No functionality yet
@@ -103,6 +105,7 @@ const Home = () => {
 
     // Only proceed if we have valid dates
     if (data.arrival_date && data.departure_date) {
+      setLoading(true);
       try {
         localStorage.setItem('saveForm', JSON.stringify(data));
         const response = await axios.post('http://localhost:4000/search', data, {withCredentials: true});
@@ -110,6 +113,8 @@ const Home = () => {
         setHotels(response.data.hotels);
       } catch (e) {
         console.log(e);
+      } finally {
+        setLoading(false); // Stop loading
       }
     }
   };
@@ -217,7 +222,9 @@ const Home = () => {
           </div>
           </div>
 
-          <button type="submit" className="searchButton">Search</button>
+          <button type="submit" className="searchButton" disabled={loading}>
+            {loading ? 'Searching...' : 'Search'}
+          </button>
 
 
           {/* Filters row */}
@@ -281,8 +288,12 @@ const Home = () => {
       </div>
 
 
-      <div className='search-results'>
-        {renderHotels}
+      <div className="search-results">
+        {loading ? (
+          <div className="loader"></div>
+        ) : (
+          renderHotels
+        )}
       </div>
       <footer className="footer">
         <div className="footer-content">
