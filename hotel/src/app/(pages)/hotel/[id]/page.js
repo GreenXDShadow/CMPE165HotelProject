@@ -42,21 +42,21 @@ export default function hotelinfo2() {
         // }
     }, []);
 
-    // useEffect(() => {
-    //     if (id) {
-    //         axios.get(`http://localhost:4000/hotel/${id}?start_date=${startDate}&end_date=${endDate}&num_adults=${numAdults}&num_children=${numChildren}&num_rooms=${numRooms}`)
-    //         .then((response) => {
-    //             console.log("hotel_info page", response.data)
-    //             console.log("Hotel Page Start Date", startDate)
-    //             setHotelDetails(response.data);
-    //             setRooms(response.data.rooms);
-    //             localStorage.setItem('saveRoomList', JSON.stringify(response.data.rooms));
-    //         })
-    //         .catch((error) => {
-    //             console.error('Error fetching data: ', error);
-    //         });
-    //     }
-    // }, [id])
+    useEffect(() => {
+        if (id) {
+            axios.get(`http://localhost:4000/hotel/${id}?start_date=${startDate}&end_date=${endDate}&num_adults=${numAdults}&num_children=${numChildren}&num_rooms=${numRooms}`)
+            .then((response) => {
+                console.log("hotel_info page", response.data)
+                console.log("Hotel Page Start Date", startDate)
+                setHotelDetails(response.data);
+                setRooms(response.data.rooms);
+                localStorage.setItem('saveRoomList', JSON.stringify(response.data.rooms));
+            })
+            .catch((error) => {
+                console.error('Error fetching data: ', error);
+            });
+        }
+    }, [id])
 
     const handleSearch = async (e) => {
         e.preventDefault();

@@ -15,10 +15,10 @@ const HotelInfo = () => {
     const params = useParams();
     const searchParams = useSearchParams();
     const { id } = params;
-    const a_date = new Date(searchParams.get('start_date'))
-    const d_date = new Date(searchParams.get('end_date'))
-    a_date.setDate(a_date.getDate()+1) // Date() is stupid and returns the day before the actual date so we need to correct it with an offset
-    d_date.setDate(d_date.getDate()+1)
+    const a_date = new Date(searchParams.get('start_date'));
+    const d_date = new Date(searchParams.get('end_date'));
+    a_date.setDate(a_date.getDate()+1); // Date() is stupid and returns the day before the actual date so we need to correct it with an offset
+    d_date.setDate(d_date.getDate()+1);
     const [startDate, setStartDate] = useState(a_date);
     const [endDate, setEndDate] = useState(d_date);
     const [numAdults, setNumAdults] = useState(searchParams.get('num_adults'));
@@ -73,7 +73,7 @@ const HotelInfo = () => {
         e.preventDefault();
 
         try {
-            axios.get(`http://localhost:4000/hotel/${id}?start_date=${startDate}&end_date=${endDate}&num_adults=${numAdults}&num_children=${numChildren}&num_rooms=${numRooms}`)
+            axios.get(`http://localhost:4000/hotel/${id}?start_date=${formatDate(startDate)}&end_date=${formatDate(endDate)}&num_adults=${numAdults}&num_children=${numChildren}&num_rooms=${numRooms}`)
             .then((response) => {
                 console.log("hotel_info page", response.data)
                 console.log("Hotel Page Start Date", startDate)
