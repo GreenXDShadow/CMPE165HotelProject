@@ -131,21 +131,24 @@ def search():
 
         # zander caching code start\/\/\/\/\/
         for h_details in example:
-            new_hotel = Hotel(
-                hotel_id = h_details['hotel_id'],
-                longitude = h_details['longitude'], 
-                latitude = h_details['latitude'],
-                name = h_details['name'],
-                address = None, # not sure where to get address or region_id
-                city = locationString, # String of the city name for example "San Jose" (initialized above)
-                region_id = city_id, # integer representing the region searched, this is returned by an API call (initialized above)
-                rating = h_details['rating'],
-                check_in_start = h_details['checkin_start'],
-                check_in_end = h_details['checkin_end'],
-                check_out_time = h_details['checkout_end']
-            )
-            db.session.add(new_hotel)
-            db.session.commit()
+            try:
+                new_hotel = Hotel(
+                    hotel_id = h_details['hotel_id'],
+                    longitude = h_details['longitude'], 
+                    latitude = h_details['latitude'],
+                    name = h_details['name'],
+                    address = None, # not sure where to get address or region_id
+                    city = locationString, # String of the city name for example "San Jose" (initialized above)
+                    region_id = city_id, # integer representing the region searched, this is returned by an API call (initialized above)
+                    rating = h_details['review_score'],
+                    check_in_start = h_details['checkin_start'],
+                    check_in_end = h_details['checkin_end'],
+                    check_out_time = h_details['checkout_end']
+                )
+                db.session.add(new_hotel)
+                db.session.commit()
+            except:
+                pass # error would be duplicate hotel id because there's no check for that, just pass
         # end zander caching code^^^^
 
         return jsonify({'hotels': example})  # Returning list of hotels + form data with jsonified/cleaner date values
@@ -157,20 +160,20 @@ def search():
 @app.route('/hotel/<hotel_id>', methods=['GET'])
 def hotel(hotel_id):
     if request.method == 'GET':
-        arrival_date = request.args.get('start_date').split('T')[0]
-        departure_date = request.args.get('end_date').split('T')[0]
+        arrival_date = request.args.get('start_date')
+        departure_date = request.args.get('end_date')
         num_adults = request.args.get('num_adults')
         num_children = request.args.get('num_children')
         num_rooms = request.args.get('num_rooms')
-        hotel_info_response = hotel_search_by_id(hotel_id, "2024-12-18", "2024-12-20")
-        print(hotel_info_response)
-        print()
+        hotel_info_response = hotel_search_by_id(hotel_id, arrival_date, departure_date)
+        # print(hotel_info_response)
+        # print()
 
         data = {
             'name': hotel_info_response[0].get('hotel_name'),
             'address': hotel_info_response[0].get('address'),
             # review score and review word are already in the data returned for each hotel in hotel_search, can be passed when redirecting
-            'rooms': room_search(hotel_id, "2024-12-18", "2024-12-20", "2", "1", "1")
+            'rooms': room_search(hotel_id, arrival_date, departure_date, num_adults, num_children, num_rooms)
         }
         # data = {
         #     'name': 'Test Hotel',
@@ -468,3 +471,7 @@ def edit():
         else:
             print("Booking not found")
             return '', 204
+
+@app.route('/hotel_photos/<hotel_id>', methods=['GET'])
+def photos(hotel_id):
+    return hotel_photos(hotel_id)
