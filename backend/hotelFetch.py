@@ -138,7 +138,22 @@ def hotel_search_by_id(hotel_id, arrival_date, depart_date):
     hotel_details = response.json()
     return hotel_details
 
+def hotel_photos(hotel_id):
+    url = "https://apidojo-booking-v1.p.rapidapi.com/properties/get-hotel-photos"
+
+    querystring = {"languagecode": "en-us","hotel_ids": hotel_id}
+
+    response = requests.get(url, headers=headers, params=querystring)
+    photos = response.json()['data'][str(hotel_id)]
+
+    photos_list = []
+    for p in photos:
+        photos_list.append('https://cf.bstatic.com' + p[4]) # replace max1024x768 with max300, max500, or square60 for different sizes
+
+    return photos_list
+
 # Example calls
 # print(hotel_search("20015742", "2024-12-18", "2024-12-20", "2", "0", "1")) # 20015742 is San Jose's dest_id
 # print(room_search("4975592", "2024-12-18", "2024-12-20", "2", "1", "1")) # 742931 is the Hyatt Downtown San Jose hotel_id
+# print(hotel_photos(742931))
 
