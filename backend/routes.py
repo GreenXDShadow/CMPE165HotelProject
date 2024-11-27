@@ -131,21 +131,24 @@ def search():
 
         # zander caching code start\/\/\/\/\/
         for h_details in example:
-            new_hotel = Hotel(
-                hotel_id = h_details['hotel_id'],
-                longitude = h_details['longitude'], 
-                latitude = h_details['latitude'],
-                name = h_details['name'],
-                address = None, # not sure where to get address or region_id
-                city = locationString, # String of the city name for example "San Jose" (initialized above)
-                region_id = city_id, # integer representing the region searched, this is returned by an API call (initialized above)
-                rating = h_details['rating'],
-                check_in_start = h_details['checkin_start'],
-                check_in_end = h_details['checkin_end'],
-                check_out_time = h_details['checkout_end']
-            )
-            db.session.add(new_hotel)
-            db.session.commit()
+            try:
+                new_hotel = Hotel(
+                    hotel_id = h_details['hotel_id'],
+                    longitude = h_details['longitude'], 
+                    latitude = h_details['latitude'],
+                    name = h_details['name'],
+                    address = None, # not sure where to get address or region_id
+                    city = locationString, # String of the city name for example "San Jose" (initialized above)
+                    region_id = city_id, # integer representing the region searched, this is returned by an API call (initialized above)
+                    rating = h_details['review_score'],
+                    check_in_start = h_details['checkin_start'],
+                    check_in_end = h_details['checkin_end'],
+                    check_out_time = h_details['checkout_end']
+                )
+                db.session.add(new_hotel)
+                db.session.commit()
+            except:
+                pass # error would be duplicate hotel id because there's no check for that, just pass
         # end zander caching code^^^^
 
         return jsonify({'hotels': example})  # Returning list of hotels + form data with jsonified/cleaner date values
