@@ -160,20 +160,20 @@ def search():
 @app.route('/hotel/<hotel_id>', methods=['GET'])
 def hotel(hotel_id):
     if request.method == 'GET':
-        arrival_date = request.args.get('start_date').split('T')[0]
-        departure_date = request.args.get('end_date').split('T')[0]
+        arrival_date = request.args.get('start_date')
+        departure_date = request.args.get('end_date')
         num_adults = request.args.get('num_adults')
         num_children = request.args.get('num_children')
         num_rooms = request.args.get('num_rooms')
-        hotel_info_response = hotel_search_by_id(hotel_id, "2024-12-18", "2024-12-20")
-        print(hotel_info_response)
-        print()
+        hotel_info_response = hotel_search_by_id(hotel_id, arrival_date, departure_date)
+        # print(hotel_info_response)
+        # print()
 
         data = {
             'name': hotel_info_response[0].get('hotel_name'),
             'address': hotel_info_response[0].get('address'),
             # review score and review word are already in the data returned for each hotel in hotel_search, can be passed when redirecting
-            'rooms': room_search(hotel_id, "2024-12-18", "2024-12-20", "2", "1", "1")
+            'rooms': room_search(hotel_id, arrival_date, departure_date, num_adults, num_children, num_rooms)
         }
         # data = {
         #     'name': 'Test Hotel',
@@ -471,3 +471,7 @@ def edit():
         else:
             print("Booking not found")
             return '', 204
+
+@app.route('/hotel_photos/<hotel_id>', methods=['GET'])
+def photos(hotel_id):
+    return hotel_photos(hotel_id)

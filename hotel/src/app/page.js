@@ -21,6 +21,8 @@ const Home = () => {
   const [bedType, setBedType] = useState('');
 
   const todaysDate = new Date();
+  
+  const [loading, setLoading] = useState(false);
 
   const handleContactSubmit = (event) => {
     event.preventDefault();
@@ -70,8 +72,13 @@ const Home = () => {
             setLocation(cachedForm.location);
 
             //Set form fields from cache if not use defaults
-            setStartDate(new Date(cachedForm.arrival_date || new Date()));
-            setEndDate(new Date(cachedForm.departure_date || new Date()));
+            const a_date = new Date(cachedForm.arrival_date)
+            const d_date = new Date(cachedForm.departure_date)
+            a_date.setDate(a_date.getDate()+1) // Date() is stupid and returns the day before the actual date so we need to correct it with an offset
+            d_date.setDate(d_date.getDate()+1)
+            setStartDate(a_date || new Date());
+            setEndDate(d_date || new Date());
+      
             setNumAdults(cachedForm.num_adults);
             setNumChildren(cachedForm.num_children);
             setNumRooms(cachedForm.num_rooms);
@@ -103,6 +110,7 @@ const Home = () => {
 
     // Only proceed if we have valid dates
     if (data.arrival_date && data.departure_date) {
+      setLoading(true);
       try {
         localStorage.setItem('saveForm', JSON.stringify(data));
         const response = await axios.post('http://localhost:4000/search', data, {withCredentials: true});
@@ -110,6 +118,8 @@ const Home = () => {
         setHotels(response.data.hotels);
       } catch (e) {
         console.log(e);
+      } finally {
+        setLoading(false); // Stop loading
       }
     }
   };
@@ -217,8 +227,9 @@ const Home = () => {
           </div>
           </div>
 
-          <button type="submit" className="searchButton">Search</button>
-
+          <button type="submit" className="searchButton" disabled={loading}>
+            {loading ? 'Searching...' : 'Search'}
+          </button>
 
           {/* Filters row */}
           <div className="filters-row">
@@ -280,9 +291,12 @@ const Home = () => {
         </form>
       </div>
 
-
-      <div className='search-results'>
-        {renderHotels}
+      <div className="search-results">
+        {loading ? (
+          <div className="loader"></div>
+        ) : (
+          renderHotels
+        )}
       </div>
       <footer className="footer">
         <div className="footer-content">
