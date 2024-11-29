@@ -109,49 +109,19 @@ def search():
         data = request.json  # Extracting JSON data from the request
         arrival_date = data.get("arrival_date")
         departure_date = data.get("departure_date")
-        num_adults = request.args.get('num_adults')
-        num_children = request.args.get('num_children')
-        num_rooms = request.args.get('num_rooms')
-        
-        # start zander search efficiency code below
-        inputLocation = data.get('location')
-        locationString = inputLocation.lower().strip() # makes all the characters lower case and removes white space around the edges
-        #query the database for any instance of the input city id
-        existing_location = Hotel.query.filter_by(city=locationString).first() 
-        if not existing_location: # if the city hasn't been searched before and therefore hasn't been cached
-            city_id = city_search(inputLocation) # Get the and input into function for getting the id of the city searched
-        else:
-            city_id = existing_location.region_id
-        # end zander search efficiency code above
-        # # use the function call below when we're demoing/using the finished website to actually search with the form parameters
-        # # hotel_list = hotel_search(city_id, data.get('arrival_date').split('T')[0], data.get('departure_date').split('T')[0], data.get('num_adults'), data.get('num_children'), data.get('num_rooms'), "Price (Low To High)")
+        num_adults = data.get('num_adults')
+        num_children = data.get('num_children')
+        num_rooms = data.get('num_rooms')
+        breakfast_included = data.get('breakfast_included')
+        parking_included = data.get('parking_included')
+        sort_by = data.get('sort_by')
 
-        # # use this example variable below for now to run a default API call so that only input needed is the location, hotel_list will be used later on
-        example = hotel_search(city_id, arrival_date, departure_date, "2", "1", "1", "Price (Low To High)")
+        location = data.get('location')
+        city_id = city_search(location)
 
-        # zander caching code start\/\/\/\/\/
-        for h_details in example:
-            try:
-                new_hotel = Hotel(
-                    hotel_id = h_details['hotel_id'],
-                    longitude = h_details['longitude'], 
-                    latitude = h_details['latitude'],
-                    name = h_details['name'],
-                    address = None, # not sure where to get address or region_id
-                    city = locationString, # String of the city name for example "San Jose" (initialized above)
-                    region_id = city_id, # integer representing the region searched, this is returned by an API call (initialized above)
-                    rating = h_details['review_score'],
-                    check_in_start = h_details['checkin_start'],
-                    check_in_end = h_details['checkin_end'],
-                    check_out_time = h_details['checkout_end']
-                )
-                db.session.add(new_hotel)
-                db.session.commit()
-            except:
-                pass # error would be duplicate hotel id because there's no check for that, just pass
-        # end zander caching code^^^^
+        hotels = hotel_search(city_id, arrival_date, departure_date, num_adults, num_children, num_rooms, sort_by)
 
-        return jsonify({'hotels': example})  # Returning list of hotels + form data with jsonified/cleaner date values
+        return jsonify({'hotels': hotels})  # Returning list of hotels + form data with jsonified/cleaner date values
     else:
         return 'False'  # Returning False as a response if the request method is not POST
 
@@ -165,13 +135,13 @@ def hotel(hotel_id):
         num_adults = request.args.get('num_adults')
         num_children = request.args.get('num_children')
         num_rooms = request.args.get('num_rooms')
-        hotel_info_response = hotel_search_by_id(hotel_id, arrival_date, departure_date)
+        # hotel_info_response = hotel_search_by_id(hotel_id, arrival_date, departure_date)
         # print(hotel_info_response)
         # print()
 
         data = {
-            'name': hotel_info_response[0].get('hotel_name'),
-            'address': hotel_info_response[0].get('address'),
+            # 'name': hotel_info_response[0].get('hotel_name'),
+            # 'address': hotel_info_response[0].get('address'),
             # review score and review word are already in the data returned for each hotel in hotel_search, can be passed when redirecting
             'rooms': room_search(hotel_id, arrival_date, departure_date, num_adults, num_children, num_rooms)
         }
@@ -361,13 +331,14 @@ def user():
         return jsonify({'message': 'User not logged in!'}), 401
 
     user = User.query.filter_by(user_id=session['user_id']).first()
-    bookings = Booking.query.filter_by(user_id=session['user_id']).order_by(desc(Booking.booking_id)).all()
+    bookings = Booking.query.filter_by(user_id=session['user_id']).order_by(desc(Booking.booking_id))
 
     if bookings:
         user_dict = {key: value for key, value in user.__dict__.items() if not key.startswith('_')}
-        booking_dicts = [{key: value for key, value in b.__dict__.items() if not key.startswith('_')} for b in bookings]
-        print(booking_dicts)
-        return jsonify({'user': user_dict, 'upcoming_bookings': booking_dicts, 'recent_bookings': {}}), 200
+        upcoming_dict = [{key: value for key, value in b.__dict__.items() if not key.startswith('_')} for b in bookings]
+        past = Booking.query.filter_by(user_id=session['user_id']).filter(Booking.departure_date < datetime.today()).all()  # only check bookings that haven't passed
+        recent_dict = [{key: value for key, value in b.__dict__.items() if not key.startswith('_')} for b in past]
+        return jsonify({'user': user_dict, 'upcoming_bookings': upcoming_dict, 'recent_bookings': recent_dict}), 200
     else:
         return jsonify([{}])
 
@@ -475,3 +446,19 @@ def edit():
 @app.route('/hotel_photos/<hotel_id>', methods=['GET'])
 def photos(hotel_id):
     return hotel_photos(hotel_id)
+
+@app.route('/sort', methods=['GET'])
+def sort():
+    if request.method == "GET":
+        sort_by = 'Price (High To Low)'
+        hotel_dict = request.get_json()
+        # default sorting is by popularity
+        if sort_by == 'Price (Low To High)':
+            hotel_dict = sorted(hotel_dict, key=lambda x: x['cost_before_extra'], reverse=False)
+        elif sort_by == 'Price (High To Low)':
+            hotel_dict = sorted(hotel_dict, key=lambda x: x['cost_before_extra'], reverse=True)
+        elif sort_by == 'Review Score (High To Low)':
+            hotel_dict = sorted(hotel_dict, key=lambda x: x['review_score'], reverse=True)
+        elif sort_by == 'Review Score (Low To High)':
+            hotel_dict = sorted(hotel_dict, key=lambda x: x['review_score'], reverse=False)
+        return hotel_dict

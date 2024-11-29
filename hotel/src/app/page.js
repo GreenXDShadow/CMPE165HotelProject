@@ -18,7 +18,7 @@ const Home = () => {
   const [breakfastIncluded, setBreakfastIncluded] = useState(false);
   const [parkingIncluded, setParkingIncluded] = useState(false);
   const [rating, setRating] = useState('');
-  const [bedType, setBedType] = useState('');
+  const [sortBy, setSortBy] = useState('Price (Low To High)');
 
   const todaysDate = new Date();
   
@@ -36,9 +36,16 @@ const Home = () => {
     console.log("Breakfast Included:", breakfastIncluded);
     console.log("Parking Included:", parkingIncluded);
     console.log("Rating:", rating);
-    console.log("Bed Type:", bedType);
+    console.log("Bed Type:", sortBy);
     
   };
+
+  const handleSort = (e) => {
+    console.log("w");
+    e.preventDefault();
+    const response = axios.post('http://localhost:4000/sort', hotelsList, {withCredentials: true});
+    setHotels(response.data);
+  }
 
   function formatDate(d) {
     // Check if d exists, is a Date object, and is valid
@@ -105,8 +112,12 @@ const Home = () => {
       departure_date: formatDate(endDate),
       num_adults: numAdults,
       num_children: numChildren,
-      num_rooms: numRooms
+      num_rooms: numRooms,
+      breakfast_included: breakfastIncluded,
+      park_included: parkingIncluded,
+      sort_by: sortBy
     };
+    console.log(data);
 
     // Only proceed if we have valid dates
     if (data.arrival_date && data.departure_date) {
@@ -254,30 +265,12 @@ const Home = () => {
             </label>
 
             <label>
-              Rating:
-              <select value={rating} onChange={(e) => setRating(e.target.value)}>
-                <option value="">Any</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-                <option value="7">7</option>
-                <option value="8">8</option>
-                <option value="9">9</option>
-                <option value="10">10</option>
-              </select>
-              <div className="vertical-line2"></div>
-            </label>
-
-            <label>
-              Bed Type:
-              <select value={bedType} onChange={(e) => setBedType(e.target.value)}>
-                <option value="">Any</option>
-                <option value="king">King</option>
-                <option value="queen">Queen</option>
-                <option value="twin">Twin</option>
+              Sort By:
+              <select value={sortBy} onChange={(e) => {setSortBy(e.target.value)}}>
+                <option value="Price (Low To High)">Price (Low To High)</option>
+                <option value="Review Score (High To Low)">Review Score (High To Low)</option>
+                <option value="Price (High To Low)">Price (High To Low)</option>
+                <option value="Review Score (Low To High)">Review Score (Low To High)</option>
               </select>
             </label>
 
