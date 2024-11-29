@@ -81,7 +81,7 @@ export default function hotelinfo2() {
         </div>
         ));
 
-    const renderPhotos = roomsList.map((photo_link, index) => (
+    const renderPhotos = photosList.map((photo_link, index) => (
         <div className="photo-list" key = {index}>
            <img
             src={photo_link}
@@ -97,7 +97,7 @@ export default function hotelinfo2() {
         axios.get(`http://localhost:4000/hotel_photos/${id}`)
         .then((response) => {
             console.log(response.data);
-            setRooms(response.data);
+            setPhotos(response.data);
         })
         .catch((error) => {
             console.error('Error fetching data: ', error);
