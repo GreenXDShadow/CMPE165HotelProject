@@ -68,7 +68,7 @@ def registration():
         password=hashed_password,
         first_name=first_name,
         last_name=last_name,
-        reward_points=0
+        reward_points=1000
     )
     new_payment_info = PaymentInfo(
         payment_id=payment_id,
@@ -200,9 +200,15 @@ def booking():
         first_name = user.first_name
         last_name = user.last_name
         cost_before_extra = round(data['room_data'].get('cost_before_extra'),2)
-        extra = round(cost_before_extra * 0.25 + 2.5,2)
-        point_deduct = int(data['form_data'].get('deduct_points'))*0.1
-        total = round(cost_before_extra + extra - point_deduct,2)
+        extra = round(cost_before_extra * 0.09 + 2.5,2)
+        point_deduct = int(data['form_data'].get('deduct_points'))
+        total = round(cost_before_extra + extra - point_deduct*0.1,2)
+        if total < 0:
+            total = 0
+        point_earn = round((cost_before_extra - point_deduct*.1)*.06, 0)
+        if point_earn < 0:
+            point_earn = 0
+        canceled = 0
         canceled = 0
 
         bookings = Booking.query.filter_by(user_id=session['user_id']).filter(Booking.departure_date >= datetime.today()).all()  # only check bookings that haven't passed
@@ -231,13 +237,20 @@ def booking():
             last_name=last_name,
             cost_before_extra=cost_before_extra,
             extra=extra,
+            points_used=point_deduct,
             total=total,
+            points_earned=point_earn,
             payment_id=payment_id,
             canceled=canceled
         )
 
         try:
             db.session.add(new_booking)
+            currentRewardsPoints = user.reward_points
+            pointsFromPurchase = round((cost_before_extra - point_deduct*.1)*.06, 0)
+            print("c", currentRewardsPoints, "p", pointsFromPurchase, "d", point_deduct)
+            user.reward_points = round(currentRewardsPoints + point_earn - point_deduct,0)
+            print("c", currentRewardsPoints, "p", pointsFromPurchase, "u", user.reward_points)
             db.session.commit()
             return jsonify({'message': 'Booking successful!'}), 200
         except Exception as e:
@@ -272,10 +285,10 @@ def booking_details(booking_id):
             'num_rooms': booking.num_rooms,
             'cost_before_extra': booking.cost_before_extra,
             'convenience_fee': 2.50,  # arbitrary value for now
-            'tax': 0.25,  # arbitrary value for now
+            'tax': 0.09,  # arbitrary value for now
             'total': booking.total,  # convenience fee already accounted for in booking logic
             'guests': str(booking.num_adults) + " adult(s) & " + str(booking.num_children) + " child(ren)",
-            'reward_points': round(booking.cost_before_extra * .06, 0),
+            'points_earned': booking.points_earned,
             'user_points': User.query.filter_by(user_id=session['user_id']).first().reward_points
         }]
         return jsonify(data), 200
@@ -290,7 +303,7 @@ def payment():
         # get the booking the user just made on the previous page
         booking = Booking.query.filter_by(user_id=session['user_id']).first()
         fee = 100  # website fee
-        tax = 0.25  # constant sales tax percentage
+        tax = 0.09  # constant sales tax percentage
 
         # price per night and nights from database multiplied together = cost for all nights + fee
         cost_before_extra = booking.cost_before_extra + fee
@@ -349,14 +362,11 @@ def user():
     user = User.query.filter_by(user_id=session['user_id']).first()
     bookings = Booking.query.filter_by(user_id=session['user_id']).order_by(desc(Booking.booking_id)).filter(Booking.departure_date >= datetime.today()).all()
 
-    if bookings:
-        user_dict = {key: value for key, value in user.__dict__.items() if not key.startswith('_')}
-        upcoming_dict = [{key: value for key, value in b.__dict__.items() if not key.startswith('_')} for b in bookings]
-        past = Booking.query.filter_by(user_id=session['user_id']).filter(Booking.departure_date < datetime.today()).all()  # only check bookings that haven't passed
-        recent_dict = [{key: value for key, value in b.__dict__.items() if not key.startswith('_')} for b in past]
-        return jsonify({'user': user_dict, 'upcoming_bookings': upcoming_dict, 'recent_bookings': recent_dict}), 200
-    else:
-        return jsonify([{}])
+    user_dict = {key: value for key, value in user.__dict__.items() if not key.startswith('_')}
+    upcoming_dict = [{key: value for key, value in b.__dict__.items() if not key.startswith('_')} for b in bookings]
+    past = Booking.query.filter_by(user_id=session['user_id']).filter(Booking.departure_date < datetime.today()).all()  # only check bookings that haven't passed
+    recent_dict = [{key: value for key, value in b.__dict__.items() if not key.startswith('_')} for b in past]
+    return jsonify({'user': user_dict, 'upcoming_bookings': upcoming_dict, 'recent_bookings': recent_dict}), 200
 
 
 @app.route('/cancel', methods=['DELETE'])
@@ -366,10 +376,16 @@ def cancel():
 
     booking_id = request.args.get('id')
     booking = Booking.query.filter_by(booking_id=booking_id).first()
+    user = User.query.filter_by(user_id=session['user_id']).first()
+    currentRewardsPoints = user.reward_points
 
     if booking:
         # booking.canceled = 1
         db.session.delete(booking)
+        pointsUsedOnBooking = booking.points_used
+        pointsEarnedOnBooking = booking.points_earned
+        user.reward_points = currentRewardsPoints+pointsUsedOnBooking-pointsEarnedOnBooking
+        print("c", currentRewardsPoints, "p", pointsUsedOnBooking, "u", user.reward_points)
         db.session.commit()
         print(booking_id, "deleted")
         return '', 204
@@ -407,8 +423,14 @@ def edit():
         first_name = user.first_name
         last_name = user.last_name
         cost_before_extra = data['room_data'].get('cost_before_extra')
-        extra = cost_before_extra * 0.25 + 2.5
-        total = cost_before_extra + extra
+        extra = cost_before_extra * 0.09 + 2.5
+        point_deduct = int(data['form_data'].get('deduct_points'))
+        total = round(cost_before_extra + extra - point_deduct*0.1,2)
+        if total < 0:
+            total = 0
+        point_earn = round((cost_before_extra - point_deduct*.1)*.06, 0)
+        if point_earn < 0:
+            point_earn = 0
         canceled = 0
 
         if booking:
@@ -423,6 +445,9 @@ def edit():
 
                 hotel_name = booking.hotel_name
                 db.session.delete(booking)
+                pointsUsedOnBooking = booking.points_used
+                pointsEarnedOnBooking = booking.points_earned
+                user.reward_points = user.reward_points+pointsUsedOnBooking-pointsEarnedOnBooking
                 db.session.commit()
 
                 new_booking = Booking(
@@ -443,12 +468,15 @@ def edit():
                     last_name=last_name,
                     cost_before_extra=cost_before_extra,
                     extra=extra,
+                    points_used=point_deduct,
                     total=total,
+                    points_earned = point_earn,
                     payment_id=payment_id,
                     canceled=canceled
                 )
 
                 db.session.add(new_booking)
+                user.reward_points = round(user.reward_points + point_earn - point_deduct,0)
                 db.session.commit()
                 return jsonify({'Message': 'Booking edited'}), 200
             except Exception as e:
@@ -469,4 +497,5 @@ def rewards():
         return jsonify({'message': 'User not logged in!'}), 401
     
     user_points = User.query.filter_by(user_id=session['user_id']).first().reward_points
+    print(user_points)
     return jsonify({'user_points': user_points}), 200

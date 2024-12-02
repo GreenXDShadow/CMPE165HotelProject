@@ -1,8 +1,8 @@
 import requests
 
 headers = {
-    'x-rapidapi-key': "0ef4e9449emsh5d7b3e07754f32ep136219jsn83dd2526356c",
-    'x-rapidapi-host': "apidojo-booking-v1.p.rapidapi.com"
+	"x-rapidapi-key": "61231f5c5bmsh11e62f0625174b8p176988jsnd63759dc970f",
+	"x-rapidapi-host": "apidojo-booking-v1.p.rapidapi.com"
 }
 
 # Input string consisting of a city name, and the API will return a dictionary of different cities related to that search
@@ -180,4 +180,3 @@ def pain():
 # print(hotel_search("20015742", "2024-12-18", "2024-12-20", "2", "0", "1")) # 20015742 is San Jose's dest_id
 # print(room_search("4975592", "2024-12-18", "2024-12-20", "2", "1", "1")) # 742931 is the Hyatt Downtown San Jose hotel_id
 # print(hotel_photos(742931))
-print(pain())

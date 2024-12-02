@@ -37,7 +37,7 @@ const ToggleComponent = ({ isLoggedIn, onLogout }) => {
     const menuItems = isLoggedIn
         ? [
             { href: "/", label: "Home" },
-            { href: "/payment", label: "Payment" },
+            { href: "/user", label: "Profile" },
             { href: "#", label: "Logout", onClick: onLogout },
           ]
         : [

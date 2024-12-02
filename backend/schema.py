@@ -46,7 +46,9 @@ class Booking(db.Model):
     last_name = db.Column('Last Name', db.String, nullable=False)
     cost_before_extra = db.Column('Cost', db.Float)
     extra = db.Column('Extra', db.Float)
+    points_used = db.Column('PU', db.Integer)
     total = db.Column('Total', db.Float)
+    points_earned = db.Column('PE', db.Integer)
     payment_id = db.Column('Payment ID', db.String, db.ForeignKey('Payment Info.Payment ID'))
     canceled = db.Column('Canceled', db.Integer)  # may be used to keep record of canceled reservations 
 

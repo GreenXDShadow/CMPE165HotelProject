@@ -25,14 +25,6 @@ export default function Payment() {
             rewardPoints : deductPoints
         }
         try{
-            // const response = await axios.post('http://localhost:4000/payment', data, { withCredentials: true })
-            // if(response.status === 200){ // Checking if the response data is equal to 'Success'
-            //     console.log("Help");
-            //     NotificationManager.success('Payment successful') // Updating the 'response' state variable with the success message
-            //     setTimeout(() => {
-            //         window.location.href = '/user' // Redirecting to the confirmation page after a delay
-            //     }, 1500)
-            // }
             bd[0].form_data['deduct_points'] = deductPoints;
             if (booking_id == "0") {
                 const response = await axios.post('http://localhost:4000/booking', bd[0], {withCredentials: true})
@@ -40,7 +32,7 @@ export default function Payment() {
                     NotificationManager.success('Hotel booked successfully');
                     setTimeout(() => {
                         window.location.href = '/user' // id=0 means the payment page fetches info for the new booking 
-                    }, 1500) // 1.5 second delay before redirecting to the payment page
+                    }, 3000) // 1.5 second delay before redirecting to the payment page
                 }
                 if(response.status === 401) {
                     NotificationManager.error('You must be logged in to book a hotel');
@@ -104,10 +96,11 @@ export default function Payment() {
                                 <p>Hotel: {bd[0].hotel_data.name}</p>
                                 <p>Guests: {bd[0].form_data.num_adults} adult(s) & {bd[0].form_data.num_children} child(ren)</p>
                                 <p>Room Configuration: {bd[0].room_data.config}</p>
-                                <p>Price: {bd[0].room_data.cost_before_extra} ({(bd[0].room_data.cost_before_extra * 0.06).toFixed(0)} reward points earned)</p>
-                                <p>Tax: {(bd[0].room_data.cost_before_extra*0.09).toFixed(2)} ({0.09}%)</p>
-                                <p>Convenience Fee: ${2.50}</p>
-                                <p>Total: ${(bd[0].room_data.cost_before_extra+bd[0].room_data.cost_before_extra*0.09+2.5-deductPoints*0.1).toFixed(2)}</p>
+                                <p>Subtotal: ${bd[0].room_data.cost_before_extra}</p> 
+                                <p>9% Tax: ${(bd[0].room_data.cost_before_extra*0.09).toFixed(2)}</p>
+                                <p>Convenience Fee: ${2.50.toFixed(2)}</p>
+                                <p>Total: <b>${(bd[0].room_data.cost_before_extra+bd[0].room_data.cost_before_extra*0.09+2.5-deductPoints*0.1).toFixed(2) >= 0 ? ((bd[0].room_data.cost_before_extra+bd[0].room_data.cost_before_extra*0.09+2.5-deductPoints*0.1).toFixed(2)) : (0)}</b></p>
+                                <p>6% Points Earned: {((bd[0].room_data.cost_before_extra - deductPoints*0.1)*.06) > 0 ? (((bd[0].room_data.cost_before_extra - deductPoints*0.1)*.06).toFixed(0)): (0)}</p>                                
                                 </div>
                             ) : (
                                 <p>Loading Booking Details...</p>
@@ -118,18 +111,19 @@ export default function Payment() {
                     {/* Payment Form and Login */}
                     <div className="right-column">
                         <div>
-                            {userPoints > 0 ? (
+                            {userPoints >= 0 ? (
                                 <div>
-                                    <b>Current Reward Points Total:</b> {userPoints} (1 point = $0.10)
+                                    <b>Current Reward Points Total:</b> {userPoints}
                                 </div>
                             ) : (
-                                <p><b>Current Reward Points Total:</b> Loading... (1 point = $0.10)</p>
+                                <p><b>Current Reward Points Total:</b> Loading...</p>
+
                             )}
                         </div>
                         <div>
                         <form onSubmit={handleRewards}>
                             <div>
-                            <b> Number of Reward Points to Redeem: </b>
+                            <b> Number of Reward Points to Redeem (1 point = $0.10): </b>
                             <input
                                 type="number"
                                 min = "0"
