@@ -14,24 +14,27 @@ export default function RoomCard({roomData, hotelData, formData}) {
     e.preventDefault();
     console.log("Booking requested")
     try {
-        const response = await axios.post('http://localhost:4000/booking', {
-            hotel_data: hotelData,
-            room_data: roomData,
-            form_data: formData
-        }, { withCredentials: true });
-        if(response.status === 200){
-            NotificationManager.success('Hotel booked successfully');
-            console.log(response.data)
-            setTimeout(() => {
-                window.location.href = '/payment?id=0' // id=0 means the payment page fetches info for the new booking 
-            }, 1500) // 1.5 second delay before redirecting to the payment page
-        }
-        if(response.status === 401) {
-            NotificationManager.error('You must be logged in to book a hotel');
-        }
-        if (response.status === 202) {
-            console.log("Overlapping Booking");
-        }
+        localStorage.setItem('booking', JSON.stringify({hotel_data: hotelData, room_data: roomData, form_data: formData}));
+        window.location.href = '/payment?id=0'
+        // const response = await axios.post('http://localhost:4000/booking', {
+        //     hotel_data: hotelData,
+        //     room_data: roomData,
+        //     form_data: formData
+        // }, { withCredentials: true });
+        // if(response.status === 200){
+        //     // NotificationManager.success('Hotel booked successfully');
+        //     console.log(response.data)
+        //     setTimeout(() => {
+        //         window.location.href = '/payment?id=0' // id=0 means the payment page fetches info for the new booking 
+        //     }, 1500) // 1.5 second delay before redirecting to the payment page
+        // }
+        // if(response.status === 401) {
+        //     NotificationManager.error('You must be logged in to book a hotel');
+        // }
+        // if (response.status === 202) {
+        //   NotificationManager.error('Booking will overlap');
+        //   console.log("Overlapping Booking");
+        // }
     } catch (error) {
         console.error('Error booking hotel:', error);
     }
@@ -51,6 +54,7 @@ export default function RoomCard({roomData, hotelData, formData}) {
       <div className="hotel-card-right">
         <img src={roomData.image} alt={roomData.room_id} className="hotel-image" />
       </div>
+      <NotificationContainer />
     </div>
   );
 }

@@ -17,7 +17,7 @@ const Home = () => {
 
   const [breakfastIncluded, setBreakfastIncluded] = useState(false);
   const [parkingIncluded, setParkingIncluded] = useState(false);
-  const [rating, setRating] = useState('');
+  const [score, setScore] = useState('0');
   const [sortBy, setSortBy] = useState('Price (Low To High)');
 
   const todaysDate = new Date();
@@ -35,7 +35,7 @@ const Home = () => {
     console.log("Filters Applied: ");
     console.log("Breakfast Included:", breakfastIncluded);
     console.log("Parking Included:", parkingIncluded);
-    console.log("Rating:", rating);
+    console.log("Score:", score);
     console.log("Bed Type:", sortBy);
     
   };
@@ -89,6 +89,11 @@ const Home = () => {
             setNumAdults(cachedForm.num_adults);
             setNumChildren(cachedForm.num_children);
             setNumRooms(cachedForm.num_rooms);
+
+            setBreakfastIncluded(cachedForm.breakfast_included);
+            setParkingIncluded(cachedForm.park_included);
+            setScore(cachedForm.score);
+            setSortBy(cachedForm.sort_by);
         }
     } catch (error) {
         console.error('Error loading cached form data:', error);
@@ -115,6 +120,7 @@ const Home = () => {
       num_rooms: numRooms,
       breakfast_included: breakfastIncluded,
       park_included: parkingIncluded,
+      score: score,
       sort_by: sortBy
     };
     console.log(data);
@@ -265,6 +271,24 @@ const Home = () => {
             </label>
 
             <label>
+              Review Score:
+              <select value={score} onChange={(e) => setScore(e.target.value)}>
+                <option value="0">Any</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+              </select>
+              <div className="vertical-line2"></div>
+            </label>
+
+
+            <label>
               Sort By:
               <select value={sortBy} onChange={(e) => {setSortBy(e.target.value)}}>
                 <option value="Price (Low To High)">Price (Low To High)</option>
@@ -275,9 +299,9 @@ const Home = () => {
             </label>
 
               
-            <button type="button" className="apply-filters-button" onClick={handleApplyFilters}>
+            {/* <button type="button" className="apply-filters-button" onClick={handleApplyFilters}>
               Apply Filters
-            </button>
+            </button> */}
           </div>
 
           

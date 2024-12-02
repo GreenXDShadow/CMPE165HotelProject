@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import './edit.css'
 import Image from 'next/image';
 import axios from 'axios'
-import { useParams, useSearchParams } from 'next/navigation'
+import { useRouter, useParams, useSearchParams } from 'next/navigation'
 import EditRoomCard from '../../../components/EditRoomCard'
 import { NotificationManager, NotificationContainer } from 'react-notifications';
 import 'react-notifications/lib/notifications.css'
@@ -14,6 +14,7 @@ import "react-datepicker/dist/react-datepicker.css";
 const HotelInfo = () => {
     const params = useParams();
     const searchParams = useSearchParams();
+    const router = useRouter();  // Initialize the router
     const { id } = params;
     const a_date = new Date(searchParams.get('start_date'));
     const d_date = new Date(searchParams.get('end_date'));
@@ -25,6 +26,7 @@ const HotelInfo = () => {
     const [numChildren, setNumChildren] = useState(searchParams.get('num_children'));
     const [numRooms, setNumRooms] = useState(searchParams.get('num_rooms'));
     const [edit, setEdit] = useState(searchParams.get('edit'));
+    const [hotelName, setHotelName] = useState(searchParams.get('hotel_name'));
     const [roomsList, setRooms] = useState([]);
     const todaysDate = new Date();
 
@@ -63,7 +65,7 @@ const HotelInfo = () => {
         <div className="room-list" key = {room.room_id}>
             <EditRoomCard
             roomData = {room}
-            hotelData = {{'hotel_id': id, 'booking_id': edit}}
+            hotelData = {{'name': hotelName, 'hotel_id': id, 'booking_id': edit}}
             formData = {formData}
             />
         </div>
@@ -158,8 +160,10 @@ const HotelInfo = () => {
                             </div>
                         </div>
                     </div>
-
+                    <div>
+                    <button className='bookButton' onClick={() => router.back()}>Back</button>
                     <button type="submit" className="searchButton">Search</button>
+                    </div>
                 </form>
             </div>
             {renderRooms}
