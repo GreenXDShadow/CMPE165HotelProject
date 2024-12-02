@@ -180,4 +180,3 @@ def pain():
 # print(hotel_search("20015742", "2024-12-18", "2024-12-20", "2", "0", "1")) # 20015742 is San Jose's dest_id
 # print(room_search("4975592", "2024-12-18", "2024-12-20", "2", "1", "1")) # 742931 is the Hyatt Downtown San Jose hotel_id
 # print(hotel_photos(742931))
-print(pain())
