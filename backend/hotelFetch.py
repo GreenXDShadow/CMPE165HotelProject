@@ -1,12 +1,13 @@
 import requests
 
 headers = {
-	"x-rapidapi-key": "39199d0041msh29396267e16d118p1e24f5jsn7dda0af93ede",
-	"x-rapidapi-host": "apidojo-booking-v1.p.rapidapi.com"
+    'x-rapidapi-key': "0ef4e9449emsh5d7b3e07754f32ep136219jsn83dd2526356c",
+    'x-rapidapi-host': "apidojo-booking-v1.p.rapidapi.com"
 }
 
 # Input string consisting of a city name, and the API will return a dictionary of different cities related to that search
 def city_search(location): 
+    # return 20015732
     url = "https://apidojo-booking-v1.p.rapidapi.com/locations/auto-complete"
     querystring = {"languagecode":"en-us","text": location}
 
@@ -21,11 +22,11 @@ def city_search(location):
 
 # Get dest_id for city from city_search(), guest_qty is number of adults and room_qty is the number of rooms wanted
 # The hotel search API function still requires arrival+departure date and guest quanitities, which will be submitted by the user upon searching a city anyway
-def hotel_search(dest_id, arrival_date, depart_date, adult_qty, children_qty, room_qty, sort_by):
-    # dates must be in YYYY-MM-DD format 
-
+def hotel_search(dest_id, arrival_date, depart_date, adult_qty, children_qty, room_qty, sort_by, filter_text):
+    # dates must be in YYYY-MM-DD format
+    
     url = "https://apidojo-booking-v1.p.rapidapi.com/properties/v2/list"
-    querystring = {"offset": "0", "dest_ids": dest_id, "arrival_date": arrival_date, "departure_date": depart_date, "guest_qty": adult_qty, "children_qty": children_qty,"room_qty": room_qty, "search_type": "city"} # API can take dest_id as either string or int
+    querystring = {"offset": "0", "dest_ids": dest_id, "arrival_date": arrival_date, "departure_date": depart_date, "guest_qty": adult_qty, "children_qty": children_qty,"room_qty": room_qty, "search_type": "city", "categories_filter": filter_text} # API can take dest_id as either string or int
     
     response = requests.get(url, headers=headers, params=querystring)
     hotels = response.json()
@@ -152,8 +153,31 @@ def hotel_photos(hotel_id):
 
     return photos_list
 
+def filters():
+    url = "https://apidojo-booking-v1.p.rapidapi.com/filters/list"
+
+    querystring = {"languagecode":"en-us","categories_filter":"price::9-40,free_cancellation::1,class::1,class::0,class::2","room_qty":"1","children_qty":"0","departure_date":"2024-12-20","dest_ids":"-3712125","guest_qty":"1","arrival_date":"2024-12-18","search_type":"city"}    
+    
+    response = requests.get(url, headers=headers, params=querystring)
+
+    print(response.json())
+
+def pain():
+    location = "San Jose"
+    url = "https://apidojo-booking-v1.p.rapidapi.com/locations/auto-complete"
+    querystring = {"languagecode":"en-us","text": location}
+
+    response = requests.get(url, headers=headers, params=querystring)
+    cities = response.json()
+
+    for c in range(len(cities)):
+        if cities[c]['city_name'] == location:
+            dest_id = cities[c]['dest_id']
+            return dest_id # return dest_id of city when the name matches the query
+    return cities[0]['dest_id'] # return first city in list IF query doesn't match one of the cities listed
+
 # Example calls
 # print(hotel_search("20015742", "2024-12-18", "2024-12-20", "2", "0", "1")) # 20015742 is San Jose's dest_id
 # print(room_search("4975592", "2024-12-18", "2024-12-20", "2", "1", "1")) # 742931 is the Hyatt Downtown San Jose hotel_id
 # print(hotel_photos(742931))
-
+print(pain())

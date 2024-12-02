@@ -5,19 +5,29 @@ import './style.css';
 import '../../.././globals.css';
 import '../../.././main.css';
 import axios from 'axios'
-import { useParams, useSearchParams } from 'next/navigation'
+import { useRouter, useParams, useSearchParams } from 'next/navigation'
 import RoomCard from '../../../components/RoomCard'
 import { NotificationManager, NotificationContainer } from 'react-notifications';
 import 'react-notifications/lib/notifications.css'
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { Preahvihear } from 'next/font/google';
 
 export default function hotelinfo2() {
     const params = useParams();
     const searchParams = useSearchParams();
     const { id } = params;
-    const [startDate, setStartDate] = useState(searchParams.get('start_date'));
-    const [endDate, setEndDate] = useState(searchParams.get('end_date'));
+    const router = useRouter();  // Initialize the router
+
+    // const [startDate, setStartDate] = useState(searchParams.get('start_date'));
+    // const [endDate, setEndDate] = useState(searchParams.get('end_date'));
+    const a_date = new Date(searchParams.get('start_date'));
+    const d_date = new Date(searchParams.get('end_date'));
+    a_date.setDate(a_date.getDate()+1); // Date() is stupid and returns the day before the actual date so we need to correct it with an offset
+    d_date.setDate(d_date.getDate()+1);
+    const [startDate, setStartDate] = useState(a_date);
+    const [endDate, setEndDate] = useState(d_date);
+
     const [numAdults, setNumAdults] = useState(searchParams.get('num_adults'));
     const [numChildren, setNumChildren] = useState(searchParams.get('num_children'));
     const [numRooms, setNumRooms] = useState(searchParams.get('num_rooms'));
@@ -27,6 +37,8 @@ export default function hotelinfo2() {
     const todaysDate = new Date();
     const [overlay, setOverlay] = useState(false);
     const [photosList, setPhotos] = useState([]);
+
+    const [loading, setLoading] = useState(false);
 
     // Retrieve data from localStorage when the page loads
     useEffect(() => {
@@ -44,7 +56,8 @@ export default function hotelinfo2() {
 
     useEffect(() => {
         if (id) {
-            axios.get(`http://localhost:4000/hotel/${id}?start_date=${startDate}&end_date=${endDate}&num_adults=${numAdults}&num_children=${numChildren}&num_rooms=${numRooms}`)
+            setLoading(true);
+            axios.get(`http://localhost:4000/hotel/${id}?start_date=${formatDate(startDate)}&end_date=${formatDate(endDate)}&num_adults=${numAdults}&num_children=${numChildren}&num_rooms=${numRooms}`)
             .then((response) => {
                 console.log("hotel_info page", response.data)
                 console.log("Hotel Page Start Date", startDate)
@@ -55,6 +68,7 @@ export default function hotelinfo2() {
             .catch((error) => {
                 console.error('Error fetching data: ', error);
             });
+            setLoading(false);
         }
     }, [id])
 
@@ -62,14 +76,33 @@ export default function hotelinfo2() {
         e.preventDefault();
       };
 
-    // no need to format date because it takes from parameter which is not a Date() string
+    function formatDate(d) {
+    const months = {
+        Jan: "01",
+        Feb: "02",
+        Mar: "03",
+        Apr: "04",
+        May: "05",
+        Jun: "06",
+        Jul: "07",
+        Aug: "08",
+        Sep: "09",
+        Oct: "10",
+        Nov: "11",
+        Dec: "12"
+    };
+    const splitD = d.toString().split(" ");
+    return splitD[3] + "-" + months[splitD[1]] + "-" +  splitD[2];j
+    };
+    
     const formData = {
-        arrival_date: startDate,
-        departure_date: endDate,
+        arrival_date: formatDate(startDate),
+        departure_date: formatDate(endDate),
         num_adults: numAdults,
         num_children: numChildren,
         num_rooms: numRooms
     }
+    console.log(formData)
 
     const renderRooms = roomsList.map((room, index) => (
         <div className="room-list" key = {room.room_id}>
@@ -81,7 +114,7 @@ export default function hotelinfo2() {
         </div>
         ));
 
-    const renderPhotos = roomsList.map((photo_link, index) => (
+    const renderPhotos = photosList.map((photo_link, index) => (
         <div className="photo-list" key = {index}>
            <img
             src={photo_link}
@@ -97,7 +130,7 @@ export default function hotelinfo2() {
         axios.get(`http://localhost:4000/hotel_photos/${id}`)
         .then((response) => {
             console.log(response.data);
-            setRooms(response.data);
+            setPhotos(response.data);
         })
         .catch((error) => {
             console.error('Error fetching data: ', error);
@@ -173,13 +206,98 @@ export default function hotelinfo2() {
                     <div className="hours-stat">
                         <p className="subheading">Hours:</p>
                         {/* replace with hours */}
-                        <p className="stat">Open 24hrs</p>
+                        <p className="stat">{prevHotelData.checkin_start}</p> 
                     </div>
                 </div>
+
+                <div className="search-container">
+                    <form onSubmit={handleSearch} className="search">
+                        <div className="calendar">
+                            <div className="date-picker-wrapper">
+                            <p className="date-label">From:</p>
+                            <DatePicker
+                                id="start-date"
+                                minDate={todaysDate}
+                                className="calendar-input-first"
+                                selected={startDate}
+                                onChange={(date) => setStartDate(date)}
+                            />
+                            </div>
+                            <div className="date-picker-wrapper">
+                            <p className="date-label">To:</p>
+                            <DatePicker
+                                id="end-date"
+                                minDate={startDate}
+                                className="calendar-input"
+                                selected={endDate}
+                                onChange={(date) => setEndDate(date)}
+                            />
+                            </div>
+                            <div className="date-picker-wrapper">
+                                <img src="/guestIcon.png" alt="Guests" className="guest-icon" />
+                                <div className="dropdown">
+                                    <button className="dropdown-button"> Guests</button>
+                                    <div className="dropdown-content">
+                                    <p> Number of adults:</p>
+                                    <input
+                                        type="number"
+                                        name="adult-guests"
+                                        placeholder="2"
+                                        min="1"
+                                        max="20"
+                                        className="guest-input"
+                                        value={numAdults}
+                                        onChange={(e) => setNumAdults(e.target.value)}
+                                    />
+                                    <br />
+                                    <p> Number of children: </p>
+                                    <input
+                                        type="number"
+                                        name="child-guests"
+                                        placeholder="0"
+                                        min="0"
+                                        max="20"
+                                        className="guest-input"
+                                        value={numChildren}
+                                        onChange={(e) => setNumChildren(e.target.value)}
+                                    />
+                                    <br />
+                                    <p> Number of rooms:</p>
+                                    <input
+                                        type="number"
+                                        name="room-qty"
+                                        placeholder="1"
+                                        min="1"
+                                        max="4"
+                                        className="guest-input"
+                                        value={numRooms}
+                                        onChange={(e) => setNumRooms(e.target.value)}
+                                        onClick={(e) => e.stopPropagation()} // Stop click event from bubbling
+                                    />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                        <button className='bookButton' onClick={() => router.push('/')}>Back</button>
+                        <button type="submit" className="searchButton">Search</button>
+                        </div>
+                    </form>
+                </div>
+
                 <div className="book-section">
                     <span className="section-title">Book Now</span>
                     {renderRooms}
-                </div> 
+                </div>
+
+                <div className="search-results">
+                    {loading ? (
+                    <div className="loader"></div>
+                    ) : (
+                    renderRooms
+                    )}
+                </div>
+                
             </div>   
         </div> 
     )

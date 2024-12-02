@@ -1,7 +1,7 @@
 "use client";
 import Image from 'next/image';
-import './cancel.css';
 import '../.././main.css';
+import './cancel.css';
 import React, { useState, useEffect } from 'react';
 import { useRouter, useParams, useSearchParams } from 'next/navigation';  // Import the useRouter hook
 import axios from 'axios';
@@ -14,7 +14,7 @@ export default function reservation() {
     const router = useRouter();  // Initialize the router
 
     useEffect(() => {
-        axios.get('http://localhost:4000/booking_details', { withCredentials: true })
+        axios.get(`http://localhost:4000/booking_details/${id}`, { withCredentials: true })
         .then((response) => {
             console.log(response.data);
             setBookingDetails(response.data[0]);
@@ -52,17 +52,29 @@ export default function reservation() {
                         <p>Room Type: </p>
                         <p id='room-type'>{bookingDetails.room_configuration}</p>
                     </div>
-                    <div className='item-container'>
+                    {/* <div className='item-container'>
                         <p>Payment: </p>
                         <p id='payment'>AMEX 0945</p>
-                    </div>
+                    </div> */}
                     <div className='item-container'>
                         <p>Base Booking Cost: </p>
                         <p id='address'>${bookingDetails.cost_before_extra}</p>
                     </div>
                     <div className='item-container'>
+                        <p>Total Charged: </p>
+                        <p id='address'>${(bookingDetails.total)}</p>
+                    </div>
+                    <div className='item-container'>
                         <p>Cancellation Cost: </p>
-                        <p id='address'>${bookingDetails.cost_before_extra * 0.1}</p>
+                        <p id='address'>${(bookingDetails.cost_before_extra * 0.1).toFixed(2)}</p>
+                    </div>
+                    <div className='item-container'>
+                        <p>Reward Points Returned: </p>
+                        <p id='address'>{((bookingDetails.cost_before_extra)*.06).toFixed(0)} Points</p>
+                    </div>
+                    <div className='item-container'>
+                        <p>Refund Amount: </p>
+                        <p id='address'>${(bookingDetails.total-(bookingDetails.cost_before_extra * 0.1)).toFixed(2)}</p>
                     </div>
                 </div>
                 <div classname='button-container'>

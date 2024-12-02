@@ -109,49 +109,34 @@ def search():
         data = request.json  # Extracting JSON data from the request
         arrival_date = data.get("arrival_date")
         departure_date = data.get("departure_date")
-        num_adults = request.args.get('num_adults')
-        num_children = request.args.get('num_children')
-        num_rooms = request.args.get('num_rooms')
-        
-        # start zander search efficiency code below
-        inputLocation = data.get('location')
-        locationString = inputLocation.lower().strip() # makes all the characters lower case and removes white space around the edges
-        #query the database for any instance of the input city id
-        existing_location = Hotel.query.filter_by(city=locationString).first() 
-        if not existing_location: # if the city hasn't been searched before and therefore hasn't been cached
-            city_id = city_search(inputLocation) # Get the and input into function for getting the id of the city searched
-        else:
-            city_id = existing_location.region_id
-        # end zander search efficiency code above
-        # # use the function call below when we're demoing/using the finished website to actually search with the form parameters
-        # # hotel_list = hotel_search(city_id, data.get('arrival_date').split('T')[0], data.get('departure_date').split('T')[0], data.get('num_adults'), data.get('num_children'), data.get('num_rooms'), "Price (Low To High)")
+        num_adults = data.get('num_adults')
+        num_children = data.get('num_children')
+        num_rooms = data.get('num_rooms')
+        breakfast_included = data.get('breakfast_included')
+        parking_included = data.get('parking_included')
+        rating = data.get('score')
+        sort_by = data.get('sort_by')
 
-        # # use this example variable below for now to run a default API call so that only input needed is the location, hotel_list will be used later on
-        example = hotel_search(city_id, arrival_date, departure_date, "2", "1", "1", "Price (Low To High)")
+        location = data.get('location')
+        city_id = city_search(location)
 
-        # zander caching code start\/\/\/\/\/
-        for h_details in example:
-            try:
-                new_hotel = Hotel(
-                    hotel_id = h_details['hotel_id'],
-                    longitude = h_details['longitude'], 
-                    latitude = h_details['latitude'],
-                    name = h_details['name'],
-                    address = None, # not sure where to get address or region_id
-                    city = locationString, # String of the city name for example "San Jose" (initialized above)
-                    region_id = city_id, # integer representing the region searched, this is returned by an API call (initialized above)
-                    rating = h_details['review_score'],
-                    check_in_start = h_details['checkin_start'],
-                    check_in_end = h_details['checkin_end'],
-                    check_out_time = h_details['checkout_end']
-                )
-                db.session.add(new_hotel)
-                db.session.commit()
-            except:
-                pass # error would be duplicate hotel id because there's no check for that, just pass
-        # end zander caching code^^^^
+        filter_list = []
+        if breakfast_included:
+            filter_list.append("mealplan::breakfast_included")
+        if parking_included:
+            filter_list.append("facility::46")
+        if rating != "0":
+            filter_list.append("reviewscorebuckets::" + rating + "0")
+        filter_text = ""
+        for f in range(len(filter_list)):
+            filter_text += filter_list[f]
+            if f < len(filter_list)-1:
+                filter_text += ','
+        print(filter_text)
 
-        return jsonify({'hotels': example})  # Returning list of hotels + form data with jsonified/cleaner date values
+        hotels = hotel_search(city_id, arrival_date, departure_date, num_adults, num_children, num_rooms, sort_by, filter_text)
+
+        return jsonify({'hotels': hotels})  # Returning list of hotels + form data with jsonified/cleaner date values
     else:
         return 'False'  # Returning False as a response if the request method is not POST
 
@@ -161,17 +146,18 @@ def search():
 def hotel(hotel_id):
     if request.method == 'GET':
         arrival_date = request.args.get('start_date')
+        print(arrival_date)
         departure_date = request.args.get('end_date')
         num_adults = request.args.get('num_adults')
         num_children = request.args.get('num_children')
         num_rooms = request.args.get('num_rooms')
-        hotel_info_response = hotel_search_by_id(hotel_id, arrival_date, departure_date)
+        # hotel_info_response = hotel_search_by_id(hotel_id, arrival_date, departure_date)
         # print(hotel_info_response)
         # print()
 
         data = {
-            'name': hotel_info_response[0].get('hotel_name'),
-            'address': hotel_info_response[0].get('address'),
+            # 'name': hotel_info_response[0].get('hotel_name'),
+            # 'address': hotel_info_response[0].get('address'),
             # review score and review word are already in the data returned for each hotel in hotel_search, can be passed when redirecting
             'rooms': room_search(hotel_id, arrival_date, departure_date, num_adults, num_children, num_rooms)
         }
@@ -213,13 +199,13 @@ def booking():
         email = user.email
         first_name = user.first_name
         last_name = user.last_name
-        cost_before_extra = data['room_data'].get('cost_before_extra')
-        extra = cost_before_extra * 0.25 + 2.5
-        total = cost_before_extra + extra
+        cost_before_extra = round(data['room_data'].get('cost_before_extra'),2)
+        extra = round(cost_before_extra * 0.25 + 2.5,2)
+        point_deduct = int(data['form_data'].get('deduct_points'))*0.1
+        total = round(cost_before_extra + extra - point_deduct,2)
         canceled = 0
 
-        bookings = Booking.query.filter_by(user_id=session['user_id']).filter(
-            Booking.departure_date >= datetime.today()).all()  # only check bookings that haven't passed
+        bookings = Booking.query.filter_by(user_id=session['user_id']).filter(Booking.departure_date >= datetime.today()).all()  # only check bookings that haven't passed
         print(str(datetime.today()).split(' ')[0])
         print(bookings)
         for b in bookings:
@@ -270,8 +256,7 @@ def booking_details(booking_id):
     if booking_id != "0":
         booking = Booking.query.filter_by(booking_id=booking_id).first()  # find specific booking (for the edit page)
     else:
-        booking = Booking.query.filter_by(user_id=session['user_id']).order_by(
-            desc(Booking.booking_id)).first()  # find last booking (for the payment page)
+        booking = Booking.query.filter_by(user_id=session['user_id']).order_by(desc(Booking.booking_id)).first()  # find last booking (for the payment page)
 
     if booking:
         data = [{
@@ -290,7 +275,8 @@ def booking_details(booking_id):
             'tax': 0.25,  # arbitrary value for now
             'total': booking.total,  # convenience fee already accounted for in booking logic
             'guests': str(booking.num_adults) + " adult(s) & " + str(booking.num_children) + " child(ren)",
-            'reward_points': round(booking.cost_before_extra * .06, 0)
+            'reward_points': round(booking.cost_before_extra * .06, 0),
+            'user_points': User.query.filter_by(user_id=session['user_id']).first().reward_points
         }]
         return jsonify(data), 200
     else:
@@ -327,7 +313,7 @@ def payment():
         # Calculate earned rewards points from this purchase
         earnedRewardsPoints = costAfterRewards / 100
         currentRewardsPoints = user.reward_points
-        user.reward_points = currentRewardsPoints + earnedRewardsPoints
+        user.reward_points = round(currentRewardsPoints + earnedRewardsPoints,0)
 
         # Calculate final total with tax
         adjusted_tax = costAfterRewards * tax
@@ -361,13 +347,14 @@ def user():
         return jsonify({'message': 'User not logged in!'}), 401
 
     user = User.query.filter_by(user_id=session['user_id']).first()
-    bookings = Booking.query.filter_by(user_id=session['user_id']).order_by(desc(Booking.booking_id)).all()
+    bookings = Booking.query.filter_by(user_id=session['user_id']).order_by(desc(Booking.booking_id)).filter(Booking.departure_date >= datetime.today()).all()
 
     if bookings:
         user_dict = {key: value for key, value in user.__dict__.items() if not key.startswith('_')}
-        booking_dicts = [{key: value for key, value in b.__dict__.items() if not key.startswith('_')} for b in bookings]
-        print(booking_dicts)
-        return jsonify({'user': user_dict, 'upcoming_bookings': booking_dicts, 'recent_bookings': {}}), 200
+        upcoming_dict = [{key: value for key, value in b.__dict__.items() if not key.startswith('_')} for b in bookings]
+        past = Booking.query.filter_by(user_id=session['user_id']).filter(Booking.departure_date < datetime.today()).all()  # only check bookings that haven't passed
+        recent_dict = [{key: value for key, value in b.__dict__.items() if not key.startswith('_')} for b in past]
+        return jsonify({'user': user_dict, 'upcoming_bookings': upcoming_dict, 'recent_bookings': recent_dict}), 200
     else:
         return jsonify([{}])
 
@@ -408,7 +395,7 @@ def edit():
         room_id = data['room_data'].get('room_id')
         booking_id = data['hotel_data'].get('booking_id')
         booking = Booking.query.filter_by(booking_id=booking_id).first()
-        # hotel_name = data['hotel_data'].get('name')
+        # hotel_name = data['hotel_data'].get('name') # commmented out because getting hotel name is trickier with editing so it is taken from the booking
         room_configuration = data['room_data'].get('config')
         arrival_date = data['form_data'].get('arrival_date').split('T')[0]
         departure_date = data['form_data'].get('departure_date').split('T')[0]
@@ -475,3 +462,11 @@ def edit():
 @app.route('/hotel_photos/<hotel_id>', methods=['GET'])
 def photos(hotel_id):
     return hotel_photos(hotel_id)
+
+@app.route('/rewards', methods=['GET'])
+def rewards():
+    if 'user_id' not in session:
+        return jsonify({'message': 'User not logged in!'}), 401
+    
+    user_points = User.query.filter_by(user_id=session['user_id']).first().reward_points
+    return jsonify({'user_points': user_points}), 200

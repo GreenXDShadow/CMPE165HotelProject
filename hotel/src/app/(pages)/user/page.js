@@ -42,9 +42,10 @@ export default function User() {
         });
     }, []);
 
-    const handleViewPress = async (e, id) => {
+    const handleViewPress = async (e, id, past) => {
         e.preventDefault();
-        router.push(`/reservation?id=${id}`);
+        window.location.href = `/reservation?id=${id}&past=${past}`
+        // router.push(`/reservation?id=${id}`);
     };
 
     return (
@@ -61,20 +62,8 @@ export default function User() {
                         {user.first_name} {user.last_name}
                     </h1>
 
-                    <h2 style={{ color: 'white' }}>Platinum Member</h2>
+                    <h2 style={{ color: 'white' }}>Member</h2>
                     <p style={{ color: 'white' }}>Points: {user.reward_points}pts</p>
-                    <button
-                        className='bookButton'
-                        style={{
-                            marginTop: '5px',
-                            marginBottom: '5px',
-                            marginLeft: '0px',
-                            marginRight: '0px',
-                            background: '#cdc379'
-                        }}
-                    >
-                        Edit Profile
-                    </button>
                 </div>
 
                 <div className='column-container'>
@@ -92,7 +81,7 @@ export default function User() {
                                     </div>
                                     <button
                                         className='bookButton'
-                                        onClick={(e) => handleViewPress(e, b.booking_id)}
+                                        onClick={(e) => handleViewPress(e, b.booking_id, 0)}
                                         style={{
                                             marginTop: 'auto',
                                             marginBottom: 'auto',
@@ -122,6 +111,7 @@ export default function User() {
                                     </div>
                                     <button
                                         className='bookButton'
+                                        onClick={(e) => handleViewPress(e, b.booking_id, 1)}
                                         style={{
                                             marginTop: 'auto',
                                             marginBottom: 'auto',
