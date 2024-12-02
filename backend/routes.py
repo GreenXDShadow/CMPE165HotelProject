@@ -114,12 +114,27 @@ def search():
         num_rooms = data.get('num_rooms')
         breakfast_included = data.get('breakfast_included')
         parking_included = data.get('parking_included')
+        rating = data.get('score')
         sort_by = data.get('sort_by')
 
         location = data.get('location')
         city_id = city_search(location)
 
-        hotels = hotel_search(city_id, arrival_date, departure_date, num_adults, num_children, num_rooms, sort_by)
+        filter_list = []
+        if breakfast_included:
+            filter_list.append("mealplan::breakfast_included")
+        if parking_included:
+            filter_list.append("facility::46")
+        if rating != "0":
+            filter_list.append("reviewscorebuckets::" + rating + "0")
+        filter_text = ""
+        for f in range(len(filter_list)):
+            filter_text += filter_list[f]
+            if f < len(filter_list)-1:
+                filter_text += ','
+        print(filter_text)
+
+        hotels = hotel_search(city_id, arrival_date, departure_date, num_adults, num_children, num_rooms, sort_by, filter_text)
 
         return jsonify({'hotels': hotels})  # Returning list of hotels + form data with jsonified/cleaner date values
     else:
@@ -131,6 +146,7 @@ def search():
 def hotel(hotel_id):
     if request.method == 'GET':
         arrival_date = request.args.get('start_date')
+        print(arrival_date)
         departure_date = request.args.get('end_date')
         num_adults = request.args.get('num_adults')
         num_children = request.args.get('num_children')
@@ -183,13 +199,13 @@ def booking():
         email = user.email
         first_name = user.first_name
         last_name = user.last_name
-        cost_before_extra = data['room_data'].get('cost_before_extra')
-        extra = cost_before_extra * 0.25 + 2.5
-        total = cost_before_extra + extra
+        cost_before_extra = round(data['room_data'].get('cost_before_extra'),2)
+        extra = round(cost_before_extra * 0.25 + 2.5,2)
+        point_deduct = int(data['form_data'].get('deduct_points'))*0.1
+        total = round(cost_before_extra + extra - point_deduct,2)
         canceled = 0
 
-        bookings = Booking.query.filter_by(user_id=session['user_id']).filter(
-            Booking.departure_date >= datetime.today()).all()  # only check bookings that haven't passed
+        bookings = Booking.query.filter_by(user_id=session['user_id']).filter(Booking.departure_date >= datetime.today()).all()  # only check bookings that haven't passed
         print(str(datetime.today()).split(' ')[0])
         print(bookings)
         for b in bookings:
@@ -240,8 +256,7 @@ def booking_details(booking_id):
     if booking_id != "0":
         booking = Booking.query.filter_by(booking_id=booking_id).first()  # find specific booking (for the edit page)
     else:
-        booking = Booking.query.filter_by(user_id=session['user_id']).order_by(
-            desc(Booking.booking_id)).first()  # find last booking (for the payment page)
+        booking = Booking.query.filter_by(user_id=session['user_id']).order_by(desc(Booking.booking_id)).first()  # find last booking (for the payment page)
 
     if booking:
         data = [{
@@ -260,7 +275,8 @@ def booking_details(booking_id):
             'tax': 0.25,  # arbitrary value for now
             'total': booking.total,  # convenience fee already accounted for in booking logic
             'guests': str(booking.num_adults) + " adult(s) & " + str(booking.num_children) + " child(ren)",
-            'reward_points': round(booking.cost_before_extra * .06, 0)
+            'reward_points': round(booking.cost_before_extra * .06, 0),
+            'user_points': User.query.filter_by(user_id=session['user_id']).first().reward_points
         }]
         return jsonify(data), 200
     else:
@@ -297,7 +313,7 @@ def payment():
         # Calculate earned rewards points from this purchase
         earnedRewardsPoints = costAfterRewards / 100
         currentRewardsPoints = user.reward_points
-        user.reward_points = currentRewardsPoints + earnedRewardsPoints
+        user.reward_points = round(currentRewardsPoints + earnedRewardsPoints,0)
 
         # Calculate final total with tax
         adjusted_tax = costAfterRewards * tax
@@ -331,7 +347,7 @@ def user():
         return jsonify({'message': 'User not logged in!'}), 401
 
     user = User.query.filter_by(user_id=session['user_id']).first()
-    bookings = Booking.query.filter_by(user_id=session['user_id']).order_by(desc(Booking.booking_id))
+    bookings = Booking.query.filter_by(user_id=session['user_id']).order_by(desc(Booking.booking_id)).filter(Booking.departure_date >= datetime.today()).all()
 
     if bookings:
         user_dict = {key: value for key, value in user.__dict__.items() if not key.startswith('_')}
@@ -379,7 +395,7 @@ def edit():
         room_id = data['room_data'].get('room_id')
         booking_id = data['hotel_data'].get('booking_id')
         booking = Booking.query.filter_by(booking_id=booking_id).first()
-        # hotel_name = data['hotel_data'].get('name')
+        # hotel_name = data['hotel_data'].get('name') # commmented out because getting hotel name is trickier with editing so it is taken from the booking
         room_configuration = data['room_data'].get('config')
         arrival_date = data['form_data'].get('arrival_date').split('T')[0]
         departure_date = data['form_data'].get('departure_date').split('T')[0]
@@ -447,18 +463,10 @@ def edit():
 def photos(hotel_id):
     return hotel_photos(hotel_id)
 
-@app.route('/sort', methods=['GET'])
-def sort():
-    if request.method == "GET":
-        sort_by = 'Price (High To Low)'
-        hotel_dict = request.get_json()
-        # default sorting is by popularity
-        if sort_by == 'Price (Low To High)':
-            hotel_dict = sorted(hotel_dict, key=lambda x: x['cost_before_extra'], reverse=False)
-        elif sort_by == 'Price (High To Low)':
-            hotel_dict = sorted(hotel_dict, key=lambda x: x['cost_before_extra'], reverse=True)
-        elif sort_by == 'Review Score (High To Low)':
-            hotel_dict = sorted(hotel_dict, key=lambda x: x['review_score'], reverse=True)
-        elif sort_by == 'Review Score (Low To High)':
-            hotel_dict = sorted(hotel_dict, key=lambda x: x['review_score'], reverse=False)
-        return hotel_dict
+@app.route('/rewards', methods=['GET'])
+def rewards():
+    if 'user_id' not in session:
+        return jsonify({'message': 'User not logged in!'}), 401
+    
+    user_points = User.query.filter_by(user_id=session['user_id']).first().reward_points
+    return jsonify({'user_points': user_points}), 200

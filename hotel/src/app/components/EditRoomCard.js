@@ -14,24 +14,26 @@ export default function EditRoomCard({roomData, hotelData, formData}) {
     e.preventDefault();
     console.log("Booking requested")
     try {
-        const response = await axios.post('http://localhost:4000/edit', {
-            hotel_data: hotelData,
-            room_data: roomData,
-            form_data: formData
-        }, { withCredentials: true });
-        if(response.status === 200){
-            NotificationManager.success('Hotel booked successfully');
-            console.log(response.data)
-            setTimeout(() => {
-                window.location.href = `/payment?id=${hotelData.booking_id}` // id set to a specific booking_id means the payment page fetches a specific booking (for showing an edited reservation)
-            }, 1500) // 1.5 second delay before redirecting to the payment page
-        }
-        if(response.status === 401) {
-            NotificationManager.error('You must be logged in to book a hotel');
-        }
-        if (response.status === 202) {
-            console.log("Overlapping Booking");
-        }
+        localStorage.setItem('booking', JSON.stringify({hotel_data: hotelData, room_data: roomData, form_data: formData}));
+        window.location.href = `/payment?id=${hotelData.booking_id}`
+        // const response = await axios.post('http://localhost:4000/edit', {
+        //     hotel_data: hotelData,
+        //     room_data: roomData,
+        //     form_data: formData
+        // }, { withCredentials: true });
+        // if(response.status === 200){
+        //     NotificationManager.success('Hotel booked successfully');
+        //     console.log(response.data)
+        //     setTimeout(() => {
+        //         window.location.href = `/payment?id=${hotelData.booking_id}` // id set to a specific booking_id means the payment page fetches a specific booking (for showing an edited reservation)
+        //     }, 1500) // 1.5 second delay before redirecting to the payment page
+        // }
+        // if(response.status === 401) {
+        //     NotificationManager.error('You must be logged in to book a hotel');
+        // }
+        // if (response.status === 202) {
+        //     console.log("Overlapping Booking");
+        // }
     } catch (error) {
         console.error('Error booking hotel:', error);
     }

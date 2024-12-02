@@ -1,7 +1,7 @@
 "use client";
 import Image from 'next/image';
-import './reservation.css';
 import '../.././main.css';
+import './reservation.css';
 import React, { useState, useEffect } from 'react';
 import { useRouter, useParams, useSearchParams } from 'next/navigation';  // Import the useRouter hook
 import axios from 'axios';
@@ -10,6 +10,7 @@ import 'react-notifications/lib/notifications.css'
 
 export default function reservation() {
     const booking_id = useSearchParams().get('id');
+    const past = useSearchParams().get('past');
     const [bookingDetails, setBookingDetails] = useState([]);
     const router = useRouter();  // Initialize the router
 
@@ -26,12 +27,14 @@ export default function reservation() {
 
     const handleCancelPress = async (e) => {
         e.preventDefault();
-        router.push(`/cancel?id=${booking_id}`)
+        window.location.href = `/cancel?id=${booking_id}`
+        // router.push(`/cancel?id=${booking_id}`)
     }
 
     const handleEditPress = async (e) => {
         e.preventDefault();
-        router.push(`/edit/${bookingDetails.hotel_id}?edit=${bookingDetails.booking_id}&start_date=${bookingDetails.arrival_date}&end_date=${bookingDetails.departure_date}&num_adults=${bookingDetails.num_adults}&num_children=${bookingDetails.num_children}&num_rooms=${bookingDetails.num_rooms}`)
+        window.location.href = `/edit/${bookingDetails.hotel_id}?edit=${bookingDetails.booking_id}&hotel_name=${bookingDetails.hotel_name}&start_date=${bookingDetails.arrival_date}&end_date=${bookingDetails.departure_date}&num_adults=${bookingDetails.num_adults}&num_children=${bookingDetails.num_children}&num_rooms=${bookingDetails.num_rooms}`
+        // router.push(`/edit/${bookingDetails.hotel_id}?edit=${bookingDetails.booking_id}&start_date=${bookingDetails.arrival_date}&end_date=${bookingDetails.departure_date}&num_adults=${bookingDetails.num_adults}&num_children=${bookingDetails.num_children}&num_rooms=${bookingDetails.num_rooms}`)
     }
 
     return (
@@ -70,20 +73,28 @@ export default function reservation() {
                         <p>Room Type: </p>
                         <p id='room-type'>{bookingDetails.room_configuration}</p>
                     </div>
-                    <div className='item-container'>
+                    {/* <div className='item-container'>
                         <p>Payment: </p>
                         <p id='payment'>AMEX 0945</p>
-                    </div>
+                    </div> */}
                     <div className='item-container'>
                         <p>Guests: </p>
                         <p id='guests'>{bookingDetails.guests}</p>
                     </div>
+                    <div className='item-container'>
+                        <p>Total Cost: </p>
+                        <p id='address'>${bookingDetails.total}</p>
+                    </div>
                 </div>
-                <div classname='button-container'>
+                {past == "0" ? (
+                    <div classname='button-container'>
                     <button className='bookButton' onClick={() => router.back()}>Back</button>
                     <button className='cancelButton' onClick={handleCancelPress}>Cancel</button>
                     <button className='editButton' onClick={handleEditPress}>Edit...</button>
-                </div>
+                    </div>
+                ) : ("")
+                }
+                
             </div> 
             </div>
         </>
