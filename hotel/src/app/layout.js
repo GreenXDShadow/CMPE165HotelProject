@@ -22,7 +22,6 @@ const ToggleComponent = ({ isLoggedIn, onLogout }) => {
     ],
     loggedIn: [
       { href: "/profile", label: "Profile" },
-      { href: "/payment", label: "Payment" },
       // Add logout as a menu item with special onClick handling
       { href: "#", label: "Logout", onClick: onLogout }
     ]
@@ -156,7 +155,6 @@ export default function RootLayout({ children }) {
                 // Show when logged in
                 <>
                   <li><a className="nav-button" href="/user">Profile</a></li>
-                  <li><a className="nav-button" href="/payment">Payment</a></li>
                   <li>
                     <a
                       href="#"
