@@ -27,11 +27,11 @@ export default function reservation() {
     const handleConfirmPress = async (e) => {
         e.preventDefault();
         console.log("Canceling")
-        NotificationManager.success('Booking Canceled');
+        NotificationManager.info('$' + (bookingDetails.cost_before_extra * 0.1).toFixed(2) + " Cancellation Charged", 'Booking Canceled:');
         axios.delete(`http://localhost:4000/cancel?id=${id}`, { withCredentials: true })
         setTimeout(() => {
             router.push(`/user`)
-        }, 1500) // 1.5 second delay before redirecting to the user page
+        }, 3000) // 1.5 second delay before redirecting to the user page
     }
 
     return (
@@ -70,7 +70,7 @@ export default function reservation() {
                     </div>
                     <div className='item-container'>
                         <p>Reward Points Returned: </p>
-                        <p id='address'>{((bookingDetails.cost_before_extra)*.06).toFixed(0)} Points</p>
+                        <p id='address'>{bookingDetails.points_earned} Points</p>
                     </div>
                     <div className='item-container'>
                         <p>Refund Amount: </p>
@@ -82,6 +82,7 @@ export default function reservation() {
                     <button className='bookButton' onClick={handleConfirmPress}>Confirm</button>
                 </div>
             </div> 
+            <NotificationContainer />
         </>
     );
 };

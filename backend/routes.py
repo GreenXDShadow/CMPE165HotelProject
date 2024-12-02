@@ -68,7 +68,7 @@ def registration():
         password=hashed_password,
         first_name=first_name,
         last_name=last_name,
-        reward_points=0
+        reward_points=1000
     )
     new_payment_info = PaymentInfo(
         payment_id=payment_id,
@@ -203,7 +203,12 @@ def booking():
         extra = round(cost_before_extra * 0.09 + 2.5,2)
         point_deduct = int(data['form_data'].get('deduct_points'))
         total = round(cost_before_extra + extra - point_deduct*0.1,2)
-        point_earn = round((cost_before_extra - point_deduct*0.1)*.06, 0)
+        if total < 0:
+            total = 0
+        point_earn = round((cost_before_extra - point_deduct*.1)*.06, 0)
+        if point_earn < 0:
+            point_earn = 0
+        canceled = 0
         canceled = 0
 
         bookings = Booking.query.filter_by(user_id=session['user_id']).filter(Booking.departure_date >= datetime.today()).all()  # only check bookings that haven't passed
@@ -283,7 +288,7 @@ def booking_details(booking_id):
             'tax': 0.09,  # arbitrary value for now
             'total': booking.total,  # convenience fee already accounted for in booking logic
             'guests': str(booking.num_adults) + " adult(s) & " + str(booking.num_children) + " child(ren)",
-            'reward_points': round(booking.cost_before_extra * .06, 0),
+            'points_earned': booking.points_earned,
             'user_points': User.query.filter_by(user_id=session['user_id']).first().reward_points
         }]
         return jsonify(data), 200
@@ -357,14 +362,11 @@ def user():
     user = User.query.filter_by(user_id=session['user_id']).first()
     bookings = Booking.query.filter_by(user_id=session['user_id']).order_by(desc(Booking.booking_id)).filter(Booking.departure_date >= datetime.today()).all()
 
-    if bookings:
-        user_dict = {key: value for key, value in user.__dict__.items() if not key.startswith('_')}
-        upcoming_dict = [{key: value for key, value in b.__dict__.items() if not key.startswith('_')} for b in bookings]
-        past = Booking.query.filter_by(user_id=session['user_id']).filter(Booking.departure_date < datetime.today()).all()  # only check bookings that haven't passed
-        recent_dict = [{key: value for key, value in b.__dict__.items() if not key.startswith('_')} for b in past]
-        return jsonify({'user': user_dict, 'upcoming_bookings': upcoming_dict, 'recent_bookings': recent_dict}), 200
-    else:
-        return jsonify([{}])
+    user_dict = {key: value for key, value in user.__dict__.items() if not key.startswith('_')}
+    upcoming_dict = [{key: value for key, value in b.__dict__.items() if not key.startswith('_')} for b in bookings]
+    past = Booking.query.filter_by(user_id=session['user_id']).filter(Booking.departure_date < datetime.today()).all()  # only check bookings that haven't passed
+    recent_dict = [{key: value for key, value in b.__dict__.items() if not key.startswith('_')} for b in past]
+    return jsonify({'user': user_dict, 'upcoming_bookings': upcoming_dict, 'recent_bookings': recent_dict}), 200
 
 
 @app.route('/cancel', methods=['DELETE'])
@@ -424,8 +426,11 @@ def edit():
         extra = cost_before_extra * 0.09 + 2.5
         point_deduct = int(data['form_data'].get('deduct_points'))
         total = round(cost_before_extra + extra - point_deduct*0.1,2)
+        if total < 0:
+            total = 0
         point_earn = round((cost_before_extra - point_deduct*.1)*.06, 0)
-        # total = cost_before_extra + extra
+        if point_earn < 0:
+            point_earn = 0
         canceled = 0
 
         if booking:
@@ -466,7 +471,6 @@ def edit():
                     points_used=point_deduct,
                     total=total,
                     points_earned = point_earn,
-                    # total=total,
                     payment_id=payment_id,
                     canceled=canceled
                 )

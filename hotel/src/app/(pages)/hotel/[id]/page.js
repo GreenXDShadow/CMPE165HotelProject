@@ -210,7 +210,7 @@ export default function hotelinfo2() {
                         <p className="stat">${prevHotelData.cost_before_extra}</p>
                     </div>
                     <div className="hours-stat">
-                        <p className="subheading">Hours:</p>
+                        <p className="subheading">Check In Start:</p>
                         {/* replace with hours */}
                         <p className="stat">{prevHotelData.checkin_start}</p> 
                     </div>
