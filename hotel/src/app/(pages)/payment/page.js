@@ -117,6 +117,7 @@ export default function Payment() {
                                 </div>
                             ) : (
                                 <p><b>Current Reward Points Total:</b> Loading...</p>
+
                             )}
                         </div>
                         <div>
