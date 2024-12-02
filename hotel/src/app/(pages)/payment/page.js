@@ -120,27 +120,29 @@ export default function Payment() {
                         <div>
                             {userPoints > 0 ? (
                                 <div>
-                                    Current Reward Points Total: {userPoints} (1 point = $0.10)
+                                    <b>Current Reward Points Total:</b> {userPoints} (1 point = $0.10)
                                 </div>
                             ) : (
-                                <p>Current Reward Points Total: Loading...</p>
+                                <p><b>Current Reward Points Total:</b> Loading... (1 point = $0.10)</p>
                             )}
                         </div>
                         <div>
                         <form onSubmit={handleRewards}>
-
+                            <div>
+                            <b> Number of Reward Points to Redeem: </b>
                             <input
                                 type="number"
                                 min = "0"
                                 max = {userPoints}
                                 className="redeem-amt"
-                                placeholder="points"
+                                placeholder="#"
                                 value={deductPoints}
                                 onChange={(r) => setDeductPoints(r.target.value)}
                                 required
                             />
+                            </div>
                                 
-                            <button type = "submit" className="btn">Confirm purchase and rewards</button>
+                            <button type = "submit" className="btn">Confirm Purchase</button>
                                 
                         </form>
                         </div>

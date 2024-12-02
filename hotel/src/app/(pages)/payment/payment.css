@@ -129,6 +129,11 @@
     transition: background-color 0.3s ease;
 }
 
+.redeem-amt {
+    width: 50px;
+    font-size: 18px;
+}
+
 .error-message {
     color: red;
     text-align: center;
