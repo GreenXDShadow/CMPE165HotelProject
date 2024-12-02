@@ -11,6 +11,7 @@ import 'react-notifications/lib/notifications.css'
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
+
 const HotelInfo = () => {
     const params = useParams();
     const searchParams = useSearchParams();
@@ -29,6 +30,8 @@ const HotelInfo = () => {
     const [hotelName, setHotelName] = useState(searchParams.get('hotel_name'));
     const [roomsList, setRooms] = useState([]);
     const todaysDate = new Date();
+
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
       }, []);
@@ -71,23 +74,28 @@ const HotelInfo = () => {
         </div>
         ));
 
-    const handleEditSearch = async (e) => {
-        e.preventDefault();
-
-        try {
-            axios.get(`http://localhost:4000/hotel/${id}?start_date=${formatDate(startDate)}&end_date=${formatDate(endDate)}&num_adults=${numAdults}&num_children=${numChildren}&num_rooms=${numRooms}`)
-            .then((response) => {
-                console.log("hotel_info page", response.data)
-                console.log("Hotel Page Start Date", startDate)
-                setRooms(response.data.rooms);
-            })
-            .catch((error) => {
-                console.error('Error fetching data: ', error);
-            });
-        } catch (e) {
-            console.log(e);
-        }
-    };
+        const handleEditSearch = async (e) => {
+            e.preventDefault();
+        
+            try {
+                setLoading(true); // Start loading animation
+                await axios
+                    .get(`http://localhost:4000/hotel/${id}?start_date=${formatDate(startDate)}&end_date=${formatDate(endDate)}&num_adults=${numAdults}&num_children=${numChildren}&num_rooms=${numRooms}`)
+                    .then((response) => {
+                        console.log("hotel_info page", response.data);
+                        console.log("Hotel Page Start Date", startDate);
+                        setRooms(response.data.rooms);
+                    })
+                    .catch((error) => {
+                        console.error('Error fetching data: ', error);
+                    })
+                    .finally(() => {
+                        setLoading(false); // End loading animation after success or error
+                    });
+            } catch (e) {
+                console.error("Unexpected error:", e);
+            }
+        };
 
     return (
         <div>
@@ -166,7 +174,11 @@ const HotelInfo = () => {
                     </div>
                 </form>
             </div>
-            {renderRooms}
+            {loading ? (
+                    <div className="loader"></div>
+                    ) : (
+                    renderRooms
+                    )}
             <NotificationContainer />
         </div>
     )

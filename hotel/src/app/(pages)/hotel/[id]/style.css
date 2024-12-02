@@ -29,6 +29,7 @@ body {
     grid-column: 2 / 2;
     font-size: 2rem;
     font-weight: bold;
+    margin-top: 80px;
 }
 
 /* Map would go in space 2,2, leaving it occupied by overview for now */
@@ -36,12 +37,17 @@ body {
 .main-photo {
     width: calc(100% - 20px);
     border-radius: 10px;
-    max-width: 1024px;
+    max-width: 720px;
+    margin-left: 100px;
+    margin-top: 50px;
 }
 
 .title {
     font-size: 2rem;
     font-weight: bold;
+    margin-left: 120px;
+    margin-top: 30px;
+    max-width: 720px;
 }
 
 .section-title {
@@ -62,6 +68,7 @@ body {
     align-items: center;
     flex-wrap: wrap;
     background-color: #eee;
+    margin-top: 40px;
 }
 
 .rating-stat, .price-stat, .hours-stat {
@@ -160,6 +167,7 @@ button:hover {
     flex-direction: column;
     align-items: center;
     padding: 40px 0;
+    margin-top: 60px;
 }
 
 button:hover {
@@ -241,6 +249,7 @@ button:hover {
 
     .overview {
         padding: 10px;
+        transform: translateY(100px);
     }
 
     .stats-section {
@@ -281,6 +290,7 @@ button:hover {
 
     .section-title {
         color: white;
+        margin-bottom: 40px;
     }
 }
 

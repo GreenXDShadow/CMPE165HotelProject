@@ -26,11 +26,13 @@
     padding: 80px;
     width: 100%;
     max-width: 1800px; 
+
 }
 
 .container-left {
     width: 45%; 
     padding-right: 20px;
+    margin-top: 70px;
 }
 
 .container-right {
@@ -38,26 +40,35 @@
     padding-left: 20px; 
     background-color: white;
     border-radius: 15px;
+    margin-top: 70px;
 }
 
 .details-container {
     display: flex;
     flex-direction: column;
-    max-width: 25rem;
-    width: 70%;
+    align-items: center; /* Center the entire block horizontally */
+    max-width: 40rem;
+    width: 100%; /* Ensure responsiveness */
+    margin: 0 auto; /* Center the block in the parent container */
 }
 
 .item-container {
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
+    justify-content: space-between; /* Maintain the spacing between ":" and value */
+    width: 100%; /* Stretch the container to match `details-container` width */
+    max-width: 40rem; /* Optionally limit max width for better spacing */
+    padding: 0.5rem 0; /* Add vertical spacing between rows */
 }
 
 p {
     font-size: larger;
-    margin-top: 5px;
-    margin-left: 2px;
-    margin-right: 2px;
+    margin: 0.5rem; /* Maintain consistent spacing for text */
+    text-align: left; /* Prevent text alignment issues */
+}
+
+h1 {
+    text-align: center; /* Center the header text */
+    margin-bottom: 1rem; /* Add spacing between header and details */
 }
 
 .button-container {
